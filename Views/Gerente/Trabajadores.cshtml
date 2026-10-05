@@ -42,6 +42,7 @@
                             <th>Correo / Usuario</th>
                             <th>Teléfono</th>
                             <th>Rol</th>
+                            <th><i class="fa-solid fa-map-marker-alt me-1 text-warning"></i>Agencia / Salida Fija</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -64,10 +65,29 @@
                                             <span class="badge bg-info" style="background-color: rgba(13, 202, 240, 0.15) !important; color: #0dcaf0 !important; border: 1px solid rgba(13, 202, 240, 0.3);"><i class="fa-solid fa-user me-1"></i> Vendedor</span>
                                         }
                                     </td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(u.AgenciaAsignada))
+                                        {
+                                            <span class="badge" style="background:rgba(234,179,8,0.2);color:#facc15;border:1px solid rgba(234,179,8,0.4);">
+                                                <i class="fa-solid fa-lock me-1"></i>@u.AgenciaAsignada
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small"><i class="fa-solid fa-globe me-1"></i>Sin restricción</span>
+                                        }
+                                    </td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
-                                            <!-- Restablecer Contraseña -->
+                                            <!-- Asignar Agencia Fija -->
                                             <button type="button" class="btn btn-sm btn-outline-warning"
+                                                    onclick="openAgenciaModal(@u.Id_Usuario, '@u.Name', '@(u.AgenciaAsignada ?? "")')"
+                                                    style="border-radius: 8px;" title="Asignar Agencia de Salida">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                            </button>
+
+                                            <!-- Restablecer Contraseña -->
+                                            <button type="button" class="btn btn-sm btn-outline-secondary"
                                                     onclick="openResetModal(@u.Id_Usuario, '@u.Name')"
                                                     style="border-radius: 8px;" title="Restablecer Clave">
                                                 <i class="fa-solid fa-key"></i>
@@ -144,9 +164,65 @@
                            placeholder="Ej. 987654321" pattern="[0-9]{9}" required />
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label text-muted fs-8 font-weight-600">
+                        <i class="fa-solid fa-location-dot me-1 text-warning"></i>Agencia / Ciudad de Salida Fija <span class="text-muted">(Opcional)</span>
+                    </label>
+                    <select name="AgenciaAsignada" class="form-select bg-dark-input text-white border-glass-field">
+                        <option value="">-- Sin restricción (elige libremente) --</option>
+                        @if (ViewBag.Lugares != null)
+                        {
+                            foreach (string lugar in (List<string>)ViewBag.Lugares)
+                            {
+                                <option value="@lugar">@lugar</option>
+                            }
+                        }
+                    </select>
+                    <small class="text-muted">Si asignas una agencia, el origen de encomiendas quedará fijo para esta cuenta.</small>
+                </div>
+
                 <button type="submit" class="btn btn-primary w-100 py-2.5 mt-1 btn-orange-solid">
                     <i class="fa-solid fa-user-check me-2"></i> Registrar Cuenta
                 </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Asignar Agencia de Salida Fija -->
+<div class="modal fade" id="agenciaModal" tabindex="-1" aria-labelledby="agenciaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-glass shadow-lg">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="agenciaModalLabel">
+                    <i class="fa-solid fa-location-dot text-warning me-2"></i> Asignar Agencia de Salida Fija
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AsignarAgencia" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="agenciaUserId" />
+                    <p>Asignando agencia para: <strong id="agenciaUserName" class="text-warning"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-8 font-weight-600">Ciudad / Agencia de Salida</label>
+                        <select name="agencia" id="agenciaSelect" class="form-select bg-dark-input text-white border-glass-field">
+                            <option value="">-- Sin restricción (elige libremente) --</option>
+                            @if (ViewBag.Lugares != null)
+                            {
+                                foreach (string lugar in (List<string>)ViewBag.Lugares)
+                                {
+                                    <option value="@lugar">@lugar</option>
+                                }
+                            }
+                        </select>
+                        <small class="text-muted mt-1 d-block"><i class="fa-solid fa-circle-info me-1"></i>Al asignar una agencia, el campo Origen en encomiendas quedará fijo y bloqueado para esta cuenta.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" style="border-radius: 8px;">Cancelar</button>
+                    <button type="submit" class="btn btn-warning fw-bold" style="border-radius: 8px;"><i class="fa-solid fa-floppy-disk me-1"></i> Guardar Agencia</button>
+                </div>
             </form>
         </div>
     </div>
@@ -189,6 +265,18 @@
             document.getElementById('resetUserId').value = id;
             document.getElementById('resetUserName').innerText = name;
             const myModal = new bootstrap.Modal(document.getElementById('resetModal'));
+            myModal.show();
+        }
+
+        function openAgenciaModal(id, name, agenciaActual) {
+            document.getElementById('agenciaUserId').value = id;
+            document.getElementById('agenciaUserName').innerText = name;
+            const sel = document.getElementById('agenciaSelect');
+            // Pre-seleccionar la agencia actual
+            for (let i = 0; i < sel.options.length; i++) {
+                sel.options[i].selected = (sel.options[i].value === agenciaActual);
+            }
+            const myModal = new bootstrap.Modal(document.getElementById('agenciaModal'));
             myModal.show();
         }
     </script>

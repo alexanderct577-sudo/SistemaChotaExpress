@@ -293,29 +293,50 @@
                         <!-- Origen y Destino -->
                         <div class="col-md-6">
                             <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen</label>
-                            <select name="origenRuta" id="origenRutaSelect" class="form-select bg-secondary border-0 text-white" required>
-                                <option value="">-- Seleccionar Origen --</option>
-                                @if (ViewBag.Lugares != null)
-                                {
-                                    foreach (string l in (List<string>)ViewBag.Lugares)
+                            @if (!string.IsNullOrEmpty(ViewBag.OrigenFijo as string))
+                            {
+                                <!-- Origen fijo: bloqueado para esta cuenta -->
+                                <div class="input-group">
+                                    <span class="input-group-text bg-warning border-0 text-dark">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </span>
+                                    <input type="text" class="form-control bg-secondary border-0 text-white fw-bold"
+                                           value="@ViewBag.OrigenFijo" readonly disabled />
+                                    <input type="hidden" name="origenRuta" value="@ViewBag.OrigenFijo" />
+                                </div>
+                                <small class="text-warning mt-1 d-block"><i class="fa-solid fa-circle-info me-1"></i>Origen fijo asignado a tu cuenta. Solo el Gerente puede cambiarlo.</small>
+                            }
+                            else
+                            {
+                                <select name="origenRuta" id="origenRutaSelect" class="form-select bg-secondary border-0 text-white" required>
+                                    <option value="">-- Seleccionar Origen --</option>
+                                    @if (ViewBag.Lugares != null)
                                     {
-                                        var isSel = (Model?.ObjetoRuta?.Origen == l);
-                                        <option value="@l" selected="@isSel">@l</option>
+                                        foreach (string l in (List<string>)ViewBag.Lugares)
+                                        {
+                                            var isSel = (Model?.ObjetoRuta?.Origen == l);
+                                            <option value="@l" selected="@isSel">@l</option>
+                                        }
                                     }
-                                }
-                            </select>
+                                </select>
+                            }
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino</label>
+                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino (Ciudad de Recojo)</label>
                             <select name="destinoRuta" id="destinoRutaSelect" class="form-select bg-secondary border-0 text-white" required>
                                 <option value="">-- Seleccionar Destino --</option>
                                 @if (ViewBag.Lugares != null)
                                 {
+                                    string origenFijoStr = ViewBag.OrigenFijo as string ?? "";
                                     foreach (string l in (List<string>)ViewBag.Lugares)
                                     {
-                                        var isSel = (Model?.ObjetoRuta?.Destino == l);
-                                        <option value="@l" selected="@isSel">@l</option>
+                                        // Excluir el origen fijo del destino para evitar errores
+                                        if (!string.Equals(l, origenFijoStr, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            var isSel = (Model?.ObjetoRuta?.Destino == l);
+                                            <option value="@l" selected="@isSel">@l</option>
+                                        }
                                     }
                                 }
                             </select>

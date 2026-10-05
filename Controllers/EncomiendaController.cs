@@ -86,6 +86,13 @@ namespace SistemaChotaExpress.Controllers
             var totalCount = await _context.Encomiendas.CountAsync();
             ViewBag.SiguienteNumero = totalCount + 1;
 
+            // Leer agencia fija del usuario logueado
+            var emailActual = User.FindFirstValue(ClaimTypes.Email);
+            var nombreActual = User.Identity?.Name;
+            var usuarioActual = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == emailActual || u.Name == nombreActual);
+            ViewBag.OrigenFijo = usuarioActual?.AgenciaAsignada;
+
             try
             {
                 ViewBag.Conductores = await _context.Buses
@@ -121,6 +128,17 @@ namespace SistemaChotaExpress.Controllers
         {
             try
             {
+                // Si el usuario tiene agencia fija, forzar el origen
+                var emailActual2 = User.FindFirstValue(ClaimTypes.Email);
+                var nombreActual2 = User.Identity?.Name;
+                var usuarioPost = await _context.Usuarios
+                    .FirstOrDefaultAsync(u => u.Email == emailActual2 || u.Name == nombreActual2);
+                if (!string.IsNullOrWhiteSpace(usuarioPost?.AgenciaAsignada))
+                {
+                    origenRuta = usuarioPost.AgenciaAsignada;
+                }
+                ViewBag.OrigenFijo = usuarioPost?.AgenciaAsignada;
+
                 // Asignar ruta seleccionada de los 14 lugares oficiales
                 if (!string.IsNullOrWhiteSpace(origenRuta) && !string.IsNullOrWhiteSpace(destinoRuta) && !origenRuta.Equals(destinoRuta, StringComparison.OrdinalIgnoreCase))
                 {

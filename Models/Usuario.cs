@@ -23,6 +23,9 @@ namespace SistemaChotaExpress.Models
         [Required]
         public int Id_Rol { get; set; }
 
+        [StringLength(50)]
+        public string? AgenciaAsignada { get; set; }
+
         [ForeignKey("Id_Rol")]
         public virtual Roles? ObjetoRol { get; set; }
     }

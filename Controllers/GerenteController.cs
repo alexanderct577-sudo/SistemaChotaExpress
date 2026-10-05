@@ -187,6 +187,7 @@ namespace SistemaChotaExpress.Controllers
                 .OrderBy(u => u.Id_Rol)
                 .ThenBy(u => u.Name)
                 .ToListAsync();
+            ViewBag.Lugares = GeneradorViajesService.LugaresOficiales.OrderBy(l => l).ToList();
             return View(usuarios);
         }
 
@@ -223,13 +224,31 @@ namespace SistemaChotaExpress.Controllers
                 Email = emailLimpio,
                 Password = modelo.Password,
                 Telefono = modelo.Telefono ?? "999999999",
-                Id_Rol = rolAsignado
+                Id_Rol = rolAsignado,
+                AgenciaAsignada = string.IsNullOrWhiteSpace(modelo.AgenciaAsignada) ? null : modelo.AgenciaAsignada.Trim()
             };
 
             _context.Usuarios.Add(nuevoUsuario);
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = $"¡Cuenta de {nombreRol} '{modelo.Name}' creada con éxito! Ya puede iniciar sesión.";
+            return RedirectToAction("Trabajadores");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsignarAgencia(int id, string? agencia)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null) return NotFound();
+
+            usuario.AgenciaAsignada = string.IsNullOrWhiteSpace(agencia) ? null : agencia.Trim();
+            await _context.SaveChangesAsync();
+
+            var msg = string.IsNullOrWhiteSpace(agencia)
+                ? $"Agencia fija removida de '{usuario.Name}'."
+                : $"Agencia '{agencia}' asignada a '{usuario.Name}' con éxito.";
+            TempData["SuccessMessage"] = msg;
             return RedirectToAction("Trabajadores");
         }
 

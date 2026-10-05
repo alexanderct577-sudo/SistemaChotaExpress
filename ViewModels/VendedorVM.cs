@@ -26,5 +26,8 @@ namespace SistemaChotaExpress.ViewModels
         public string Telefono { get; set; }
 
         public int Id_Rol { get; set; } = 2; // 1 = Gerente, 2 = Vendedor
+
+        [StringLength(50)]
+        public string? AgenciaAsignada { get; set; }
     }
 }
