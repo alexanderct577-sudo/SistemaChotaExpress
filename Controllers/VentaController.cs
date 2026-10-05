@@ -28,22 +28,15 @@ namespace SistemaChotaExpress.Controllers
             _sunatService = sunatService;
         }
 
-        // ==========================================
-        // 0. PANTALLA DE INICIO / BIENVENIDA
-        // ==========================================
         [HttpGet]
         public IActionResult Inicio()
         {
             return View();
         }
 
-        // ==========================================
-        // 1. BUSCAR VIAJES & TABLERO DE VENTAS
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> BuscarViajes(string? origen, string? destino, string? fecha, int? viajeId, int? idRuta, bool reset = false)
         {
-            // Purga preventiva de rutas inválidas (Origen == Destino) de la base de datos
             var rutasInvalidas = await _context.Rutas
                 .Where(r => r.Origen.ToLower() == r.Destino.ToLower())
                 .ToListAsync();
@@ -72,21 +65,18 @@ namespace SistemaChotaExpress.Controllers
             }
             else if (string.IsNullOrWhiteSpace(origen) && string.IsNullOrWhiteSpace(destino))
             {
-                // Solo recuperar de sesión si el usuario no especificó ruta ni origen/destino
                 origen = HttpContext.Session.GetString("LastSelectedOrigen");
                 destino = HttpContext.Session.GetString("LastSelectedDestino");
             }
 
-            // Validar que Origen y Destino no sean la misma ciudad
             if (!string.IsNullOrWhiteSpace(origen) && !string.IsNullOrWhiteSpace(destino) && string.Equals(origen.Trim(), destino.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 TempData["ErrorMessage"] = "El Origen y el Destino no pueden ser la misma ciudad. Por favor elija un destino diferente.";
-                // Preservar el origen elegido y solo resetear el destino
+              
                 destino = null;
                 HttpContext.Session.Remove("LastSelectedDestino");
             }
 
-            // Si ambos valores son válidos, asegurar su existencia como Ruta registrada y guardarla en sesión
             Ruta? rutaActual = null;
             if (!string.IsNullOrWhiteSpace(origen) && !string.IsNullOrWhiteSpace(destino))
             {
@@ -130,7 +120,6 @@ namespace SistemaChotaExpress.Controllers
                 selectedFecha = DateTime.Today;
             }
 
-            // REGLA: Solo se puede emitir / consultar pasajes hasta 3 días hacia atrás (no más)
             var minFechaPermitida = DateTime.Today.AddDays(-3);
             if (selectedFecha.Date < minFechaPermitida)
             {
@@ -140,7 +129,6 @@ namespace SistemaChotaExpress.Controllers
 
             ViewBag.SelectedFecha = selectedFecha.ToString("yyyy-MM-dd");
 
-            // Lista oficial de los 14 lugares autorizados para Tours Chota Express
             var todosLosLugares = GeneradorViajesService.LugaresOficiales.OrderBy(l => l).ToList();
 
             ViewBag.LugaresDisponibles = todosLosLugares;
@@ -155,7 +143,6 @@ namespace SistemaChotaExpress.Controllers
 
             List<Viaje> viajes = new List<Viaje>();
 
-            // Si hay ruta seleccionada, aseguramos y consultamos salidas ESPECÍFICAS para esa ruta
             if (rutaActual != null)
             {
                 await GeneradorViajesService.AsegurarViajesParaFechaYRutaAsync(_context, selectedFecha.Date, rutaActual.Id_Ruta);
@@ -172,7 +159,6 @@ namespace SistemaChotaExpress.Controllers
             Viaje? selectedViaje = null;
             if (viajeId.HasValue && viajeId.Value > 0)
             {
-                // Buscar el viaje seleccionado por su identificador
                 var viajeRef = await _context.Viajes
                     .Include(v => v.ObjetoBus)
                     .Include(v => v.ObjetoRuta)
@@ -180,8 +166,6 @@ namespace SistemaChotaExpress.Controllers
 
                 if (viajeRef != null)
                 {
-                    // Si el usuario cambió la ruta (destino u origen) en los filtros mientras tenía este vehículo activo,
-                    // actualizamos el viaje para que se mantenga el MISMO VEHÍCULO y el MISMO PLANO con sus asientos!
                     if (rutaActual != null && viajeRef.Id_Ruta != rutaActual.Id_Ruta)
                     {
                         viajeRef.Id_Ruta = rutaActual.Id_Ruta;
@@ -191,7 +175,6 @@ namespace SistemaChotaExpress.Controllers
 
                     selectedViaje = viajeRef;
 
-                    // Si el viaje no estaba en la lista filtrada de la ruta, agregarlo para que aparezca en los horarios
                     if (!viajes.Any(v => v.Id_Viaje == selectedViaje.Id_Viaje))
                     {
                         viajes.Add(selectedViaje);
@@ -219,7 +202,6 @@ namespace SistemaChotaExpress.Controllers
                 });
             }
 
-            // El trabajador elige explícitamente la hora de salida
             if (selectedViaje != null)
             {
                 var ventasActivas = await _context.Ventas
@@ -252,7 +234,6 @@ namespace SistemaChotaExpress.Controllers
                 ViewBag.ViajesEnMismaHora = viajesEnMismaHora;
             }
 
-            // Datos para el modal de Programación y Rotación de Vehículos por el trabajador
             var busesLista = await _context.Buses
                 .Select(b => new { Id = b.Id_Bus, Nombre = $"{b.NombreVehiculo} (Conductor: {b.NombreConductor ?? "Sin asignar"})" })
                 .ToListAsync();
@@ -271,9 +252,6 @@ namespace SistemaChotaExpress.Controllers
             public int AsientosDisponibles { get; set; }
         }
 
-        // ==========================================
-        // 2. PROGRAMAR SALIDA ADICIONAL (Vendedor & Gerente)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProgramarSalidaRotativa(int idRuta, DateTime fechaHoraSalida, decimal precio)
@@ -307,14 +285,10 @@ namespace SistemaChotaExpress.Controllers
             });
         }
 
-        // ==========================================
-        // 2.1 AGREGAR COMBI ADICIONAL EN MISMO HORARIO (+)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgregarSalidaAdicional(int? viajeId, string? origen, string? destino, string? fecha, int? hora)
         {
-            // Determinar la fecha y hora del nuevo turno
             DateTime fechaHoraSalida;
             int? idRutaRef = null;
             decimal precioBase = 0.00m;
@@ -364,7 +338,6 @@ namespace SistemaChotaExpress.Controllers
                 }
             }
 
-            // Contar cuántas combis ya existen en esa hora para esta ruta
             var startOfHour = fechaHoraSalida.Date.AddHours(fechaHoraSalida.Hour);
             var endOfHour = startOfHour.AddHours(1);
             var countEnHora = await _context.Viajes
@@ -373,8 +346,8 @@ namespace SistemaChotaExpress.Controllers
             var nuevoViaje = new Viaje
             {
                 Id_Ruta = idRutaRef,
-                Id_Bus = null,           // Sin bus pre-asignado
-                PlacaVehiculo = null,    // El trabajador la ingresará cuando quiera
+                Id_Bus = null,           
+                PlacaVehiculo = null,    
                 FechaHoraSalida = fechaHoraSalida,
                 NombreConductor = null,
                 Precio = precioBase,
@@ -423,11 +396,6 @@ namespace SistemaChotaExpress.Controllers
 
             return RedirectToAction("BuscarViajes", new { origen, destino, fecha, viajeId });
         }
-
-        // ==========================================
-        // ACTUALIZAR PLACA DEL VEHÍCULO (Opcional, por el trabajador)
-        // Formato esperado: 123-ABC
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ActualizarPlacaViaje(int viajeId, string? placaVehiculo, string? origen, string? destino, string fecha)
@@ -435,7 +403,6 @@ namespace SistemaChotaExpress.Controllers
             var viaje = await _context.Viajes.FindAsync(viajeId);
             if (viaje != null)
             {
-                // Normalizar a mayúsculas y quitar espacios
                 var placa = placaVehiculo?.Trim().ToUpper();
                 viaje.PlacaVehiculo = string.IsNullOrWhiteSpace(placa) ? null : placa;
                 await _context.SaveChangesAsync();
@@ -448,9 +415,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("BuscarViajes", new { origen, destino, fecha, viajeId });
         }
 
-        // ==========================================
-        // 2.2 ELIMINAR SALIDA / VEHÍCULO DE UN HORARIO (-)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarSalida(int viajeId, string? origen, string? destino, string fecha)
@@ -487,9 +451,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("BuscarViajes", new { origen, destino, fecha = selectedFecha.ToString("yyyy-MM-dd") });
         }
 
-        // ==========================================
-        // 3. REGISTRAR VENTA (PASAJERO + FACTURA RUC)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegistrarVenta(
@@ -527,7 +488,6 @@ namespace SistemaChotaExpress.Controllers
             var viaje = await _context.Viajes.FindAsync(viajeId);
             if (viaje == null) return NotFound();
 
-            // Buscar o registrar al pasajero
             var pasajero = await _context.Pasajeros
                 .FirstOrDefaultAsync(p => p.TipoDocumento == tipoDocumento && p.NumeroDocumento == numeroDocumento);
 
@@ -552,7 +512,6 @@ namespace SistemaChotaExpress.Controllers
                 _context.Pasajeros.Update(pasajero);
             }
 
-            // Obtener el ID del usuario autenticado
             var emailUsuario = User.FindFirstValue(ClaimTypes.Email);
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == emailUsuario);
             if (usuario == null) return Challenge();
@@ -579,10 +538,8 @@ namespace SistemaChotaExpress.Controllers
             _context.Ventas.Add(venta);
             await _context.SaveChangesAsync();
 
-            // Generar y guardar XML SUNAT automáticamente si es venta (no reserva)
             if (venta.Estado == "Vendido")
             {
-                // Recargar relaciones para el XML
                 var ventaConRelaciones = await _context.Ventas
                     .Include(v => v.ObjetoPasajero)
                     .Include(v => v.ObjetoUsuario)
@@ -604,9 +561,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("Ticket", new { id = venta.Id_Venta });
         }
 
-        // ==========================================
-        // 3.1 REGISTRAR VENTA MÚLTIPLE DE ASIENTOS (EMPRESAS / RUC ÚNICO)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegistrarVentaMultiple(
@@ -646,7 +600,6 @@ namespace SistemaChotaExpress.Controllers
                 return RedirectToAction("BuscarViajes", new { origen, destino, fecha });
             }
 
-            // Asegurar que el viaje pertenezca a la ruta seleccionada
             if (!string.IsNullOrWhiteSpace(origen) && !string.IsNullOrWhiteSpace(destino))
             {
                 var rObj = await _context.Rutas.FirstOrDefaultAsync(r => r.Origen.ToLower() == origen.Trim().ToLower() && r.Destino.ToLower() == destino.Trim().ToLower());
@@ -681,11 +634,9 @@ namespace SistemaChotaExpress.Controllers
                 if (string.IsNullOrWhiteSpace(nDoc)) nDoc = $"S/D-{numAsiento}";
                 if (string.IsNullOrWhiteSpace(nomComp)) nomComp = $"PASAJERO ASIENTO {numAsiento}";
 
-                // Verificar si el asiento ya está ocupado
                 var yaOcupado = await _context.Ventas.AnyAsync(v => v.Id_Viaje == viaje.Id_Viaje && v.NumeroAsiento == numAsiento && v.Estado != "Cancelado");
                 if (yaOcupado) continue;
 
-                // Buscar o crear Pasajero
                 var pasajero = await _context.Pasajeros.FirstOrDefaultAsync(p => p.TipoDocumento == tDoc && p.NumeroDocumento == nDoc);
                 if (pasajero == null)
                 {
@@ -732,7 +683,6 @@ namespace SistemaChotaExpress.Controllers
                 _context.Ventas.Add(venta);
                 await _context.SaveChangesAsync();
 
-                // Generar y guardar XML SUNAT automáticamente (solo ventas, no reservas)
                 if (venta.Estado == "Vendido")
                 {
                     var ventaRel = await _context.Ventas
@@ -768,9 +718,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("BuscarViajes", new { origen = origen ?? viaje.ObjetoRuta?.Origen, destino = destino ?? viaje.ObjetoRuta?.Destino, fecha, viajeId = viaje.Id_Viaje });
         }
 
-        // ==========================================
-        // 3.2 ANULAR VENTA / LIBERAR ASIENTO (DESANIMADOS O CANCELACIONES)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AnularVenta(int idVenta, string? origen, string? destino, string? fecha, int? viajeId)
@@ -787,12 +734,16 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("BuscarViajes", new { origen, destino, fecha, viajeId = targetViajeId > 0 ? targetViajeId : (int?)null });
         }
 
-        // ==========================================
-        // 4. TICKET (Vista de Impresión / Boleto)
-        // ==========================================
         [HttpGet]
-        public async Task<IActionResult> Ticket(int? id, string? ids)
+        public IActionResult Pdf(int id)
         {
+            return RedirectToAction("Ticket", new { id, formato = "a4" });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Ticket(int? id, string? ids, string? formato = "termal")
+        {
+            ViewBag.FormatoInicial = (string.Equals(formato, "a4", StringComparison.OrdinalIgnoreCase) || string.Equals(formato, "pdf", StringComparison.OrdinalIgnoreCase)) ? "a4" : "termal";
             var targetIds = new List<int>();
             if (!string.IsNullOrWhiteSpace(ids))
             {
@@ -824,9 +775,6 @@ namespace SistemaChotaExpress.Controllers
             return View(ventas);
         }
 
-        // ==========================================
-        // 4.1 MANIFIESTO Y CROQUIS DE ASIENTOS PARA EL CHOFER
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> ManifiestoChofer(int? viajeId)
         {
@@ -841,7 +789,6 @@ namespace SistemaChotaExpress.Controllers
 
             if (viaje == null)
             {
-                // Si no se especificó ID o no existe, obtener el viaje más reciente con ventas o programado
                 viaje = await _context.Viajes
                     .Include(v => v.ObjetoBus)
                     .Include(v => v.ObjetoRuta)
@@ -862,9 +809,6 @@ namespace SistemaChotaExpress.Controllers
             return View(viaje);
         }
 
-        // ==========================================
-        // 5. REGISTRO GENERAL DE VENTAS Y RESERVAS
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> MisVentas()
         {
@@ -898,7 +842,6 @@ namespace SistemaChotaExpress.Controllers
             venta.FechaVenta = DateTime.Now;
             await _context.SaveChangesAsync();
 
-            // Generar y subir comprobante electrónico SUNAT
             var ventaConRel = await _context.Ventas
                 .Include(v => v.ObjetoPasajero)
                 .Include(v => v.ObjetoUsuario)
@@ -926,9 +869,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("MisVentas");
         }
 
-        // ==========================================
-        // 6. DESCARGA XML (SUNAT UBL 2.1 FORMAT)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> DescargarXml(int id)
         {
@@ -945,7 +885,7 @@ namespace SistemaChotaExpress.Controllers
 
             bool esFactura = (venta.TipoComprobante == "Factura");
             string serie = esFactura ? "F001" : "B001";
-            string tipoDocSunat = esFactura ? "01" : "03"; // 01: Factura, 03: Boleta
+            string tipoDocSunat = esFactura ? "01" : "03";
             string numeroCorrelativo = venta.Id_Venta.ToString("D8");
             string idComprobante = $"{serie}-{numeroCorrelativo}";
             string rucEmisor = "20600308883";
@@ -983,7 +923,6 @@ namespace SistemaChotaExpress.Controllers
                     new XElement(cbc + "InvoiceTypeCode", new XAttribute("listID", "0101"), tipoDocSunat),
                     new XElement(cbc + "DocumentCurrencyCode", "PEN"),
 
-                    // Emisor (Tours Chota Express)
                     new XElement(cac + "AccountingSupplierParty",
                         new XElement(cac + "Party",
                             new XElement(cac + "PartyIdentification",
@@ -995,7 +934,6 @@ namespace SistemaChotaExpress.Controllers
                         )
                     ),
 
-                    // Receptor (Cliente / Pasajero / Empresa)
                     new XElement(cac + "AccountingCustomerParty",
                         new XElement(cac + "Party",
                             new XElement(cac + "PartyIdentification",
@@ -1007,7 +945,6 @@ namespace SistemaChotaExpress.Controllers
                         )
                     ),
 
-                    // Detalle de Impuestos
                     new XElement(cac + "TaxTotal",
                         new XElement(cbc + "TaxAmount", new XAttribute("currencyID", "PEN"), igv.ToString("0.00")),
                         new XElement(cac + "TaxSubtotal",
@@ -1023,14 +960,11 @@ namespace SistemaChotaExpress.Controllers
                         )
                     ),
 
-                    // Totales Monetarios
                     new XElement(cac + "LegalMonetaryTotal",
                         new XElement(cbc + "LineExtensionAmount", new XAttribute("currencyID", "PEN"), subtotal.ToString("0.00")),
                         new XElement(cbc + "TaxInclusiveAmount", new XAttribute("currencyID", "PEN"), venta.PrecioPagado.ToString("0.00")),
                         new XElement(cbc + "PayableAmount", new XAttribute("currencyID", "PEN"), venta.PrecioPagado.ToString("0.00"))
                     ),
-
-                    // Línea de detalle del Pasaje
                     new XElement(cac + "InvoiceLine",
                         new XElement(cbc + "ID", "1"),
                         new XElement(cbc + "InvoicedQuantity", new XAttribute("unitCode", "ZZ"), "1"),
@@ -1053,9 +987,6 @@ namespace SistemaChotaExpress.Controllers
             return File(stream, "application/xml", fileName);
         }
 
-        // ==========================================
-        // 7. EXPORTAR EXCEL / CSV
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> ExportarExcel()
         {
@@ -1071,7 +1002,6 @@ namespace SistemaChotaExpress.Controllers
             var ventas = await query.ToListAsync();
 
             var sb = new StringBuilder();
-            // Encabezados CSV compatibles con Excel (BOM UTF-8)
             sb.AppendLine("ID_Venta,Fecha_Operacion,Hora,Tipo_Comprobante,Doc_Pasajero,Nombre_Pasajero,RUC_Empresa,Razon_Social,Ruta_Origen,Ruta_Destino,Fecha_Salida,Hora_Salida,Bus_Placa,Asiento,Monto_Pagado,Metodo_Pago,Estado,Vendedor");
 
             foreach (var v in ventas)

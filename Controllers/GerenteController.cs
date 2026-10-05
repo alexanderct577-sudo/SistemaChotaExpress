@@ -23,13 +23,9 @@ namespace SistemaChotaExpress.Controllers
             _context = context;
         }
 
-        // ==========================================
-        // 1. DASHBOARD & REPORTES DE VENTAS
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
-            // Valores por defecto seguros (si falla alguna consulta, el Dashboard igual carga)
             ViewBag.VentasHoy = 0m;
             ViewBag.CantidadHoy = 0;
             ViewBag.VentasMes = 0m;
@@ -43,7 +39,7 @@ namespace SistemaChotaExpress.Controllers
             ViewBag.MesesLabels = new[] { "Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic" };
             ViewBag.MesesValores = new decimal[12];
             ViewBag.ViajesMasVendidos = new List<RutaMasVendidaVM>();
-            // Encomiendas defaults
+
             ViewBag.EncomiendaHoy = 0;
             ViewBag.EncomiendaMes = 0m;
             ViewBag.EncomiendaPendientes = 0;
@@ -55,7 +51,6 @@ namespace SistemaChotaExpress.Controllers
                 var inicioMes = new DateTime(hoy.Year, hoy.Month, 1);
                 var inicioAnio = new DateTime(hoy.Year, 1, 1);
 
-                // KPIs
                 ViewBag.VentasHoy = await _context.Ventas
                     .Where(v => v.Estado == "Vendido" && v.FechaVenta >= hoy && v.FechaVenta < manana)
                     .SumAsync(v => (decimal?)v.PrecioPagado) ?? 0;
@@ -77,7 +72,6 @@ namespace SistemaChotaExpress.Controllers
                 ViewBag.ViajesCount = await _context.Viajes.Where(v => v.Estado == "Programado").CountAsync();
                 ViewBag.TrabajadoresCount = await _context.Usuarios.Where(u => u.Id_Rol == 2).CountAsync();
 
-                // Ventas diarias (últimos 15 días) - en memoria para PostgreSQL
                 var limiteDias = DateTime.Today.AddDays(-14);
                 var ventasRaw = await _context.Ventas
                     .Where(v => v.Estado == "Vendido" && v.FechaVenta >= limiteDias)
@@ -102,7 +96,6 @@ namespace SistemaChotaExpress.Controllers
                 ViewBag.DiasLabels = datosGraficoDias.Select(d => d.Label).ToArray();
                 ViewBag.DiasValores = datosGraficoDias.Select(d => d.Total).ToArray();
 
-                // Ventas mensuales (año actual) - en memoria para PostgreSQL
                 var ventasMesesRaw = await _context.Ventas
                     .Where(v => v.Estado == "Vendido" && v.FechaVenta >= inicioAnio)
                     .Select(v => new { v.FechaVenta, v.PrecioPagado })
@@ -123,7 +116,6 @@ namespace SistemaChotaExpress.Controllers
                 ViewBag.MesesLabels = nombreMeses;
                 ViewBag.MesesValores = valoresMeses;
 
-                // Top rutas - en memoria para PostgreSQL
                 var ventasConRutas = await _context.Ventas
                     .Where(v => v.Estado == "Vendido" && v.Id_Viaje != null)
                     .Select(v => new {
@@ -149,7 +141,6 @@ namespace SistemaChotaExpress.Controllers
 
                 ViewBag.ViajesMasVendidos = topRutas;
 
-                // KPIs de Encomiendas
                 ViewBag.EncomiendaHoy = await _context.Encomiendas
                     .Where(e => e.FechaRegistro >= hoy && e.FechaRegistro < manana)
                     .CountAsync();
@@ -164,7 +155,6 @@ namespace SistemaChotaExpress.Controllers
             }
             catch (Exception ex)
             {
-                // Log el error pero no rompe la página — el Dashboard carga con valores en cero
                 var logger = HttpContext.RequestServices.GetRequiredService<ILogger<GerenteController>>();
                 logger.LogError(ex, "Error cargando datos del Dashboard del Gerente");
             }
@@ -173,12 +163,6 @@ namespace SistemaChotaExpress.Controllers
             return View();
         }
 
-        // ==========================================
-        // 2. TRABAJADORES (CRUD)
-        // ==========================================
-        // ==========================================
-        // 2. CUENTAS DE USUARIOS / TRABAJADORES (CRUD)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Trabajadores()
         {
@@ -240,7 +224,6 @@ namespace SistemaChotaExpress.Controllers
             var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario == null) return NotFound();
 
-            // Evitar que el usuario actual se elimine a sí mismo
             var emailActual = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             if (!string.IsNullOrEmpty(emailActual) && usuario.Email.Equals(emailActual, StringComparison.OrdinalIgnoreCase))
             {
@@ -250,7 +233,6 @@ namespace SistemaChotaExpress.Controllers
 
             try
             {
-                // Si el usuario tiene ventas asociadas, reasignar a la cuenta del Gerente actual
                 var ventasUsuario = await _context.Ventas.Where(v => v.Id_Usuario == id).ToListAsync();
                 if (ventasUsuario.Any())
                 {
@@ -299,9 +281,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("Trabajadores");
         }
 
-        // ==========================================
-        // 3. BUSES (CRUD)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Buses()
         {
@@ -359,9 +338,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("Buses");
         }
 
-        // ==========================================
-        // 4. RUTAS (CRUD)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Rutas()
         {
@@ -407,9 +383,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("Rutas");
         }
 
-        // ==========================================
-        // 5. VIAJES (CRUD)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Viajes(int? idRuta, string? fecha)
         {
@@ -508,9 +481,6 @@ namespace SistemaChotaExpress.Controllers
             return RedirectToAction("Viajes");
         }
 
-        // ==========================================
-        // 6. ENCOMIENDAS (GESTIÓN GERENTE)
-        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Encomiendas(string? buscar, string? estado, string? fechaDesde, string? fechaHasta)
         {
@@ -548,7 +518,6 @@ namespace SistemaChotaExpress.Controllers
                 ViewBag.FechaDesde = fechaDesde;
                 ViewBag.FechaHasta = fechaHasta;
 
-                // Estadísticas de resumen
                 ViewBag.TotalEncomiendas = lista.Count;
                 ViewBag.TotalCobrado = lista.Where(e => e.Estado != "Anulado").Sum(e => e.PrecioEnvio);
                 ViewBag.TotalEntregadas = lista.Count(e => e.Estado == "Entregado");

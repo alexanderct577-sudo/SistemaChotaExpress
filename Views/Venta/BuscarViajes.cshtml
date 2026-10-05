@@ -1027,9 +1027,14 @@
                             <i class="fa-solid fa-ban me-1"></i> ANULAR VENTA / LIBERAR ASIENTO
                         </button>
                     </form>
-                    <a href="#" id="modalVerTicketLink" class="btn btn-outline-light btn-sm w-100 py-1 fs-9 border-glass-btn">
-                        <i class="fa-solid fa-receipt me-1"></i> Ver / Imprimir Ticket
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="#" id="modalVerTicketLink" target="_blank" class="btn btn-outline-info btn-sm flex-fill py-1.5 fs-9 border-glass-btn">
+                            <i class="fa-solid fa-print me-1"></i> Ticket (80mm)
+                        </a>
+                        <a href="#" id="modalVerPdfLink" target="_blank" class="btn btn-outline-danger btn-sm flex-fill py-1.5 fs-9 border-glass-btn">
+                            <i class="fa-solid fa-file-pdf me-1"></i> PDF (A4)
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1415,6 +1420,11 @@
                             const btnTicket = document.getElementById("modalVerTicketLink");
                             if (btnTicket) {
                                 btnTicket.href = `/Venta/Ticket/${vta.idVenta}`;
+                            }
+
+                            const btnPdf = document.getElementById("modalVerPdfLink");
+                            if (btnPdf) {
+                                btnPdf.href = `/Venta/Ticket?id=${vta.idVenta}&formato=a4`;
                             }
 
                             const modalEl = document.getElementById("modalDetalleAsientoOcupado");

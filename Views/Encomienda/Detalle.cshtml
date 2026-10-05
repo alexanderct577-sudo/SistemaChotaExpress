@@ -102,7 +102,6 @@
     </div>
 }
 
-<!-- LÍNEA DE TIEMPO DEL ESTADO -->
 @{
     var estados = new[] { "Registrado", "En transito", "Entregado" };
     int estadoIdx = Array.IndexOf(estados, Model.Estado);
@@ -145,9 +144,7 @@
     </div>
 </div>
 
-<!-- COMPROBANTE (imprimible) -->
 <div class="card bg-dark border-glass" id="comprobante">
-    <!-- Encabezado -->
     <div class="card-body pb-0">
         <div class="row align-items-center mb-3">
             <div class="col-auto">
@@ -170,7 +167,6 @@
     <div class="card-body pt-2">
         <div class="row g-4">
 
-            <!-- Remitente -->
             <div class="col-md-6">
                 <div class="p-3 rounded" style="background:rgba(255,165,0,0.08); border:1px solid rgba(255,165,0,0.3)">
                     <h6 class="text-warning mb-3"><i class="fa-solid fa-user me-2"></i>Remitente</h6>
@@ -184,7 +180,6 @@
                 </div>
             </div>
 
-            <!-- Destinatario -->
             <div class="col-md-6">
                 <div class="p-3 rounded" style="background:rgba(13,202,240,0.08); border:1px solid rgba(13,202,240,0.3)">
                     <h6 class="text-info mb-3"><i class="fa-solid fa-user-check me-2"></i>Destinatario</h6>
@@ -198,7 +193,6 @@
                 </div>
             </div>
 
-            <!-- Detalle del paquete, pago y seguridad -->
             <div class="col-12">
                 <div class="card bg-secondary border-0">
                     <div class="card-body">
@@ -256,7 +250,6 @@
                 </div>
             </div>
 
-            <!-- Fechas y registro -->
             <div class="col-12">
                 <div class="row text-center">
                     <div class="col-md-4">

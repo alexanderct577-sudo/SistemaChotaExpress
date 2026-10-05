@@ -2,17 +2,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using SistemaChotaExpress.Data;
 using SistemaChotaExpress.Models;
 using SistemaChotaExpress.Services;
 
-// Soporte universal para DateTime en PostgreSQL
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Soporte para Proxy Inverso (Railway, Cloudflare Tunnel, ngrok, etc.)
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.All;
@@ -20,7 +15,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-// Configuracion de Antiforgery para permitir navegacion por tunel HTTPS y localhost
 builder.Services.AddAntiforgery(options =>
 {
     options.Cookie.SameSite = SameSiteMode.Lax;
@@ -28,7 +22,6 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.HttpOnly = true;
 });
 
-// 1. FILTRO ANTI-CACHE GLOBAL (Evita el boton atras tras Logout)
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new ResponseCacheAttribute
@@ -38,51 +31,24 @@ builder.Services.AddControllersWithViews(options =>
     });
 });
 
-// 2. REGISTRAR CONEXION EF CORE - POSTGRESQL (Railway / Local)
-// Resuelve tanto cadenas standard como URIs estilo postgresql://user:pass@host:port/db
-string rawConn =
+string finalConn =
     Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? Environment.GetEnvironmentVariable("DATABASE_PUBLIC_URL")
     ?? builder.Configuration.GetConnectionString("CadenaChotaExpress")
     ?? "";
 
-string finalConn = rawConn;
-if (rawConn.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
-    rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
-{
-    try
-    {
-        var uri = new Uri(rawConn);
-        var userInfo = uri.UserInfo.Split(':');
-        var csb = new NpgsqlConnectionStringBuilder
-        {
-            Host = uri.Host,
-            Port = uri.Port > 0 ? uri.Port : 5432,
-            Username = Uri.UnescapeDataString(userInfo[0]),
-            Password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "",
-            Database = uri.AbsolutePath.TrimStart('/'),
-            SslMode = SslMode.Prefer,
-            TrustServerCertificate = true
-        };
-        finalConn = csb.ConnectionString;
-    }
-    catch { /* Mantener rawConn si falla el parseo */ }
-}
-
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (!string.IsNullOrWhiteSpace(finalConn))
     {
-        options.UseNpgsql(finalConn);
+        options.UseSqlServer(finalConn);
     }
 });
 
-// Registrar Servicios de la Aplicacion
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDocumentLookupService, DocumentLookupService>();
 builder.Services.AddScoped<SunatService>();
 
-// 3. REGISTRAR SESIONES EN MEMORIA
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -93,7 +59,6 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
-// 4. ESQUEMA DE SEGURIDAD POR COOKIES MANUALES
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -106,13 +71,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// Configurar el puerto desde la variable PORT de Railway (o 8080 por defecto)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Aplicar cabeceras de proxy inverso de inmediato
 app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
@@ -123,7 +86,6 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
-// Orden obligatorio de Middleware
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -132,7 +94,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Login}/{id?}");
 
-// Inicializacion automatica de la base de datos y datos semilla
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -140,67 +101,59 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
 
-        // EnsureCreated crea todas las tablas y columnas del modelo actual en PostgreSQL
         context.Database.EnsureCreated();
 
-        // Asegurar que la tabla Encomiendas exista en bases de datos PostgreSQL ya existentes
         try
         {
             context.Database.ExecuteSqlRaw(@"
-                CREATE TABLE IF NOT EXISTS ""Encomiendas"" (
-                    ""Id_Encomienda"" integer GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-                    ""CodigoSeguimiento"" character varying(20) NOT NULL,
-                    ""NombreRemitente"" character varying(100) NOT NULL,
-                    ""DniRemitente"" character varying(15),
-                    ""TelefonoRemitente"" character varying(15),
-                    ""NombreDestinatario"" character varying(100) NOT NULL,
-                    ""DniDestinatario"" character varying(15),
-                    ""TelefonoDestinatario"" character varying(15),
-                    ""Descripcion"" character varying(200) NOT NULL,
-                    ""PesoKg"" numeric(8,2),
-                    ""PrecioEnvio"" numeric(10,2) NOT NULL,
-                    ""Id_Ruta"" integer,
-                    ""Estado"" character varying(20) NOT NULL DEFAULT 'Registrado',
-                    ""Observaciones"" character varying(300),
-                    ""FechaRegistro"" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    ""FechaEntrega"" timestamp without time zone,
-                    ""TurnoSalida"" character varying(50),
-                    ""NombreConductor"" character varying(100),
-                    ""Id_Usuario"" integer
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Encomiendas' AND xtype='U')
+                CREATE TABLE [Encomiendas] (
+                    [Id_Encomienda] INT IDENTITY(1,1) PRIMARY KEY,
+                    [CodigoSeguimiento] NVARCHAR(20) NOT NULL,
+                    [NombreRemitente] NVARCHAR(100) NOT NULL,
+                    [DniRemitente] NVARCHAR(15),
+                    [TelefonoRemitente] NVARCHAR(15),
+                    [NombreDestinatario] NVARCHAR(100) NOT NULL,
+                    [DniDestinatario] NVARCHAR(15),
+                    [TelefonoDestinatario] NVARCHAR(15),
+                    [Descripcion] NVARCHAR(200) NOT NULL,
+                    [PesoKg] DECIMAL(8,2),
+                    [PrecioEnvio] DECIMAL(10,2) NOT NULL,
+                    [Id_Ruta] INT,
+                    [Estado] NVARCHAR(20) NOT NULL DEFAULT 'Registrado',
+                    [Observaciones] NVARCHAR(300),
+                    [FechaRegistro] DATETIME2 NOT NULL DEFAULT GETDATE(),
+                    [FechaEntrega] DATETIME2,
+                    [TurnoSalida] NVARCHAR(50),
+                    [NombreConductor] NVARCHAR(100),
+                    [RucRemitente] NVARCHAR(15),
+                    [RucDestinatario] NVARCHAR(15),
+                    [ClaveEnvio] NVARCHAR(20),
+                    [MetodoPago] NVARCHAR(30) DEFAULT 'Efectivo',
+                    [Id_Usuario] INT
                 );
-                CREATE INDEX IF NOT EXISTS ""IX_Encomiendas_Id_Ruta"" ON ""Encomiendas"" (""Id_Ruta"");
-                CREATE INDEX IF NOT EXISTS ""IX_Encomiendas_Id_Usuario"" ON ""Encomiendas"" (""Id_Usuario"");
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""TurnoSalida"" character varying(50);
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""NombreConductor"" character varying(100);
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""RucRemitente"" character varying(15);
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""RucDestinatario"" character varying(15);
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""ClaveEnvio"" character varying(20);
-                ALTER TABLE ""Encomiendas"" ADD COLUMN IF NOT EXISTS ""MetodoPago"" character varying(30) DEFAULT 'Efectivo';
-                ALTER TABLE ""Buses"" ADD COLUMN IF NOT EXISTS ""NumeroLicencia"" character varying(20);
-                ALTER TABLE ""Buses"" ADD COLUMN IF NOT EXISTS ""Marca"" character varying(50) DEFAULT 'Toyota';
 
-                CREATE TABLE IF NOT EXISTS ""ProformasViajes"" (
-                    ""Id_Proforma"" integer GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-                    ""CodigoProforma"" character varying(25) NOT NULL,
-                    ""NombreCliente"" character varying(120) NOT NULL,
-                    ""TipoDocumento"" character varying(10) NOT NULL DEFAULT 'DNI',
-                    ""NumeroDocumento"" character varying(20),
-                    ""TelefonoCliente"" character varying(20),
-                    ""Id_Ruta"" integer,
-                    ""FechaViaje"" timestamp without time zone NOT NULL,
-                    ""HoraSalida"" character varying(50),
-                    ""TipoServicio"" character varying(60) NOT NULL,
-                    ""CantidadPasajeros"" integer NOT NULL DEFAULT 15,
-                    ""PrecioUnitario"" numeric(10,2),
-                    ""PrecioTotal"" numeric(10,2) NOT NULL,
-                    ""ValidezDias"" integer NOT NULL DEFAULT 5,
-                    ""Observaciones"" character varying(500),
-                    ""Estado"" character varying(20) NOT NULL DEFAULT 'Emitida',
-                    ""FechaEmision"" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    ""Id_Usuario"" integer
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ProformasViajes' AND xtype='U')
+                CREATE TABLE [ProformasViajes] (
+                    [Id_Proforma] INT IDENTITY(1,1) PRIMARY KEY,
+                    [CodigoProforma] NVARCHAR(25) NOT NULL,
+                    [NombreCliente] NVARCHAR(120) NOT NULL,
+                    [TipoDocumento] NVARCHAR(10) NOT NULL DEFAULT 'DNI',
+                    [NumeroDocumento] NVARCHAR(20),
+                    [TelefonoCliente] NVARCHAR(20),
+                    [Id_Ruta] INT,
+                    [FechaViaje] DATETIME2 NOT NULL,
+                    [HoraSalida] NVARCHAR(50),
+                    [TipoServicio] NVARCHAR(60) NOT NULL,
+                    [CantidadPasajeros] INT NOT NULL DEFAULT 15,
+                    [PrecioUnitario] DECIMAL(10,2),
+                    [PrecioTotal] DECIMAL(10,2) NOT NULL,
+                    [ValidezDias] INT NOT NULL DEFAULT 5,
+                    [Observaciones] NVARCHAR(500),
+                    [Estado] NVARCHAR(20) NOT NULL DEFAULT 'Emitida',
+                    [FechaEmision] DATETIME2 NOT NULL DEFAULT GETDATE(),
+                    [Id_Usuario] INT
                 );
-                CREATE INDEX IF NOT EXISTS ""IX_ProformasViajes_Id_Ruta"" ON ""ProformasViajes"" (""Id_Ruta"");
-                CREATE INDEX IF NOT EXISTS ""IX_ProformasViajes_Id_Usuario"" ON ""ProformasViajes"" (""Id_Usuario"");
             ");
         }
         catch (Exception exTable)
@@ -209,7 +162,6 @@ using (var scope = app.Services.CreateScope())
             logger.LogWarning(exTable, "Aviso verificando/creando tablas y columnas de base de datos");
         }
 
-        // Asegurar salidas en segundo plano sin bloquear el arranque del servidor web
         _ = Task.Run(async () =>
         {
             try

@@ -20,7 +20,7 @@ namespace SistemaChotaExpress.Models
         public virtual Pasajero? ObjetoPasajero { get; set; }
 
         [Required]
-        public int Id_Usuario { get; set; } // El Vendedor que registra la venta
+        public int Id_Usuario { get; set; } 
         [ForeignKey("Id_Usuario")]
         public virtual Usuario? ObjetoUsuario { get; set; }
 
@@ -37,11 +37,11 @@ namespace SistemaChotaExpress.Models
 
         [Required]
         [StringLength(20)]
-        public string Estado { get; set; } = "Vendido"; // Vendido, Reservado, Cancelado
+        public string Estado { get; set; } = "Vendido"; 
 
         [Required]
         [StringLength(30)]
-        public string TipoComprobante { get; set; } = "Boleta"; // Boleta, Factura, Ticket
+        public string TipoComprobante { get; set; } = "Boleta"; 
 
         [StringLength(20)]
         public string? RucEmpresa { get; set; }

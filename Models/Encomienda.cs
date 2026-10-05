@@ -14,7 +14,6 @@ namespace SistemaChotaExpress.Models
         [StringLength(20)]
         public string CodigoSeguimiento { get; set; } = string.Empty;
 
-        // --- REMITENTE ---
         [Required(ErrorMessage = "El nombre del remitente es obligatorio")]
         [StringLength(100)]
         [Display(Name = "Nombre del Remitente")]
@@ -32,7 +31,6 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Teléfono del Remitente")]
         public string? TelefonoRemitente { get; set; }
 
-        // --- DESTINATARIO ---
         [Required(ErrorMessage = "El nombre del destinatario es obligatorio")]
         [StringLength(100)]
         [Display(Name = "Nombre del Destinatario")]
@@ -50,7 +48,6 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Teléfono del Destinatario")]
         public string? TelefonoDestinatario { get; set; }
 
-        // --- PAQUETE ---
         [Required(ErrorMessage = "La descripción del contenido es obligatoria")]
         [StringLength(200)]
         [Display(Name = "Descripción del contenido")]
@@ -67,7 +64,6 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Precio del envío (S/)")]
         public decimal PrecioEnvio { get; set; }
 
-        // --- SEGURIDAD Y PAGO ---
         [StringLength(20)]
         [Display(Name = "Clave de Envío / Recojo")]
         public string? ClaveEnvio { get; set; }
@@ -76,7 +72,6 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Método de Pago")]
         public string MetodoPago { get; set; } = "Efectivo";
 
-        // --- RUTA Y TURNO ---
         [Display(Name = "Ruta de envío")]
         public int? Id_Ruta { get; set; }
         [ForeignKey("Id_Ruta")]
@@ -91,7 +86,6 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Conductor / Chofer")]
         public string? NombreConductor { get; set; }
 
-        // --- ESTADO ---
         [ValidateNever]
         [StringLength(20)]
         public string Estado { get; set; } = "Registrado";

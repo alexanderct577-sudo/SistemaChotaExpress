@@ -25,7 +25,6 @@ namespace SistemaChotaExpress.Controllers
             return View();
         }
 
-        // ACCIÓN 1: Inicio de sesión exclusivo para el Gerente Fijo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginGerente(string Email, string Password)
@@ -50,8 +49,6 @@ namespace SistemaChotaExpress.Controllers
             TempData["ErrorGerente"] = "Correo o contraseña de Gerente incorrectos.";
             return View("Login");
         }
-
-        // ACCIÓN 2: Inicio de sesión para los Vendedores desde la Base de Datos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginVendedor(LoginVM modelo)
@@ -61,7 +58,6 @@ namespace SistemaChotaExpress.Controllers
                 var emailClean = modelo.Email?.Trim().ToLower();
                 var passwordClean = modelo.Password;
 
-                // Si el gerente ingresa por este formulario, también se le permite el acceso
                 if (emailClean == "gerente@chotaexpress.com" && passwordClean == "gerente123")
                 {
                     var claims = new List<Claim>
@@ -139,7 +135,7 @@ namespace SistemaChotaExpress.Controllers
                     Email = emailNorm!,
                     Password = modelo.Password,
                     Telefono = modelo.Telefono,
-                    Id_Rol = 2 // Vendedor
+                    Id_Rol = 2
                 };
 
                 _context.Usuarios.Add(nuevoUsuario);
@@ -166,7 +162,6 @@ namespace SistemaChotaExpress.Controllers
             return View("~/Views/Account/AccessDenied.cshtml");
         }
 
-        // Redirige al dashboard según el rol del usuario autenticado
         private IActionResult RedirectToDashboard()
         {
             if (User.IsInRole("Gerente"))

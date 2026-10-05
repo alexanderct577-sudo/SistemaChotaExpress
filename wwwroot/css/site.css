@@ -1,4 +1,4 @@
-/* Core Premium CSS System - Tours Chota Express S.A.C. */
+
 :root {
     --primary: #F37021;
     --primary-light: #ff9248;
@@ -17,9 +17,6 @@
     --table-row-hover: rgba(243, 112, 33, 0.08);
 }
 
-/* =============================================
-   MODO CLARO (LIGHT MODE) - ALTA VISIBILIDAD & CONTRASTE
-   ============================================= */
 body.light-mode {
     --dark: #f8fafc;
     --dark-surface: #ffffff;
@@ -37,13 +34,12 @@ body.light-mode {
     color: var(--text-main) !important;
 }
 
-/* Navbar en Modo Claro */
 body.light-mode .custom-navbar {
     background: rgba(255, 255, 255, 0.95) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
-/* Navbar Logo Badge Styles (Modo Oscuro / Modo Claro) */
+
 .navbar-logo-badge {
     background: #ffffff;
     padding: 3px 10px;
@@ -84,7 +80,6 @@ body.light-mode .nav-link-custom.active {
     border-left: 3px solid var(--primary);
 }
 
-/* Cards y Contenedores en Modo Claro */
 body.light-mode .border-glass,
 body.light-mode .card.bg-dark,
 body.light-mode .bg-dark,
@@ -100,7 +95,6 @@ body.light-mode .bg-dark-card {
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Textos generales en Modo Claro */
 body.light-mode h1, body.light-mode h2, body.light-mode h3, 
 body.light-mode h4, body.light-mode h5, body.light-mode h6,
 body.light-mode .h1, body.light-mode .h2, body.light-mode .h3,
@@ -115,7 +109,6 @@ body.light-mode .sidebar-section-title {
     color: #1e293b !important;
 }
 
-/* Inputs, Selects y Form Controls en Modo Claro */
 body.light-mode .bg-dark-input,
 body.light-mode .form-control,
 body.light-mode .form-select,
@@ -171,7 +164,6 @@ body.light-mode .btn-outline-light:hover {
     color: #0f172a !important;
 }
 
-/* Calendario en Modo Claro */
 body.light-mode .calendar-container {
     background: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
@@ -197,7 +189,6 @@ body.light-mode .calendar-day-cell.selected-cell {
     box-shadow: 0 2px 8px rgba(243, 112, 33, 0.4);
 }
 
-/* Píldoras de Horarios en Modo Claro */
 body.light-mode .btn-glass-pill {
     background: #f1f5f9 !important;
     color: #0f172a !important;
@@ -213,7 +204,6 @@ body.light-mode .btn-teal-active {
     border-color: #10b981 !important;
 }
 
-/* Tablas en Modo Claro */
 body.light-mode .table {
     color: #0f172a !important;
     border-color: #e2e8f0 !important;
@@ -237,7 +227,6 @@ body.light-mode .table-dark tbody tr:hover td {
     background-color: rgba(243, 112, 33, 0.05) !important;
 }
 
-/* Modales en Modo Claro */
 body.light-mode .modal-content {
     background: #ffffff !important;
     color: #0f172a !important;
@@ -252,7 +241,6 @@ body.light-mode .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(20%) !important;
 }
 
-/* Badges y Alertas en Modo Claro */
 body.light-mode .badge.bg-secondary {
     background: #e2e8f0 !important;
     color: #1e293b !important;
@@ -263,14 +251,12 @@ body.light-mode .alert-dark {
     color: #92400e !important;
 }
 
-/* Footer en Modo Claro */
 body.light-mode footer.custom-footer {
     background: #ffffff !important;
     border-top: 1px solid #e2e8f0 !important;
     color: #475569 !important;
 }
 
-/* Contrast Boost for Text and Labels in Light Mode */
 body.light-mode .text-warning {
     color: #b45309 !important;
 }
@@ -301,9 +287,6 @@ body.light-mode .font-monospace {
     color: #0f172a;
 }
 
-/* =============================================
-   ESTILOS GENERALES (MODO OSCURO POR DEFECTO)
-   ============================================= */
 body {
     font-family: 'Outfit', sans-serif;
     background: var(--bg-body-gradient);
@@ -315,7 +298,6 @@ body {
     transition: background 0.25s ease, color 0.25s ease;
 }
 
-/* Glassmorphism Container Card */
 .border-glass {
     background: var(--dark-card);
     backdrop-filter: blur(15px);
@@ -338,7 +320,6 @@ body {
     color: #ffffff;
 }
 
-/* Inputs & Form Fields */
 .bg-dark-input, .form-control.bg-dark-input, .form-select.bg-dark-input, .form-select, select {
     background: var(--bg-input) !important;
     border: 1px solid var(--border-glass) !important;
@@ -366,7 +347,6 @@ select option:checked, .form-select option:checked {
     color: #ffffff !important;
 }
 
-/* Custom Buttons */
 .btn-orange-solid {
     background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
     border: none !important;
@@ -384,7 +364,6 @@ select option:checked, .form-select option:checked {
     transform: translateY(0);
 }
 
-/* Navbar Branding Styles */
 .custom-navbar {
     background: rgba(15, 14, 19, 0.85) !important;
     backdrop-filter: blur(20px);
@@ -406,7 +385,6 @@ select option:checked, .form-select option:checked {
     border-left: 3px solid var(--primary);
 }
 
-/* Botón de cambio de tema */
 .theme-toggle-btn {
     display: inline-flex;
     align-items: center;
@@ -435,7 +413,6 @@ body.light-mode .theme-toggle-btn:hover {
     background: #f1f5f9;
 }
 
-/* Footer styling */
 footer.custom-footer {
     background: rgba(15, 14, 19, 0.95);
     border-top: 1px solid var(--border-glass);
@@ -447,7 +424,6 @@ footer.custom-footer {
     width: 100%;
 }
 
-/* KPI Card & Glow Blobs */
 .card-kpi {
     transition: transform 0.3s ease;
 }
@@ -485,7 +461,6 @@ footer.custom-footer {
 .bg-purple-transparent { background: rgba(111, 66, 193, 0.15); }
 .text-purple { color: #a370f7 !important; }
 
-/* Dashboard table custom scrollbar */
 .table-responsive::-webkit-scrollbar {
     height: 6px;
 }
@@ -497,7 +472,7 @@ footer.custom-footer {
     border-radius: 10px;
 }
 
-/* Voyage Cards */
+
 .voyage-card {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     border: 1px solid var(--border-glass);
@@ -508,9 +483,7 @@ footer.custom-footer {
     border-color: rgba(243, 112, 33, 0.3) !important;
 }
 
-/* ====================================================
-   BUS SEAT MAP CHASSIS & INTERACTIVE MAP STYLING
-   ==================================================== */
+
 .bus-outer-body {
     width: 100%;
     max-width: 320px;
@@ -565,7 +538,6 @@ footer.custom-footer {
     height: 36px;
 }
 
-/* Interactive seat boxes */
 .seat-box {
     width: 38px;
     height: 38px;
@@ -598,7 +570,6 @@ footer.custom-footer {
     z-index: 2;
 }
 
-/* Seat states styles */
 .seat-available {
     background: #ecfdf5;
     color: #065f46;

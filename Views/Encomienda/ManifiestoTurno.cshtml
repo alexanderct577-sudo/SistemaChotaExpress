@@ -12,11 +12,9 @@
     var count = Model != null ? Model.Count : 0;
     var totalKilos = Model != null ? Model.Sum(e => e.PesoKg ?? 0) : 0;
 
-    // Hora formateada para mostrar (ej: "08:00 am")
     DateTime horaDt;
     string horaFormato12 = DateTime.TryParse(horaFiltro, out horaDt) ? horaDt.ToString("hh:mm tt") : horaFiltro;
 
-    // Datos del vehículo y piloto
     var modeloVehiculo = viaje?.ObjetoBus?.Modelo ?? "Toyota HiAce";
     var marcaVehiculo = viaje?.ObjetoBus?.Marca ?? "Toyota";
     var placaVehiculo = !string.IsNullOrWhiteSpace(viaje?.PlacaVehiculo) ? viaje.PlacaVehiculo : (viaje?.ObjetoBus?.Placa ?? "S/P");
@@ -45,7 +43,6 @@
             padding: 20px;
         }
 
-        /* Barra de Control y Filtros (No imprimible) */
         .controls-wrapper {
             max-width: 980px;
             margin: 0 auto 20px auto;
@@ -85,7 +82,6 @@
             font-weight: bold;
         }
 
-        /* Hoja de Impresión A4 Oficial */
         .paper-sheet {
             max-width: 980px;
             margin: 0 auto;
@@ -220,7 +216,6 @@
 </head>
 <body>
 
-    <!-- BARRA DE ACCIONES Y FILTRO POR TURNO -->
     <div class="controls-wrapper">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <div class="d-flex gap-2">
@@ -239,7 +234,6 @@
             </div>
         </div>
 
-        <!-- Panel de Filtro de Turno y Franjas Horarias -->
         <div class="filter-panel">
             <form method="get" asp-action="ManifiestoTurno" class="row g-2 align-items-end mb-3">
                 <div class="col-md-3">
@@ -273,7 +267,6 @@
                 </div>
             </form>
 
-            <!-- 24 Franjas Horarias Disponibles -->
             <div class="pt-2 border-top border-secondary">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <span class="text-warning fw-bold fs-9 text-uppercase">
@@ -311,7 +304,6 @@
         </div>
     </div>
 
-    <!-- DOCUMENTO OFICIAL PARA IMPRESIÓN (HOJA A4) -->
     <div class="paper-sheet">
         <div class="header-brand">
             <div>
@@ -325,10 +317,9 @@
             </div>
         </div>
 
-        <!-- PANEL METADATA CON LOS 10 CAMPOS COMPLETOS -->
         <div class="meta-box">
             <div class="row g-2">
-                <!-- Fila 1: ORIGEN, DESTINO, FECHA, HORA -->
+
                 <div class="col-3">
                     <div class="meta-label">📍 ORIGEN:</div>
                     <div class="meta-value text-primary">@origenFiltro.ToUpper()</div>
@@ -348,7 +339,6 @@
                     </div>
                 </div>
 
-                <!-- Fila 2: MODELO, PLACA, MARCA, CAPACIDAD COMBI -->
                 <div class="col-3 pt-2 border-top border-light">
                     <div class="meta-label">🚐 MODELO:</div>
                     <div class="meta-value font-monospace">@modeloVehiculo</div>
@@ -368,7 +358,6 @@
                     <div class="meta-value">@capacidadVehiculo asientos</div>
                 </div>
 
-                <!-- Fila 3: PILOTO, N° LICENCIA -->
                 <div class="col-6 pt-2 border-top border-light">
                     <div class="meta-label">🧑‍✈️ PILOTO:</div>
                     <div class="meta-value text-uppercase">@piloto</div>
@@ -378,7 +367,6 @@
                     <div class="meta-value font-monospace text-uppercase">@licencia</div>
                 </div>
 
-                <!-- Resumen de Carga del Turno -->
                 <div class="col-12 mt-1 pt-2 border-top border-light d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div class="fs-8">
                         <strong>Total Encomiendas:</strong> <span class="badge bg-secondary px-2">@count bultos</span>
@@ -481,7 +469,6 @@
             </tbody>
         </table>
 
-        <!-- Firmas de Conformidad -->
         <div class="signatures-area">
             <div class="sig-block">
                 <div class="sig-line"></div>
