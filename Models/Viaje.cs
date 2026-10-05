@@ -10,10 +10,12 @@ namespace SistemaChotaExpress.Models
         [Key]
         public int Id_Viaje { get; set; }
 
+        // FK al Bus: ahora es OPCIONAL — los vehículos no están pre-asignados al horario
         public int? Id_Bus { get; set; }
         [ForeignKey("Id_Bus")]
         public virtual Bus? ObjetoBus { get; set; }
 
+        // Placa del vehículo que cubre este turno (la registra el trabajador, es opcional)
         [StringLength(20)]
         public string? PlacaVehiculo { get; set; }
 
@@ -34,7 +36,7 @@ namespace SistemaChotaExpress.Models
 
         [Required]
         [StringLength(20)]
-        public string Estado { get; set; } = "Programado"; 
+        public string Estado { get; set; } = "Programado"; // Programado, Completado, Cancelado
 
         public virtual ICollection<Venta> Ventas { get; set; } = new List<Venta>();
     }

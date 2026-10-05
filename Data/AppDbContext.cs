@@ -17,11 +17,16 @@ namespace SistemaChotaExpress.Data
         public DbSet<Encomienda> Encomiendas { get; set; }
         public DbSet<ProformaViaje> ProformasViajes { get; set; }
 
+        // =========================================================================
+        // SOLUCIÓN AL ERROR DE CONSOLA: Inicializador automático de ConnectionString
+        // =========================================================================
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=SistemaChotaExpress_BD;Trusted_Connection=True;TrustServerCertificate=True;");
+                // Fallback para herramientas EF Core (dotnet ef migrations)
+                // En producción se usa la cadena de conexión de las variables de entorno
+                optionsBuilder.UseNpgsql("Host=localhost;Database=SistemaChotaExpress_BD;Username=postgres;Password=postgres");
             }
         }
 
@@ -29,11 +34,13 @@ namespace SistemaChotaExpress.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Insertar Roles básicos
             modelBuilder.Entity<Roles>().HasData(
                 new Roles { Id_Rol = 1, NombreRol = "Gerente" },
                 new Roles { Id_Rol = 2, NombreRol = "Vendedor" }
             );
 
+            // Insertar Buses iniciales con conductores asignados por defecto
             modelBuilder.Entity<Bus>().HasData(
                 new Bus { Id_Bus = 1, Placa = "S/P", NombreVehiculo = "Combi 01", NombreConductor = "Juan Pérez", Modelo = "Toyota HiAce (Combi)", Capacidad = 15 },
                 new Bus { Id_Bus = 2, Placa = "S/P", NombreVehiculo = "Combi 02", NombreConductor = "Carlos Gómez", Modelo = "Hyundai H350", Capacidad = 15 },
@@ -41,6 +48,7 @@ namespace SistemaChotaExpress.Data
                 new Bus { Id_Bus = 4, Placa = "S/P", NombreVehiculo = "Combi 04", NombreConductor = "Luis Fernández", Modelo = "Mercedes-Benz Sprinter", Capacidad = 15 }
             );
 
+            // Insertar Rutas iniciales de Chota Express
             modelBuilder.Entity<Ruta>().HasData(
                 new Ruta { Id_Ruta = 1, Origen = "Chiclayo", Destino = "Chota", DuracionHoras = 6.0 },
                 new Ruta { Id_Ruta = 2, Origen = "Chota", Destino = "Chiclayo", DuracionHoras = 6.0 },
@@ -53,6 +61,8 @@ namespace SistemaChotaExpress.Data
                 new Ruta { Id_Ruta = 9, Origen = "Chota", Destino = "Cutervo", DuracionHoras = 2.0 },
                 new Ruta { Id_Ruta = 10, Origen = "Cutervo", Destino = "Chota", DuracionHoras = 2.0 }
             );
+
+            // Insertar Usuario Gerente General inicial
             modelBuilder.Entity<Usuario>().HasData(
                 new Usuario
                 {
@@ -74,6 +84,7 @@ namespace SistemaChotaExpress.Data
                 }
             );
 
+            // Configurar comportamiento de eliminación para Venta (evitar cascadas)
             modelBuilder.Entity<Venta>()
                 .HasOne(v => v.ObjetoViaje)
                 .WithMany(v => v.Ventas)
@@ -92,10 +103,12 @@ namespace SistemaChotaExpress.Data
                 .HasForeignKey(v => v.Id_Usuario)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Índice único para documento de pasajero
             modelBuilder.Entity<Pasajero>()
                 .HasIndex(p => new { p.TipoDocumento, p.NumeroDocumento })
                 .IsUnique();
 
+            // Relación opcional Viaje -> Ruta (Id_Ruta nullable: los horarios auto-generados no tienen ruta pre-asignada)
             modelBuilder.Entity<Viaje>()
                 .HasOne(v => v.ObjetoRuta)
                 .WithMany()

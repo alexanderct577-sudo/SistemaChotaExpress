@@ -22,6 +22,10 @@ namespace SistemaChotaExpress.Controllers
         {
             _context = context;
         }
+
+        // =============================================
+        // 1. LISTADO DE PROFORMAS
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Index(string? buscar, string? estado)
         {
@@ -60,6 +64,9 @@ namespace SistemaChotaExpress.Controllers
             }
         }
 
+        // =============================================
+        // 2. CREAR PROFORMA (GET)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Crear()
         {
@@ -80,12 +87,17 @@ namespace SistemaChotaExpress.Controllers
 
             return View(modelo);
         }
+
+        // =============================================
+        // 3. CREAR PROFORMA (POST)
+        // =============================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(ProformaViaje modelo, string? origenRuta, string? destinoRuta)
         {
             try
             {
+                // Asignar o crear ruta
                 if (!string.IsNullOrWhiteSpace(origenRuta) && !string.IsNullOrWhiteSpace(destinoRuta))
                 {
                     var rutaMatch = await _context.Rutas.FirstOrDefaultAsync(r =>
@@ -119,11 +131,13 @@ namespace SistemaChotaExpress.Controllers
                     return View(modelo);
                 }
 
+                // Generar código correlativo
                 var total = await _context.ProformasViajes.CountAsync();
                 modelo.CodigoProforma = $"PROF-{(total + 1):D4}";
                 modelo.FechaEmision = DateTime.Now;
                 modelo.Estado = "Emitida";
 
+                // Asignar usuario logueado
                 var emailActual = User.FindFirstValue(ClaimTypes.Email);
                 var nombreActual = User.Identity?.Name;
                 var usuario = await _context.Usuarios
@@ -147,6 +161,9 @@ namespace SistemaChotaExpress.Controllers
             }
         }
 
+        // =============================================
+        // 4. IMPRIMIR PROFORMA (HOJA A4 PROFESIONAL)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Imprimir(int id)
         {
@@ -163,6 +180,10 @@ namespace SistemaChotaExpress.Controllers
 
             return View(proforma);
         }
+
+        // =============================================
+        // 5. CAMBIAR ESTADO
+        // =============================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstado(int id, string nuevoEstado)

@@ -1,6 +1,6 @@
 @model SistemaChotaExpress.Models.Encomienda
 @{
-    Layout = null; 
+    Layout = null; // No usamos el layout principal porque esto es solo para imprimir
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ticket @Model.CodigoSeguimiento</title>
     <style>
-
+        /* Estilos optimizados para impresora térmica de 80mm */
         * {
             margin: 0;
             padding: 0;
@@ -57,21 +57,23 @@
         @@media print {
             .no-print { display: none !important; }
             body { padding: 0; margin: 0; }
+            /* Forza corte de papel en algunas impresoras */
             html, body { height: 99%; page-break-after: avoid; page-break-before: avoid; }
         }
     </style>
 </head>
 <body onload="window.print()">
-
+    <!-- Botón para imprimir manualmente si no funciona onload -->
     <div class="text-center mb-3 no-print">
         <button onclick="window.print()" style="padding: 10px; cursor: pointer;">Imprimir Ticket</button>
         <button onclick="window.close()" style="padding: 10px; cursor: pointer;">Cerrar</button>
     </div>
 
+    <!-- Encabezado del ticket -->
     <div class="text-center mb-2">
         <div class="logo-placeholder">CHOTA EXPRESS</div>
         <div>Tours Chota Express S.A.C.</div>
-        <div>RUC: 20601234567</div> 
+        <div>RUC: 20601234567</div> <!-- Asegúrate de cambiar esto por el RUC real si lo tienen -->
         <div>Chota - Perú</div>
     </div>
     
@@ -81,6 +83,7 @@
 
     <div class="divider"></div>
 
+    <!-- Datos generales -->
     <div class="row">
         <span>Fecha: @Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</span>
     </div>
@@ -91,6 +94,7 @@
 
     <div class="divider"></div>
 
+    <!-- Origen y Destino -->
     <div class="row font-bold font-lg mb-1">
         <span>RUTA:</span>
     </div>
@@ -112,6 +116,7 @@
 
     <div class="divider"></div>
 
+    <!-- Remitente -->
     <div class="mb-2">
         <div class="label">REMITENTE:</div>
         <div>@Model.NombreRemitente</div>
@@ -123,6 +128,7 @@
 
     <div class="divider"></div>
 
+    <!-- Destinatario -->
     <div class="mb-2">
         <div class="label">DESTINATARIO:</div>
         <div>@Model.NombreDestinatario</div>
@@ -136,6 +142,7 @@
 
     <div class="divider"></div>
 
+    <!-- Seguridad y Pago -->
     <div class="mb-2">
         @if (!string.IsNullOrEmpty(Model.ClaveEnvio))
         {
@@ -152,6 +159,7 @@
 
     <div class="divider"></div>
 
+    <!-- Paquete -->
     <div class="mb-2">
         <div class="label">DESCRIPCIÓN:</div>
         <div>@Model.Descripcion</div>
@@ -176,6 +184,7 @@
 
     <div class="divider"></div>
 
+    <!-- Pie de página -->
     <div class="text-center mb-3 mt-2">
         <div>Atendido por: @(Model.UsuarioRegistro?.Name ?? "Sistema")</div>
         <br />
@@ -185,6 +194,7 @@
         </div>
     </div>
     
+    <!-- Espacio final para asegurar el corte correcto en impresoras térmicas -->
     <div style="margin-top: 30px;">.</div>
 
 </body>

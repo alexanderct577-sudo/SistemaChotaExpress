@@ -187,6 +187,7 @@
                 <div class="brand-subtitle mt-2">Control de Pasajes</div>
             </div>
 
+            <!-- TABS: Gerente / Vendedor -->
             <ul class="nav nav-tabs-login justify-content-center mb-3 border-0 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
                 <li class="nav-item">
                     <button class="nav-link active" id="tab-gerente" onclick="switchTab('gerente')">
@@ -200,6 +201,7 @@
                 </li>
             </ul>
 
+            <!-- FORMULARIO GERENTE -->
             <div id="form-gerente">
                 <form asp-controller="Login" asp-action="LoginGerente" method="post">
                     @Html.AntiForgeryToken()
@@ -229,6 +231,7 @@
                 </form>
             </div>
 
+            <!-- FORMULARIO TRABAJADOR -->
             <div id="form-vendedor" style="display:none;">
                 <form asp-controller="Login" asp-action="LoginVendedor" method="post">
                     @Html.AntiForgeryToken()

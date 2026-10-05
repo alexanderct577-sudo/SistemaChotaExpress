@@ -44,17 +44,21 @@ namespace SistemaChotaExpress.Services
                 return new LookupResult { Success = false, Mensaje = "El número de documento está vacío." };
             }
 
+            // Normalización
             tipoDocumento = tipoDocumento.ToUpper().Trim();
             if (tipoDocumento == "C. EXTRANJERÍA" || tipoDocumento == "C. EXTRANJERIA" || tipoDocumento == "CARNET_EXTRANJERIA" || tipoDocumento == "CARNET DE EXTRANJERIA" || tipoDocumento == "CARNET DE EXTRANJERÍA")
             {
                 tipoDocumento = "CE";
             }
             numeroDocumento = numeroDocumento.Trim();
+
+            // Auto-detectar si se envía 9 dígitos como CE
             if (tipoDocumento == "DNI" && numeroDocumento.Length == 9)
             {
                 tipoDocumento = "CE";
             }
 
+            // Validación de formatos peruanos
             if (tipoDocumento == "DNI" && numeroDocumento.Length != 8)
             {
                 return new LookupResult { Success = false, Mensaje = "El DNI debe contener exactamente 8 dígitos numéricos." };
@@ -71,6 +75,7 @@ namespace SistemaChotaExpress.Services
             string? tokenJsonPe = _configuration["DocumentLookup:JsonPeToken"] 
                 ?? "2d03a54d8ce643edd7dfd63901920bc44ec3b78e94976aa1cc8f1fcc1f88";
 
+            // 1. CARNET DE EXTRANJERÍA (CE): CONSULTAR A JSON.PE
             if (tipoDocumento == "CE" && !string.IsNullOrWhiteSpace(tokenJsonPe))
             {
                 try
@@ -136,6 +141,7 @@ namespace SistemaChotaExpress.Services
                 }
             }
 
+            // 2. CONSULTAR EN TIEMPO REAL DNI / RUC A API OFICIAL (apiperu.dev)
             string? tokenApiPeru = _configuration["DocumentLookup:ApiPeruToken"] 
                 ?? "85f31ca800c9cc8b6c485aff467578a53fc5f9e29bfe6576c268558703407e60";
 
@@ -172,6 +178,7 @@ namespace SistemaChotaExpress.Services
 
                                 if (!string.IsNullOrWhiteSpace(nombreCompleto))
                                 {
+                                    // Actualizar en base de datos si ya existía con nombre incorrecto previo
                                     var existingPassenger = await _context.Pasajeros
                                         .FirstOrDefaultAsync(p => p.TipoDocumento == "DNI" && p.NumeroDocumento == numeroDocumento);
 
@@ -244,6 +251,7 @@ namespace SistemaChotaExpress.Services
                 }
             }
 
+            // 2. FALLBACK A BASE DE DATOS LOCAL
             var pasajeroDb = await _context.Pasajeros
                 .FirstOrDefaultAsync(p => p.TipoDocumento == tipoDocumento && p.NumeroDocumento == numeroDocumento);
 
@@ -260,6 +268,7 @@ namespace SistemaChotaExpress.Services
                 };
             }
 
+            // 3. SI NO SE ENCONTRÓ EN RENIEC/SUNAT NI EN DB, INFORMAR CLARAMENTE (SIN GENERAR NOMBRES FALSOS)
             string entidadNombre = tipoDocumento == "RUC" ? "SUNAT" : (tipoDocumento == "CE" ? "Migraciones" : "RENIEC");
             return new LookupResult
             {

@@ -9,7 +9,7 @@ namespace SistemaChotaExpress.Models
 
         [Required]
         [StringLength(10)]
-        public string TipoDocumento { get; set; } = "DNI"; 
+        public string TipoDocumento { get; set; } = "DNI"; // DNI, CE, RUC
 
         [Required(ErrorMessage = "El número de documento es obligatorio")]
         [StringLength(20)]

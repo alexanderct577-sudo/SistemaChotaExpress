@@ -9,6 +9,6 @@ namespace SistemaChotaExpress.Models
 
         [Required]
         [StringLength(50)]
-        public string NombreRol { get; set; } 
+        public string NombreRol { get; set; } // "Gerente" o "Vendedor"
     }
 }

@@ -27,7 +27,7 @@
 }
 
 <div class="row g-4">
-
+    <!-- List Trips -->
     <div class="col-md-8">
         <div class="card bg-dark text-white border-glass p-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
@@ -35,6 +35,7 @@
                 <span class="badge bg-warning text-dark font-monospace">@((Model != null) ? Model.Count() : 0) salida(s)</span>
             </div>
 
+            <!-- Filtros por Ruta y Fecha -->
             <form method="get" class="row g-2 mb-3 bg-dark-card border-glass p-2.5 rounded">
                 <div class="col-md-5">
                     <label class="form-label text-muted fs-9 mb-1">Filtrar por Ruta:</label>
@@ -147,6 +148,7 @@
         </div>
     </div>
 
+    <!-- Create Trip Form -->
     <div class="col-md-4">
         <div class="card bg-dark text-white border-glass p-4">
             <h5 class="fw-bold mb-3">Programar Nueva Salida</h5>

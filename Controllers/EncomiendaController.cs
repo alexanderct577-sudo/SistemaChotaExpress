@@ -23,6 +23,9 @@ namespace SistemaChotaExpress.Controllers
             _context = context;
         }
 
+        // =============================================
+        // 1. REGISTRO DE ENCOMIENDAS (LISTADO)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Index(string? buscar, string? estado)
         {
@@ -32,6 +35,8 @@ namespace SistemaChotaExpress.Controllers
                     .Include(e => e.ObjetoRuta)
                     .Include(e => e.UsuarioRegistro)
                     .AsQueryable();
+
+                // Trabajadores solo ven las suyas; Gerente ve todas
                 if (!User.IsInRole("Gerente"))
                 {
                     var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -71,6 +76,9 @@ namespace SistemaChotaExpress.Controllers
             }
         }
 
+        // =============================================
+        // 2. REGISTRAR ENCOMIENDA (FORMULARIO)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Registrar()
         {
@@ -113,6 +121,7 @@ namespace SistemaChotaExpress.Controllers
         {
             try
             {
+                // Asignar ruta seleccionada de los 14 lugares oficiales
                 if (!string.IsNullOrWhiteSpace(origenRuta) && !string.IsNullOrWhiteSpace(destinoRuta) && !origenRuta.Equals(destinoRuta, StringComparison.OrdinalIgnoreCase))
                 {
                     var rutaMatch = await _context.Rutas.FirstOrDefaultAsync(r =>
@@ -149,9 +158,12 @@ namespace SistemaChotaExpress.Controllers
                     ViewBag.SiguienteNumero = countActual + 1;
                     return View(modelo);
                 }
+
+                // Generar número correlativo que inicia estrictamente desde el 1
                 var totalEncomiendas = await _context.Encomiendas.CountAsync();
                 int siguienteNumero = totalEncomiendas + 1;
                 modelo.CodigoSeguimiento = $"ENC-{siguienteNumero:D4}";
+                // Clave de envío de seguridad (si no se digitó, se autogenera una de 4 dígitos)
                 if (string.IsNullOrWhiteSpace(modelo.ClaveEnvio))
                 {
                     modelo.ClaveEnvio = new Random().Next(1000, 9999).ToString();
@@ -162,6 +174,7 @@ namespace SistemaChotaExpress.Controllers
                     modelo.MetodoPago = "Efectivo";
                 }
 
+                // Asignar trabajador que registra
                 var emailActual = User.FindFirstValue(ClaimTypes.Email);
                 var nombreActual = User.Identity?.Name;
                 var usuario = await _context.Usuarios
@@ -196,6 +209,9 @@ namespace SistemaChotaExpress.Controllers
             }
         }
 
+        // =============================================
+        // 3. DETALLE / COMPROBANTE DE ENCOMIENDA
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Detalle(int id)
         {
@@ -208,6 +224,7 @@ namespace SistemaChotaExpress.Controllers
 
                 if (enc == null) return NotFound();
 
+                // Vendedor solo puede ver las suyas
                 if (!User.IsInRole("Gerente"))
                 {
                     var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -226,6 +243,10 @@ namespace SistemaChotaExpress.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        // =============================================
+        // 4. EDITAR ENCOMIENDA
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
@@ -235,11 +256,15 @@ namespace SistemaChotaExpress.Controllers
                     .Include(e => e.ObjetoRuta)
                     .FirstOrDefaultAsync(e => e.Id_Encomienda == id);
                 if (enc == null) return NotFound();
+
+                // Solo se puede editar si está en estado Registrado
                 if (enc.Estado != "Registrado")
                 {
                     TempData["Error"] = "Solo se pueden editar encomiendas en estado 'Registrado'.";
                     return RedirectToAction("Detalle", new { id });
                 }
+
+                // Vendedor solo puede editar las suyas
                 if (!User.IsInRole("Gerente"))
                 {
                     var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -333,6 +358,7 @@ namespace SistemaChotaExpress.Controllers
                     return View(modelo);
                 }
 
+                // Actualizar solo los campos editables
                 enc.NombreRemitente      = modelo.NombreRemitente;
                 enc.DniRemitente         = modelo.DniRemitente;
                 enc.TelefonoRemitente    = modelo.TelefonoRemitente;
@@ -363,6 +389,9 @@ namespace SistemaChotaExpress.Controllers
             }
         }
 
+        // =============================================
+        // 5. CAMBIAR ESTADO
+        // =============================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstado(int id, string nuevoEstado)
@@ -379,6 +408,7 @@ namespace SistemaChotaExpress.Controllers
                     return RedirectToAction("Detalle", new { id });
                 }
 
+                // Vendedor solo puede cambiar estado de sus propias encomiendas
                 if (!User.IsInRole("Gerente"))
                 {
                     var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -404,12 +434,18 @@ namespace SistemaChotaExpress.Controllers
                 return RedirectToAction("Detalle", new { id });
             }
         }
+
+        // Acción de compatibilidad para el botón "Marcar Entregada"
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarcarEntregada(int id)
         {
             return await CambiarEstado(id, "Entregado");
         }
+
+        // =============================================
+        // 6. BUSCAR POR CODIGO (RASTREO PUBLICO)
+        // =============================================
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Rastrear(string? codigo)
@@ -435,6 +471,10 @@ namespace SistemaChotaExpress.Controllers
             ViewBag.CodigoBuscado = codigo;
             return View(enc);
         }
+
+        // =============================================
+        // 7. IMPRIMIR TICKET (80mm)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> Ticket(int id)
         {
@@ -447,6 +487,7 @@ namespace SistemaChotaExpress.Controllers
 
                 if (enc == null) return NotFound();
 
+                // Vendedor solo puede ver las suyas
                 if (!User.IsInRole("Gerente"))
                 {
                     var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -464,6 +505,9 @@ namespace SistemaChotaExpress.Controllers
                 return NotFound();
             }
         }
+        // =============================================
+        // 8. MANIFIESTO DE ENCOMIENDAS POR TURNO (CARGA)
+        // =============================================
         [HttpGet]
         public async Task<IActionResult> ManifiestoTurno(int? viajeId, string? origen, string? destino, DateTime? fecha, string? hora)
         {
@@ -497,6 +541,7 @@ namespace SistemaChotaExpress.Controllers
                 }
                 else
                 {
+                    // Buscar si existe un viaje programado para esa ruta, fecha y hora
                     var viajesEncontrados = await _context.Viajes
                         .Include(v => v.ObjetoRuta)
                         .Include(v => v.ObjetoBus)
@@ -509,17 +554,23 @@ namespace SistemaChotaExpress.Controllers
                     viaje = viajesEncontrados.FirstOrDefault(v => v.FechaHoraSalida.ToString("HH:mm") == horaFiltro)
                             ?? viajesEncontrados.FirstOrDefault();
                 }
+
+                // Obtener las encomiendas para esta ruta y turno de salida
                 var query = _context.Encomiendas
                     .Include(e => e.UsuarioRegistro)
                     .Include(e => e.ObjetoRuta)
                     .AsQueryable();
 
+                // Filtrar por fecha de registro (o fecha asignada)
                 query = query.Where(e => e.FechaRegistro.Date == fechaFiltro);
 
+                // Filtrar por turno horario (e.g. "08:00")
                 if (!string.IsNullOrWhiteSpace(horaFiltro))
                 {
                     query = query.Where(e => e.TurnoSalida == horaFiltro);
                 }
+
+                // Filtrar por ruta
                 if (!string.IsNullOrWhiteSpace(origenFiltro) && !string.IsNullOrWhiteSpace(destinoFiltro))
                 {
                     query = query.Where(e => e.ObjetoRuta != null &&

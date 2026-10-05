@@ -24,6 +24,11 @@ namespace SistemaChotaExpress.Services
         public string? DigestValue { get; set; }
     }
 
+    /// <summary>
+    /// Servicio de facturación electrónica SUNAT UBL 2.1 y conector OSE (Nubefact).
+    /// Si existe NubefactToken configurado, sube el comprobante directamente a SUNAT.
+    /// Siempre genera y respalda el XML oficial en App_Data/Comprobantes/.
+    /// </summary>
     public class SunatService
     {
         private readonly IConfiguration _config;
@@ -42,12 +47,18 @@ namespace SistemaChotaExpress.Services
             _env = env;
             _httpClientFactory = httpClientFactory;
         }
+
+        /// <summary>
+        /// Procesa la venta: guarda el XML oficial y si hay token de Nubefact lo envía a SUNAT.
+        /// </summary>
         public async Task<SunatEnvioResultado> ProcesarComprobanteAsync(Venta venta)
         {
             var resultado = new SunatEnvioResultado();
 
+            // 1. Siempre generar y guardar el XML local oficial
             resultado.XmlPath = await GenerarYGuardarXmlAsync(venta);
 
+            // 2. Verificar si hay credenciales de OSE (Nubefact) para envío automático
             string? nubefactUrl = _config["Sunat:NubefactUrl"];
             string? nubefactToken = _config["Sunat:NubefactToken"];
 
@@ -71,6 +82,9 @@ namespace SistemaChotaExpress.Services
             return resultado;
         }
 
+        /// <summary>
+        /// Genera el XML UBL 2.1 de la venta y lo guarda en App_Data/Comprobantes/.
+        /// </summary>
         public async Task<string?> GenerarYGuardarXmlAsync(Venta venta)
         {
             try
@@ -104,6 +118,9 @@ namespace SistemaChotaExpress.Services
             }
         }
 
+        /// <summary>
+        /// Envía el comprobante a la API de Nubefact para que firme y envíe a SUNAT.
+        /// </summary>
         private async Task<SunatEnvioResultado> EnviarANubefactAsync(Venta venta, string url, string token)
         {
             var resultado = new SunatEnvioResultado();
@@ -133,7 +150,7 @@ namespace SistemaChotaExpress.Services
                 var payload = new Dictionary<string, object>
                 {
                     ["operacion"] = "generar_comprobante",
-                    ["tipo_de_comprobante"] = esFactura ? 1 : 2, 
+                    ["tipo_de_comprobante"] = esFactura ? 1 : 2, // 1 = Factura, 2 = Boleta
                     ["serie"] = esFactura ? "F001" : "B001",
                     ["numero"] = venta.Id_Venta,
                     ["sunat_transaction"] = 1,
@@ -143,7 +160,7 @@ namespace SistemaChotaExpress.Services
                     ["cliente_direccion"] = clienteDireccion,
                     ["cliente_email"] = venta.ObjetoPasajero?.Correo ?? "",
                     ["fecha_de_emision"] = venta.FechaVenta.ToString("dd-MM-yyyy"),
-                    ["moneda"] = 1, 
+                    ["moneda"] = 1, // 1 = Soles
                     ["tipo_de_cambio"] = "",
                     ["porcentaje_de_igv"] = 18.0,
                     ["total_gravada"] = subtotal,
@@ -167,7 +184,7 @@ namespace SistemaChotaExpress.Services
                             ["precio_unitario"] = venta.PrecioPagado,
                             ["descuento"] = "",
                             ["subtotal"] = subtotal,
-                            ["tipo_de_igv"] = 1, 
+                            ["tipo_de_igv"] = 1, // Gravado - Operación Onerosa
                             ["igv"] = igv,
                             ["total"] = venta.PrecioPagado,
                             ["anticipo_regularizacion"] = false
@@ -217,6 +234,9 @@ namespace SistemaChotaExpress.Services
             return resultado;
         }
 
+        /// <summary>
+        /// Genera el contenido XML UBL 2.1 SUNAT para una venta.
+        /// </summary>
         public string GenerarXmlUbl21(Venta venta)
         {
             bool esFactura = venta.TipoComprobante == "Factura";
@@ -281,6 +301,7 @@ namespace SistemaChotaExpress.Services
                         )
                     ),
 
+                    // Receptor
                     new XElement(cac + "AccountingCustomerParty",
                         new XElement(cac + "Party",
                             new XElement(cac + "PartyIdentification",
@@ -292,6 +313,7 @@ namespace SistemaChotaExpress.Services
                         )
                     ),
 
+                    // Impuestos
                     new XElement(cac + "TaxTotal",
                         new XElement(cbc + "TaxAmount", new XAttribute("currencyID", "PEN"), igv.ToString("0.00")),
                         new XElement(cac + "TaxSubtotal",
@@ -307,12 +329,14 @@ namespace SistemaChotaExpress.Services
                         )
                     ),
 
+                    // Totales monetarios
                     new XElement(cac + "LegalMonetaryTotal",
                         new XElement(cbc + "LineExtensionAmount", new XAttribute("currencyID", "PEN"), subtotal.ToString("0.00")),
                         new XElement(cbc + "TaxInclusiveAmount", new XAttribute("currencyID", "PEN"), venta.PrecioPagado.ToString("0.00")),
                         new XElement(cbc + "PayableAmount", new XAttribute("currencyID", "PEN"), venta.PrecioPagado.ToString("0.00"))
                     ),
 
+                    // Línea de detalle del pasaje
                     new XElement(cac + "InvoiceLine",
                         new XElement(cbc + "ID", "1"),
                         new XElement(cbc + "InvoicedQuantity", new XAttribute("unitCode", "ZZ"), "1"),

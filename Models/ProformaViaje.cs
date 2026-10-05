@@ -15,6 +15,7 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Código Proforma")]
         public string CodigoProforma { get; set; } = string.Empty;
 
+        // --- CLIENTE ---
         [Required(ErrorMessage = "El nombre del cliente o empresa es obligatorio")]
         [StringLength(120)]
         [Display(Name = "Cliente / Razón Social")]
@@ -22,7 +23,7 @@ namespace SistemaChotaExpress.Models
 
         [StringLength(10)]
         [Display(Name = "Tipo de Documento")]
-        public string TipoDocumento { get; set; } = "DNI"; 
+        public string TipoDocumento { get; set; } = "DNI"; // DNI o RUC
 
         [StringLength(20)]
         [Display(Name = "N° Documento")]
@@ -32,6 +33,7 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Teléfono / WhatsApp")]
         public string? TelefonoCliente { get; set; }
 
+        // --- DETALLES DEL VIAJE ---
         [Display(Name = "Ruta")]
         public int? Id_Ruta { get; set; }
         [ForeignKey("Id_Ruta")]
@@ -51,7 +53,7 @@ namespace SistemaChotaExpress.Models
         [StringLength(60)]
         [Display(Name = "Tipo de Servicio")]
         public string TipoServicio { get; set; } = "Viaje Expreso (Combi Completa)"; 
-
+        // Opciones: "Viaje Expreso (Combi Completa)", "Pasajes Individuales"
 
         [Range(1, 100, ErrorMessage = "La cantidad debe ser al menos 1")]
         [Display(Name = "Cantidad de Pasajeros / Asientos")]
@@ -75,9 +77,10 @@ namespace SistemaChotaExpress.Models
         [Display(Name = "Condiciones / Observaciones")]
         public string? Observaciones { get; set; }
 
+        // --- ESTADO & AUDITORÍA ---
         [ValidateNever]
         [StringLength(20)]
-        public string Estado { get; set; } = "Emitida"; 
+        public string Estado { get; set; } = "Emitida"; // Emitida, Aprobada, Vencida
 
         public DateTime FechaEmision { get; set; } = DateTime.Now;
 

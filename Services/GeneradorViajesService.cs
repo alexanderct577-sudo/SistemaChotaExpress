@@ -10,12 +10,16 @@ namespace SistemaChotaExpress.Services
 {
     public static class GeneradorViajesService
     {
-       
+        /// <summary>
+        /// Asegura que existan salidas horarias (de 00:00 a 23:00) para una fecha y una RUTA específica.
+        /// Respeta cualquier salida que el Gerente o el trabajador ya hayan programado o personalizado.
+        /// </summary>
         public static async Task AsegurarViajesParaFechaYRutaAsync(AppDbContext context, DateTime fecha, int idRuta)
         {
             var startOfDay = fecha.Date;
             var endOfDay = startOfDay.AddDays(1);
 
+            // Horas que ya tienen al menos 1 viaje registrado para ESTA RUTA en ese día
             var horasExistentes = await context.Viajes
                 .Where(v => v.Id_Ruta == idRuta && v.FechaHoraSalida >= startOfDay && v.FechaHoraSalida < endOfDay)
                 .Select(v => v.FechaHoraSalida.Hour)
@@ -52,6 +56,9 @@ namespace SistemaChotaExpress.Services
             await LimpiarDuplicadosPorRutaAsync(context, fecha.Date, idRuta);
         }
 
+        /// <summary>
+        /// Asegura salidas para un rango de fechas. Mantenido para compatibilidad.
+        /// </summary>
         public static async Task AsegurarViajesParaRangoAsync(AppDbContext context, DateTime fechaInicio, DateTime fechaFin)
         {
             for (var current = fechaInicio.Date; current <= fechaFin.Date; current = current.AddDays(1))
@@ -60,8 +67,12 @@ namespace SistemaChotaExpress.Services
             }
         }
 
+        /// <summary>
+        /// Asegura salidas para una fecha dada. Mantenido para compatibilidad.
+        /// </summary>
         public static async Task AsegurarViajesParaFechaAsync(AppDbContext context, DateTime fecha)
         {
+            // Para cada ruta registrada en el sistema, garantizar salidas
             var rutasIds = await context.Rutas.Select(r => r.Id_Ruta).ToListAsync();
             foreach (var idRuta in rutasIds)
             {
@@ -69,11 +80,19 @@ namespace SistemaChotaExpress.Services
             }
         }
 
+        /// <summary>
+        /// Limpia salidas duplicadas idénticas si existiesen, respetando todas las combis adicionales creadas.
+        /// </summary>
         public static async Task LimpiarDuplicadosPorRutaAsync(AppDbContext context, DateTime fecha, int idRuta)
         {
+            // Las combis adicionales (Combi 2, Combi 3, etc.) a la misma hora son salidas legítimas programadas
+            // por el usuario, por lo que no deben ser eliminadas automáticamente.
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Limpieza general de duplicados asegurando agrupar por Ruta.
+        /// </summary>
         public static async Task LimpiarDuplicadosInicialesAsync(AppDbContext context)
         {
             var viajesSinVentas = await context.Viajes
@@ -81,6 +100,7 @@ namespace SistemaChotaExpress.Services
                 .Where(v => v.Estado == "Programado" && !v.Ventas.Any(vt => vt.Estado == "Vendido" || vt.Estado == "Reservado"))
                 .ToListAsync();
 
+            // Agrupar por Fecha, Hora Y RUTA — para no mezclar salidas de distintas rutas
             var grupos = viajesSinVentas
                 .GroupBy(v => new { Fecha = v.FechaHoraSalida.Date, Hora = v.FechaHoraSalida.Hour, Ruta = v.Id_Ruta });
 
@@ -102,6 +122,9 @@ namespace SistemaChotaExpress.Services
             }
         }
 
+        /// <summary>
+        /// Lista oficial de los 14 lugares autorizados para Tours Chota Express.
+        /// </summary>
         public static readonly List<string> LugaresOficiales = new()
         {
             "Bambamarca",
@@ -120,6 +143,9 @@ namespace SistemaChotaExpress.Services
             "San Antonio"
         };
 
+        /// <summary>
+        /// Asegura que todas las rutas oficiales para los 14 lugares estén registradas en la base de datos.
+        /// </summary>
         public static async Task AsegurarRutasOficialesAsync(AppDbContext context)
         {
             var pares = new (string Origen, string Destino, double Horas)[]

@@ -12,8 +12,9 @@
     </div>
 </div>
 
+<!-- KPI Cards -->
 <div class="row g-3 mb-4">
-
+    <!-- Ventas del Día -->
     <div class="col-md-3">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-green"></div>
@@ -29,7 +30,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Ventas del Mes -->
     <div class="col-md-3">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-blue"></div>
@@ -45,7 +46,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Ventas del Año -->
     <div class="col-md-3">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-orange"></div>
@@ -61,7 +62,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Operaciones Activas -->
     <div class="col-md-3">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-purple"></div>
@@ -79,11 +80,12 @@
     </div>
 </div>
 
+<!-- KPIs Encomiendas -->
 <div class="row g-3 mb-4">
     <div class="col-12">
         <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-box me-2 text-warning"></i>Encomiendas</h5>
     </div>
-
+    <!-- Encomiendas de Hoy -->
     <div class="col-md-4">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-green"></div>
@@ -99,7 +101,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Cobrado por Encomiendas este mes -->
     <div class="col-md-4">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-blue"></div>
@@ -115,7 +117,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Pendientes de entrega -->
     <div class="col-md-4">
         <div class="card bg-dark text-white border-glass p-3 h-100 position-relative overflow-hidden card-kpi">
             <div class="kpi-glow-purple"></div>
@@ -133,8 +135,9 @@
     </div>
 </div>
 
+<!-- Charts Section -->
 <div class="row g-4 mb-4">
-
+    <!-- Chart Last 15 Days -->
     <div class="col-md-7">
         <div class="card bg-dark text-white border-glass p-4 h-100">
             <h5 class="fw-bold mb-3"><i class="fa-solid fa-arrow-trend-up text-primary me-2"></i> Ventas Diarias (Últimos 15 días)</h5>
@@ -143,7 +146,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Chart Months -->
     <div class="col-md-5">
         <div class="card bg-dark text-white border-glass p-4 h-100">
             <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-column text-primary me-2"></i> Ventas Mensuales</h5>
@@ -154,8 +157,9 @@
     </div>
 </div>
 
+<!-- Table and Quick Links -->
 <div class="row g-4">
-
+    <!-- Top Routes -->
     <div class="col-md-8">
         <div class="card bg-dark text-white border-glass p-4 h-100">
             <h5 class="fw-bold mb-3"><i class="fa-solid fa-award text-warning me-2"></i> Rutas Más Vendidas (Top 5)</h5>
@@ -194,7 +198,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Quick Management links -->
     <div class="col-md-4">
         <div class="card bg-dark text-white border-glass p-4 h-100">
             <h5 class="fw-bold mb-3"><i class="fa-solid fa-gears text-primary me-2"></i> Gestión Rápida</h5>
@@ -243,7 +247,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-
+            // Chart 1: Daily Sales
             const ctxDias = document.getElementById('diasChart').getContext('2d');
             const diasLabels = @Html.Raw(Json.Serialize(ViewBag.DiasLabels));
             const diasValores = @Html.Raw(Json.Serialize(ViewBag.DiasValores));
@@ -283,6 +287,7 @@
                 }
             });
 
+            // Chart 2: Monthly Sales
             const ctxMeses = document.getElementById('mesesChart').getContext('2d');
             const mesesLabels = @Html.Raw(Json.Serialize(ViewBag.MesesLabels));
             const mesesValores = @Html.Raw(Json.Serialize(ViewBag.MesesValores));

@@ -84,6 +84,7 @@
 
     <div class="row g-4">
 
+        <!-- REMITENTE (QUIEN ENVÍA) -->
         <div class="col-md-6">
             <div class="card bg-dark border-glass h-100">
                 <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
@@ -130,6 +131,7 @@
             </div>
         </div>
 
+        <!-- DESTINATARIO (QUIEN RECIBE) -->
         <div class="col-md-6">
             <div class="card bg-dark border-glass h-100">
                 <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
@@ -176,6 +178,7 @@
             </div>
         </div>
 
+        <!-- DATOS DEL PAQUETE, PAGO Y SEGURIDAD -->
         <div class="col-12">
             <div class="card bg-dark border-glass">
                 <div class="card-header bg-transparent border-secondary">
@@ -184,6 +187,7 @@
                 <div class="card-body">
                     <div class="row g-3">
                         
+                        <!-- Descripción -->
                         <div class="col-md-5">
                             <label asp-for="Descripcion" class="form-label text-muted small fw-bold">Descripción del Contenido <span class="text-danger">*</span></label>
                             <input asp-for="Descripcion" class="form-control bg-secondary border-0 text-white"
@@ -191,6 +195,7 @@
                             <span asp-validation-for="Descripcion" class="text-danger small"></span>
                         </div>
 
+                        <!-- Peso -->
                         <div class="col-md-2">
                             <label asp-for="PesoKg" class="form-label text-muted small fw-bold">Peso (kg)</label>
                             <div class="input-group">
@@ -200,6 +205,7 @@
                             </div>
                         </div>
 
+                        <!-- Precio -->
                         <div class="col-md-2">
                             <label asp-for="PrecioEnvio" class="form-label text-warning small fw-bold">Precio Envío (S/) <span class="text-danger">*</span></label>
                             <div class="input-group">
@@ -210,6 +216,7 @@
                             <span asp-validation-for="PrecioEnvio" class="text-danger small"></span>
                         </div>
 
+                        <!-- Método de Pago: Efectivo, Yape, Plin -->
                         <div class="col-md-3">
                             <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-money-bill-wave me-1"></i> Método de Pago</label>
                             <input type="hidden" asp-for="MetodoPago" id="txtMetodoPago" value="Efectivo" />
@@ -226,6 +233,7 @@
                             </div>
                         </div>
 
+                        <!-- Clave de Envío / Código de Recojo -->
                         <div class="col-md-4">
                             <label asp-for="ClaveEnvio" class="form-label text-info small fw-bold">
                                 <i class="fa-solid fa-key me-1"></i> Clave de Envío (Para Recojo)
@@ -240,6 +248,7 @@
                             <small class="text-muted fs-9">Código secreto que se solicitará al destinatario para entregar el paquete.</small>
                         </div>
 
+                        <!-- Horario de Salida -->
                         <div class="col-md-4">
                             <label asp-for="TurnoSalida" class="form-label text-muted small fw-bold"><i class="fa-solid fa-clock me-1 text-warning"></i> Horario de Salida (Opcional)</label>
                             <select asp-for="TurnoSalida" id="TurnoSalida" class="form-select bg-secondary border-0 text-white">
@@ -265,6 +274,7 @@
                             </select>
                         </div>
 
+                        <!-- Conductor / Chofer -->
                         <div class="col-md-4">
                             <label asp-for="NombreConductor" class="form-label text-muted small fw-bold"><i class="fa-solid fa-user-tie me-1 text-warning"></i> Conductor / Chofer (Opcional)</label>
                             <input asp-for="NombreConductor" class="form-control bg-secondary border-0 text-white" 
@@ -280,6 +290,7 @@
                             </datalist>
                         </div>
 
+                        <!-- Origen y Destino -->
                         <div class="col-md-6">
                             <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen</label>
                             <select name="origenRuta" id="origenRutaSelect" class="form-select bg-secondary border-0 text-white" required>
@@ -310,6 +321,7 @@
                             </select>
                         </div>
 
+                        <!-- Observaciones -->
                         <div class="col-12">
                             <label asp-for="Observaciones" class="form-label text-muted small fw-bold">Observaciones / Indicaciones Especiales</label>
                             <textarea asp-for="Observaciones" rows="2"
@@ -321,6 +333,7 @@
             </div>
         </div>
 
+        <!-- BOTONES -->
         <div class="col-12 d-flex gap-2 justify-content-end">
             <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancelar</a>
             <button type="submit" class="btn btn-warning fw-bold px-5">
@@ -333,6 +346,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        // Función para cambiar método de pago
         function seleccionarPago(metodo, btn) {
             document.getElementById('txtMetodoPago').value = metodo;
             document.querySelectorAll('.payment-pill-btn').forEach(b => {
@@ -343,11 +357,13 @@
             if (metodo === 'Plin') btn.classList.add('active-plin');
         }
 
+        // Generar clave aleatoria de 4 dígitos
         function generarClaveAleatoria() {
             const aleatorio = Math.floor(1000 + Math.random() * 9000);
             document.getElementById('txtClaveEnvio').value = aleatorio;
         }
 
+        // Búsqueda de documento (DNI, CE o RUC)
         async function consultarDoc(tipo, inputId, nombreInputId, statusId, btnId) {
             const input = document.getElementById(inputId);
             const nombreInput = document.getElementById(nombreInputId);
@@ -360,6 +376,7 @@
                 return;
             }
 
+            // Auto-detectar Carnet de Extranjería si tiene 9 dígitos o empieza con 00
             if (tipo === 'DNI' && (doc.length === 9 || doc.startsWith('00') || doc.length > 8)) {
                 tipo = 'CE';
             }
@@ -400,12 +417,13 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-
+            // Autogenerar clave si está vacía
             const claveInput = document.getElementById('txtClaveEnvio');
             if (claveInput && !claveInput.value) {
                 generarClaveAleatoria();
             }
 
+            // Remitente - Eventos DNI y RUC
             document.getElementById('btnBuscarDniRemitente')?.addEventListener('click', () => {
                 consultarDoc('DNI', 'txtDniRemitente', 'txtNombreRemitente', 'statusRemitente', 'btnBuscarDniRemitente');
             });
@@ -435,6 +453,7 @@
                 }
             });
 
+            // Destinatario - Eventos DNI y RUC
             document.getElementById('btnBuscarDniDestinatario')?.addEventListener('click', () => {
                 consultarDoc('DNI', 'txtDniDestinatario', 'txtNombreDestinatario', 'statusDestinatario', 'btnBuscarDniDestinatario');
             });
