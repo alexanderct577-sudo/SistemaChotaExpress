@@ -25,8 +25,7 @@ namespace SistemaChotaExpress.Data
             if (!optionsBuilder.IsConfigured)
             {
                 // Fallback para herramientas EF Core (dotnet ef migrations)
-                // En producción se usa la cadena de conexión de las variables de entorno
-                optionsBuilder.UseNpgsql("Host=localhost;Database=SistemaChotaExpress_BD;Username=postgres;Password=postgres");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
             }
         }
 
