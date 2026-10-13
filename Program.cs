@@ -52,6 +52,15 @@ try
 }
 catch { }
 
+string? configuredConn = builder.Configuration.GetConnectionString("CadenaChotaExpress");
+if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+{
+    if (configuredConn != null && configuredConn.Contains("localdb", StringComparison.OrdinalIgnoreCase))
+    {
+        configuredConn = null;
+    }
+}
+
 string rawConn =
     discoveredPostgres
     ?? Environment.GetEnvironmentVariable("DATABASE_URL")
@@ -61,7 +70,7 @@ string rawConn =
     ?? Environment.GetEnvironmentVariable("URL_DE_LA_BASE_DE_DATOS")
     ?? Environment.GetEnvironmentVariable("URL DE LA BASE DE DATOS")
     ?? Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING")
-    ?? builder.Configuration.GetConnectionString("CadenaChotaExpress")
+    ?? configuredConn
     ?? (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
         ? "Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
         : "");
