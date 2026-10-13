@@ -7,6 +7,9 @@ using SistemaChotaExpress.Data;
 using SistemaChotaExpress.Models;
 using SistemaChotaExpress.Services;
 
+// Habilitar compatibilidad universal de DateTime (Local / Unspecified) en PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Soporte para Proxy Inverso (Railway, Cloudflare Tunnel, ngrok, etc.)
