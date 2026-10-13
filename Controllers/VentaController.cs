@@ -668,26 +668,8 @@ namespace SistemaChotaExpress.Controllers
                 if (string.IsNullOrWhiteSpace(nDoc)) nDoc = $"S/D-{numAsiento}";
                 if (string.IsNullOrWhiteSpace(nomComp)) nomComp = $"PASAJERO ASIENTO {numAsiento}";
 
-                // Verificar si el asiento ya está ocupado para ESTE TRAMO
-                // Un asiento está ocupado solo si hay otra venta en el mismo viaje cuyo
-                // tramo se SOLAPA con el tramo del pasajero nuevo.
-                string origenNuevoPasajero = origen?.Trim() ?? "";
-                string destinoNuevoPasajero = (destinosPasajeros != null && i < destinosPasajeros.Count && !string.IsNullOrWhiteSpace(destinosPasajeros[i]))
-                    ? destinosPasajeros[i].Trim()
-                    : destino?.Trim() ?? "";
-
-                var ventasEnAsiento = await _context.Ventas
-                    .Where(v => v.Id_Viaje == viaje.Id_Viaje && v.NumeroAsiento == numAsiento && v.Estado != "Cancelado")
-                    .ToListAsync();
-
-                bool yaOcupado = ventasEnAsiento.Any(v =>
-                    SeTramanSegmentos(
-                        v.OrigenPasajero ?? origenNuevoPasajero, // si no tiene tramo, usa el del viaje
-                        v.DestinoPasajero ?? destinoNuevoPasajero,
-                        origenNuevoPasajero,
-                        destinoNuevoPasajero
-                    )
-                );
+                // Verificar si el asiento ya está ocupado
+                var yaOcupado = await _context.Ventas.AnyAsync(v => v.Id_Viaje == viaje.Id_Viaje && v.NumeroAsiento == numAsiento && v.Estado != "Cancelado");
                 if (yaOcupado) continue;
 
                 // Buscar o crear Pasajero
@@ -731,9 +713,7 @@ namespace SistemaChotaExpress.Controllers
                     RazonSocialEmpresa = (comprobanteFinal == "Factura") ? razonSocialEmpresa?.Trim().ToUpper() : null,
                     DireccionEmpresa = (comprobanteFinal == "Factura") ? direccionEmpresa?.Trim() : null,
                     MetodoPago = string.IsNullOrWhiteSpace(metodoPago) ? "Efectivo" : metodoPago,
-                    Observaciones = obsFinal,
-                    OrigenPasajero = string.IsNullOrWhiteSpace(origenNuevoPasajero) ? null : origenNuevoPasajero,
-                    DestinoPasajero = string.IsNullOrWhiteSpace(destinoNuevoPasajero) ? null : destinoNuevoPasajero
+                    Observaciones = obsFinal
                 };
 
                 _context.Ventas.Add(venta);
@@ -1110,47 +1090,6 @@ namespace SistemaChotaExpress.Controllers
             var fileName = $"Ventas_ChotaExpress_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
 
             return File(bytes, "text/csv", fileName);
-        }
-        // ==========================================
-        // HELPER: Detección de solapamiento de tramos
-        // ==========================================
-        /// <summary>
-        /// Determina si dos segmentos de ruta se solapan, lo que significa que el asiento
-        /// no puede ser vendido para el segmento B si ya está vendido para el segmento A.
-        ///
-        /// Dos segmentos se solapan si comparten algún tramo en común.
-        /// Ejemplo: Cajamarca→Chota y Bambamarca→Chiclayo SE SOLAPAN (comparten Bambamarca→Chota).
-        /// Ejemplo: Cajamarca→Bambamarca y Bambamarca→Chota NO se solapan (son consecutivos).
-        /// 
-        /// NOTA: Para la comparación simple (sin orden de paradas definido), si el origen
-        /// de uno es igual al destino del otro son consecutivos y NO se solapan.
-        /// En cualquier otro caso donde los lugares sean distintos asumimos solapamiento
-        /// para seguridad (comportamiento conservador).
-        /// </summary>
-        private bool SeTramanSegmentos(string origenA, string destinoA, string origenB, string destinoB)
-        {
-            // Normalizar
-            origenA = (origenA ?? "").Trim().ToLowerInvariant();
-            destinoA = (destinoA ?? "").Trim().ToLowerInvariant();
-            origenB = (origenB ?? "").Trim().ToLowerInvariant();
-            destinoB = (destinoB ?? "").Trim().ToLowerInvariant();
-
-            // Si alguno está vacío no podemos determinar el tramo: asumir solapamiento (comportamiento seguro)
-            if (string.IsNullOrEmpty(origenA) || string.IsNullOrEmpty(destinoA) ||
-                string.IsNullOrEmpty(origenB) || string.IsNullOrEmpty(destinoB))
-                return true;
-
-            // Segmentos idénticos: siempre solapan
-            if (origenA == origenB && destinoA == destinoB)
-                return true;
-
-            // Segmentos consecutivos: A termina donde B empieza, o B termina donde A empieza → NO solapan
-            if (destinoA == origenB || destinoB == origenA)
-                return false;
-
-            // Misma dirección, subconjunto de paradas: conservadoramente asumir solapamiento
-            // (evita vender el mismo asiento en trayectos parcialmente superpuestos)
-            return true;
         }
     }
 }

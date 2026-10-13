@@ -57,18 +57,5 @@ namespace SistemaChotaExpress.Models
 
         [StringLength(250)]
         public string? Observaciones { get; set; }
-
-        // ========== TRAMO DEL PASAJERO (para rutas con paradas intermedias) ==========
-        /// <summary>
-        /// Lugar donde sube el pasajero. Null = origen oficial del viaje.
-        /// </summary>
-        [StringLength(100)]
-        public string? OrigenPasajero { get; set; }
-
-        /// <summary>
-        /// Lugar donde baja el pasajero. Null = destino oficial del viaje.
-        /// </summary>
-        [StringLength(100)]
-        public string? DestinoPasajero { get; set; }
     }
 }
