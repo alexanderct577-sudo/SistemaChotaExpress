@@ -50,69 +50,47 @@
                 </div>
             </div>
 
-            <!-- Interactive Bus Body -->
-            <div class="bus-outer-body p-4 mx-auto position-relative">
-                <!-- Llantas Delanteras (arriba) -->
-                <div class="bus-wheel bus-wheel-fl" title="Llanta Delantera Izquierda"></div>
-                <div class="bus-wheel bus-wheel-fr" title="Llanta Delantera Derecha"></div>
-                <!-- Llantas Traseras (abajo) -->
-                <div class="bus-wheel bus-wheel-rl" title="Llanta Trasera Izquierda"></div>
-                <div class="bus-wheel bus-wheel-rr" title="Llanta Trasera Derecha"></div>
+            <!-- Interactive Bus Body (Combi Horizontal) -->
+            <div class="bus-outer-body p-3 mx-auto position-relative">
+                <!-- Llantas Horizontales (2 arriba, 2 abajo) -->
+                <div class="bus-wheel bus-wheel-top-front" title="Llanta Delantera Superior"></div>
+                <div class="bus-wheel bus-wheel-top-rear" title="Llanta Trasera Superior"></div>
+                <div class="bus-wheel bus-wheel-bottom-front" title="Llanta Delantera Inferior"></div>
+                <div class="bus-wheel bus-wheel-bottom-rear" title="Llanta Trasera Inferior"></div>
 
                 <div class="bus-inner-cabin position-relative">
-                    <div class="bus-title text-center text-danger fw-bold mb-3">Piso 1</div>
+                    <div class="bus-title text-center text-danger fw-bold mb-2">Piso 1 - Combi Estándar</div>
                     
-                    <!-- Seats Grid Layout (4 Rows x 5 Columns) -->
+                    <!-- Seats Grid Layout (4 Filas x 5 Columnas) -->
                     <div class="seats-grid">
-                        
-                        <!-- Row 1 (Top) -->
-                        <!-- Col 1: Seat 2 -->
+                        <!-- Fila 1 (Superior) -->
                         @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 1))
-                        <!-- Col 2: Empty -->
                         <div class="seat-space" style="grid-row: 1; grid-column: 2;"></div>
-                        <!-- Col 3: Seat 8 -->
                         @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 1, 3))
-                        <!-- Col 4: Seat 11 -->
                         @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 1, 4))
-                        <!-- Col 5: Seat 15 -->
                         @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 1, 5))
 
-                        <!-- Row 2 -->
-                        <!-- Col 1: Seat 1 -->
+                        <!-- Fila 2 -->
                         @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 2, 1))
-                        <!-- Col 2: Seat 5 -->
                         @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 2))
-                        <!-- Col 3: Aisle -->
                         <div class="seat-space" style="grid-row: 2; grid-column: 3;"></div>
-                        <!-- Col 4: Aisle -->
                         <div class="seat-space" style="grid-row: 2; grid-column: 4;"></div>
-                        <!-- Col 5: Seat 14 -->
                         @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 2, 5))
 
-                        <!-- Row 3 -->
-                        <!-- Col 1: Empty -->
+                        <!-- Fila 3 -->
                         <div class="seat-space" style="grid-row: 3; grid-column: 1;"></div>
-                        <!-- Col 2: Seat 4 -->
                         @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 3, 2))
-                        <!-- Col 3: Seat 7 -->
                         @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 3))
-                        <!-- Col 4: Seat 10 -->
                         @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 3, 4))
-                        <!-- Col 5: Seat 13 -->
                         @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 3, 5))
 
-                        <!-- Row 4 (Bottom) -->
-                        <!-- Col 1: Steering Wheel (Volante) -->
+                        <!-- Fila 4 (Inferior / Chofer) -->
                         <div class="driver-wheel" style="grid-row: 4; grid-column: 1;" title="Chofer">
                             <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 2.2rem;"></i>
                         </div>
-                        <!-- Col 2: Seat 3 -->
                         @Html.Raw(RenderSeatHtml(3, asientosOcupados, asientosReservados, 4, 2))
-                        <!-- Col 3: Seat 6 -->
                         @Html.Raw(RenderSeatHtml(6, asientosOcupados, asientosReservados, 4, 3))
-                        <!-- Col 4: Seat 9 -->
                         @Html.Raw(RenderSeatHtml(9, asientosOcupados, asientosReservados, 4, 4))
-                        <!-- Col 5: Seat 12 -->
                         @Html.Raw(RenderSeatHtml(12, asientosOcupados, asientosReservados, 4, 5))
                     </div>
                 </div>

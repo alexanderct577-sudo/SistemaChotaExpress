@@ -616,41 +616,40 @@
                                     </div>
                                 </div>
 
-                                <!-- Interactive Bus Chassis -->
-                                <div class="bus-outer-body p-4 mx-auto mb-3 position-relative">
-                                    <!-- Llantas Delanteras (arriba) -->
-                                    <div class="bus-wheel bus-wheel-fl" title="Llanta Delantera Izquierda"></div>
-                                    <div class="bus-wheel bus-wheel-fr" title="Llanta Delantera Derecha"></div>
-                                    <!-- Llantas Traseras (abajo) -->
-                                    <div class="bus-wheel bus-wheel-rl" title="Llanta Trasera Izquierda"></div>
-                                    <div class="bus-wheel bus-wheel-rr" title="Llanta Trasera Derecha"></div>
+                                <!-- Interactive Bus Chassis (Combi Horizontal) -->
+                                <div class="bus-outer-body p-3 mx-auto mb-3 position-relative">
+                                    <!-- Llantas Horizontales (2 arriba, 2 abajo) -->
+                                    <div class="bus-wheel bus-wheel-top-front" title="Llanta Delantera Superior"></div>
+                                    <div class="bus-wheel bus-wheel-top-rear" title="Llanta Trasera Superior"></div>
+                                    <div class="bus-wheel bus-wheel-bottom-front" title="Llanta Delantera Inferior"></div>
+                                    <div class="bus-wheel bus-wheel-bottom-rear" title="Llanta Trasera Inferior"></div>
 
                                     <div class="bus-inner-cabin position-relative">
-                                        <div class="bus-title text-center text-danger fw-bold mb-3 fs-9">Piso 1 - Combi Estándar</div>
+                                        <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Combi Estándar</div>
                                         
                                         <div class="seats-grid">
-                                            <!-- Row 1 (Top) -->
+                                            <!-- Fila 1 (Superior) -->
                                             @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 1))
                                             <div class="seat-space" style="grid-row: 1; grid-column: 2;"></div>
                                             @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 1, 3))
                                             @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 1, 4))
                                             @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 1, 5))
 
-                                            <!-- Row 2 -->
+                                            <!-- Fila 2 -->
                                             @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 2, 1))
                                             @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 2))
                                             <div class="seat-space" style="grid-row: 2; grid-column: 3;"></div>
                                             <div class="seat-space" style="grid-row: 2; grid-column: 4;"></div>
                                             @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 2, 5))
 
-                                            <!-- Row 3 -->
+                                            <!-- Fila 3 -->
                                             <div class="seat-space" style="grid-row: 3; grid-column: 1;"></div>
                                             @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 3, 2))
                                             @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 3))
                                             @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 3, 4))
                                             @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 3, 5))
 
-                                            <!-- Row 4 (Bottom) -->
+                                            <!-- Fila 4 (Inferior / Chofer) -->
                                             <div class="driver-wheel" style="grid-row: 4; grid-column: 1;" title="Chofer">
                                                 <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 2rem;"></i>
                                             </div>
