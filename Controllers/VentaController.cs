@@ -180,15 +180,9 @@ namespace SistemaChotaExpress.Controllers
 
                 if (viajeRef != null)
                 {
-                    // Si el usuario cambió la ruta (destino u origen) en los filtros mientras tenía este vehículo activo,
-                    // actualizamos el viaje para que se mantenga el MISMO VEHÍCULO y el MISMO PLANO con sus asientos!
-                    if (rutaActual != null && viajeRef.Id_Ruta != rutaActual.Id_Ruta)
-                    {
-                        viajeRef.Id_Ruta = rutaActual.Id_Ruta;
-                        viajeRef.ObjetoRuta = rutaActual;
-                        await _context.SaveChangesAsync();
-                    }
-
+                    // NUNCA modificar la ruta de un viaje existente — cada viaje pertenece
+                    // a una ruta fija (Chota→Chiclayo NO es lo mismo que Chiclayo→Chota).
+                    // Si el filtro cambia, simplemente mostrar la ruta que tiene ese viaje.
                     selectedViaje = viajeRef;
 
                     // Si el viaje no estaba en la lista filtrada de la ruta, agregarlo para que aparezca en los horarios
@@ -646,16 +640,9 @@ namespace SistemaChotaExpress.Controllers
                 return RedirectToAction("BuscarViajes", new { origen, destino, fecha });
             }
 
-            // Asegurar que el viaje pertenezca a la ruta seleccionada
-            if (!string.IsNullOrWhiteSpace(origen) && !string.IsNullOrWhiteSpace(destino))
-            {
-                var rObj = await _context.Rutas.FirstOrDefaultAsync(r => r.Origen.ToLower() == origen.Trim().ToLower() && r.Destino.ToLower() == destino.Trim().ToLower());
-                if (rObj != null && viaje.Id_Ruta != rObj.Id_Ruta)
-                {
-                    viaje.Id_Ruta = rObj.Id_Ruta;
-                    await _context.SaveChangesAsync();
-                }
-            }
+            // NO modificar la ruta del viaje — cada viaje pertenece a su ruta fija.
+            // Si el frontend envía origen/destino distintos, significa que el operador
+            // está vendiendo en la ruta correcta; el viaje seleccionado ya pertenece a ella.
 
             var emailUsuario = User.FindFirstValue(ClaimTypes.Email);
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == emailUsuario) 
@@ -681,8 +668,26 @@ namespace SistemaChotaExpress.Controllers
                 if (string.IsNullOrWhiteSpace(nDoc)) nDoc = $"S/D-{numAsiento}";
                 if (string.IsNullOrWhiteSpace(nomComp)) nomComp = $"PASAJERO ASIENTO {numAsiento}";
 
-                // Verificar si el asiento ya está ocupado
-                var yaOcupado = await _context.Ventas.AnyAsync(v => v.Id_Viaje == viaje.Id_Viaje && v.NumeroAsiento == numAsiento && v.Estado != "Cancelado");
+                // Verificar si el asiento ya está ocupado para ESTE TRAMO
+                // Un asiento está ocupado solo si hay otra venta en el mismo viaje cuyo
+                // tramo se SOLAPA con el tramo del pasajero nuevo.
+                string origenNuevoPasajero = origen?.Trim() ?? "";
+                string destinoNuevoPasajero = (destinosPasajeros != null && i < destinosPasajeros.Count && !string.IsNullOrWhiteSpace(destinosPasajeros[i]))
+                    ? destinosPasajeros[i].Trim()
+                    : destino?.Trim() ?? "";
+
+                var ventasEnAsiento = await _context.Ventas
+                    .Where(v => v.Id_Viaje == viaje.Id_Viaje && v.NumeroAsiento == numAsiento && v.Estado != "Cancelado")
+                    .ToListAsync();
+
+                bool yaOcupado = ventasEnAsiento.Any(v =>
+                    SeTramanSegmentos(
+                        v.OrigenPasajero ?? origenNuevoPasajero, // si no tiene tramo, usa el del viaje
+                        v.DestinoPasajero ?? destinoNuevoPasajero,
+                        origenNuevoPasajero,
+                        destinoNuevoPasajero
+                    )
+                );
                 if (yaOcupado) continue;
 
                 // Buscar o crear Pasajero
@@ -726,7 +731,9 @@ namespace SistemaChotaExpress.Controllers
                     RazonSocialEmpresa = (comprobanteFinal == "Factura") ? razonSocialEmpresa?.Trim().ToUpper() : null,
                     DireccionEmpresa = (comprobanteFinal == "Factura") ? direccionEmpresa?.Trim() : null,
                     MetodoPago = string.IsNullOrWhiteSpace(metodoPago) ? "Efectivo" : metodoPago,
-                    Observaciones = obsFinal
+                    Observaciones = obsFinal,
+                    OrigenPasajero = string.IsNullOrWhiteSpace(origenNuevoPasajero) ? null : origenNuevoPasajero,
+                    DestinoPasajero = string.IsNullOrWhiteSpace(destinoNuevoPasajero) ? null : destinoNuevoPasajero
                 };
 
                 _context.Ventas.Add(venta);
@@ -1103,6 +1110,47 @@ namespace SistemaChotaExpress.Controllers
             var fileName = $"Ventas_ChotaExpress_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
 
             return File(bytes, "text/csv", fileName);
+        }
+        // ==========================================
+        // HELPER: Detección de solapamiento de tramos
+        // ==========================================
+        /// <summary>
+        /// Determina si dos segmentos de ruta se solapan, lo que significa que el asiento
+        /// no puede ser vendido para el segmento B si ya está vendido para el segmento A.
+        ///
+        /// Dos segmentos se solapan si comparten algún tramo en común.
+        /// Ejemplo: Cajamarca→Chota y Bambamarca→Chiclayo SE SOLAPAN (comparten Bambamarca→Chota).
+        /// Ejemplo: Cajamarca→Bambamarca y Bambamarca→Chota NO se solapan (son consecutivos).
+        /// 
+        /// NOTA: Para la comparación simple (sin orden de paradas definido), si el origen
+        /// de uno es igual al destino del otro son consecutivos y NO se solapan.
+        /// En cualquier otro caso donde los lugares sean distintos asumimos solapamiento
+        /// para seguridad (comportamiento conservador).
+        /// </summary>
+        private bool SeTramanSegmentos(string origenA, string destinoA, string origenB, string destinoB)
+        {
+            // Normalizar
+            origenA = (origenA ?? "").Trim().ToLowerInvariant();
+            destinoA = (destinoA ?? "").Trim().ToLowerInvariant();
+            origenB = (origenB ?? "").Trim().ToLowerInvariant();
+            destinoB = (destinoB ?? "").Trim().ToLowerInvariant();
+
+            // Si alguno está vacío no podemos determinar el tramo: asumir solapamiento (comportamiento seguro)
+            if (string.IsNullOrEmpty(origenA) || string.IsNullOrEmpty(destinoA) ||
+                string.IsNullOrEmpty(origenB) || string.IsNullOrEmpty(destinoB))
+                return true;
+
+            // Segmentos idénticos: siempre solapan
+            if (origenA == origenB && destinoA == destinoB)
+                return true;
+
+            // Segmentos consecutivos: A termina donde B empieza, o B termina donde A empieza → NO solapan
+            if (destinoA == origenB || destinoB == origenA)
+                return false;
+
+            // Misma dirección, subconjunto de paradas: conservadoramente asumir solapamiento
+            // (evita vender el mismo asiento en trayectos parcialmente superpuestos)
+            return true;
         }
     }
 }
