@@ -185,24 +185,7 @@ namespace SistemaChotaExpress.Controllers
                     {
                         selectedViaje = viajeRef;
                     }
-                    else if (viajes.Any())
-                    {
-                        // Si el usuario cambió de ruta o fecha, NO arrastrar el viaje de la otra ruta.
-                        // En su lugar, sincronizamos al viaje de la MISMA hora en la nueva ruta si existe,
-                        // o el viaje más cercano a la hora actual.
-                        int horaPrevia = viajeRef.FechaHoraSalida.Hour;
-                        selectedViaje = viajes.FirstOrDefault(v => v.FechaHoraSalida.Hour == horaPrevia)
-                                     ?? viajes.FirstOrDefault(v => v.FechaHoraSalida >= DateTime.Now)
-                                     ?? viajes.First();
-                    }
                 }
-            }
-
-            // Si aún no hay viaje seleccionado (o no se envió viajeId), seleccionar automáticamente el viaje más cercano a la hora actual
-            if (selectedViaje == null && viajes.Any())
-            {
-                selectedViaje = viajes.FirstOrDefault(v => v.FechaHoraSalida >= DateTime.Now)
-                             ?? viajes.First();
             }
 
             var viajesDisponibles = new List<ViajeConDisponibilidad>();

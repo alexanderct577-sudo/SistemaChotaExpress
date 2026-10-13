@@ -302,12 +302,8 @@
     <!-- LEFT SIDEBAR -->
     <div class="col-xl-3 col-lg-4 col-md-5 col-12">
         <form method="get" id="searchFilterForm" class="m-0" action="@Url.Action("BuscarViajes")">
-            <!-- Search Date and Selected Trip hidden inputs -->
+            <!-- Search Date hidden input -->
             <input type="hidden" name="fecha" id="fechaInput" value="@ViewBag.SelectedFecha" />
-            @if (selectedViaje != null)
-            {
-                <input type="hidden" name="viajeId" id="filtroViajeId" value="@selectedViaje.Id_Viaje" />
-            }
 
             <!-- Selección de Origen y Destino -->
             <div class="sidebar-card border-warning">
@@ -436,7 +432,8 @@
                                     var isSelected = itemSeleccionado != null;
                                     var targetTrip = (itemSeleccionado ?? tripsEnHora.First()).Viaje;
 
-                                    <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = targetTrip.Id_Viaje })#bookingSection" 
+                                    <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = targetTrip.Id_Viaje })" 
+                                       onclick="window.location.href = this.href; return false;"
                                        class="btn hour-pill-btn mb-1 me-1 @(isSelected ? "btn-teal-active shadow-lg" : "btn-glass-pill")"
                                        title="Salida a las @horaTexto (@cantidadVehiculos vehículo(s))">
                                         <i class="fa-regular fa-clock me-1 fs-9"></i>@horaTexto
@@ -479,7 +476,8 @@
                                     var chofer = string.IsNullOrWhiteSpace(itemV.Viaje.NombreConductor) ? "Sin Conductor" : itemV.Viaje.NombreConductor;
 
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = itemV.Viaje.Id_Viaje })#bookingSection"
+                                        <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = itemV.Viaje.Id_Viaje })"
+                                           onclick="window.location.href = this.href; return false;"
                                            class="btn @(isThisSelected ? "btn-teal-active shadow-lg text-white font-weight-700" : "btn-outline-light border-glass-btn opacity-85") fs-8 py-1.5 px-3">
                                             <i class="fa-solid fa-van-shuttle me-1 text-warning"></i>
                                             <strong>@nombreVeh</strong> <small class="opacity-75">(@chofer)</small>
@@ -1044,6 +1042,14 @@
                 </div>
             </div>
         </div>
+    </div>
+}
+else if (hasActiveRoute)
+{
+    <div class="card bg-dark text-white border-warning p-4 text-center my-3 shadow-lg rounded-4">
+        <i class="fa-regular fa-clock fa-2x text-warning mb-2 d-block"></i>
+        <h5 class="fw-bold text-warning mb-1">HORARIO NO SELECCIONADO</h5>
+        <p class="text-muted fs-8 mb-0">Haga clic en cualquiera de las horas disponibles arriba para ver el vehículo y los asientos correspondientes a <strong class="text-white">@ViewBag.SelectedOrigen → @ViewBag.SelectedDestino</strong>.</p>
     </div>
 }
 
