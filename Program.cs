@@ -36,8 +36,25 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 // 2. REGISTRAR CONEXION EF CORE (PostgreSQL en Railway o SQL Server en Local)
+string? discoveredPostgres = null;
+try
+{
+    foreach (System.Collections.DictionaryEntry env in Environment.GetEnvironmentVariables())
+    {
+        string val = env.Value?.ToString()?.Trim() ?? "";
+        if (val.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+            val.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+        {
+            discoveredPostgres = val;
+            break;
+        }
+    }
+}
+catch { }
+
 string rawConn =
-    Environment.GetEnvironmentVariable("DATABASE_URL")
+    discoveredPostgres
+    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? Environment.GetEnvironmentVariable("DATABASE_PUBLIC_URL")
     ?? Environment.GetEnvironmentVariable("POSTGRES_URL")
     ?? Environment.GetEnvironmentVariable("POSTGRESQL_URL")
@@ -45,10 +62,13 @@ string rawConn =
     ?? Environment.GetEnvironmentVariable("URL DE LA BASE DE DATOS")
     ?? Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING")
     ?? builder.Configuration.GetConnectionString("CadenaChotaExpress")
-    ?? "Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+    ?? (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+        ? "Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+        : "");
 
-bool isPostgres = rawConn.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
-                  rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase);
+bool isPostgres = !string.IsNullOrWhiteSpace(rawConn) &&
+                  (rawConn.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+                   rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase));
 
 string finalConn = rawConn;
 if (isPostgres)

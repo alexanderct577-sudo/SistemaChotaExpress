@@ -24,8 +24,11 @@ namespace SistemaChotaExpress.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // Fallback para herramientas EF Core (dotnet ef migrations)
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+                // Fallback para herramientas EF Core solo en Windows
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                {
+                    optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+                }
             }
         }
 
