@@ -39,6 +39,10 @@ builder.Services.AddControllersWithViews(options =>
 string rawConn =
     Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? Environment.GetEnvironmentVariable("DATABASE_PUBLIC_URL")
+    ?? Environment.GetEnvironmentVariable("POSTGRES_URL")
+    ?? Environment.GetEnvironmentVariable("POSTGRESQL_URL")
+    ?? Environment.GetEnvironmentVariable("URL_DE_LA_BASE_DE_DATOS")
+    ?? Environment.GetEnvironmentVariable("URL DE LA BASE DE DATOS")
     ?? Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING")
     ?? builder.Configuration.GetConnectionString("CadenaChotaExpress")
     ?? "Server=(localdb)\\mssqllocaldb;Database=SistemaChotaExpress_BD;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
