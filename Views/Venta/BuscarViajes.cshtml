@@ -701,11 +701,8 @@
                                      <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
 
                                      <!-- Indicadores de Selección de Asientos -->
-                                     <div id="seatAlert" class="alert alert-warning p-2 mb-3 fs-9 text-center" role="alert">
-                                         <i class="fa-solid fa-hand-pointer me-1"></i> Haga clic en uno o varios asientos libres del mapa para seleccionarlos.
-                                     </div>
                                      <div id="seatSelectedIndicator" class="alert alert-success p-2 mb-3 fs-8 text-center d-none fw-bold" role="alert">
-                                         <i class="fa-solid fa-circle-check me-1"></i> Asiento(s) Seleccionado(s): <span id="selectedSeatLabel" class="badge bg-dark px-2 py-1 fs-8 text-success border border-success">Ninguno</span>
+                                         <i class="fa-solid fa-circle-check me-1"></i> Asiento(s): <span id="selectedSeatLabel" class="badge bg-dark px-2 py-1 fs-8 text-success border border-success">Ninguno</span>
                                      </div>
 
                                      <!-- ============================================== -->
@@ -718,7 +715,6 @@
                                          </div>
 
                                          <div id="asientosPasajerosContainer">
-                                             <p class="text-white fs-8 text-center fw-bold py-3 m-0"><i class="fa-solid fa-info-circle text-warning me-1"></i> Seleccione un asiento en el mapa interactivo para ingresar los datos del pasajero.</p>
                                          </div>
                                      </div>
 
@@ -806,12 +802,9 @@
                 }
                 else
                 {
-                    <div class="card bg-dark text-white border-glass p-5 text-center shadow-lg my-3">
-                        <i class="fa-solid fa-van-shuttle text-primary mb-3" style="font-size: 3.5rem;"></i>
-                        <h4 class="fw-bold text-white">Seleccione un Horario de Salida</h4>
-                        <p class="text-muted fs-7 mx-auto" style="max-width: 540px;">
-                            Haga clic en cualquiera de los horarios disponibles en la barra superior para cargar el croquis de asientos del vehículo y gestionar pasajes.
-                        </p>
+                    <div class="card bg-dark text-white border-glass p-4 text-center shadow-lg my-3">
+                        <i class="fa-solid fa-van-shuttle text-primary mb-2" style="font-size: 2.8rem; opacity:0.6;"></i>
+                        <p class="text-muted fs-8 m-0">Seleccione un horario para gestionar asientos y pasajes.</p>
                     </div>
                 }
             </div>
@@ -868,8 +861,7 @@
                     <div class="mb-3">
                         <label class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
                         <input type="text" name="conductorNombre" id="inputModalConductor" class="form-control bg-dark-input text-white border-glass-field" 
-                               placeholder="Ej. Carlos Gómez, Juan Pérez, Mario Silva" required />
-                        <span class="fs-9 text-muted mt-1 d-block"><i class="fa-solid fa-info-circle me-1"></i> Ingrese el nombre del chofer asignado a esta salida.</span>
+                               placeholder="Nombre del conductor" required />
                     </div>
                 </div>
                 <div class="modal-footer border-secondary py-2">
@@ -1154,7 +1146,6 @@ else if (hasActiveRoute)
             if (bookingSection) {
                 const seats = document.querySelectorAll(".seat-box.seat-available");
                 const selectedSeatLabel = document.getElementById("selectedSeatLabel");
-                const seatAlert = document.getElementById("seatAlert");
                 const seatSelectedIndicator = document.getElementById("seatSelectedIndicator");
                 const containerPasajeros = document.getElementById("asientosPasajerosContainer");
                 const counterAsientos = document.getElementById("counterAsientos");
@@ -1184,17 +1175,15 @@ else if (hasActiveRoute)
                     containerPasajeros.innerHTML = "";
 
                     if (selectedSeatsList.length === 0) {
-                        seatAlert.classList.remove("d-none");
                         seatSelectedIndicator.classList.add("d-none");
                         btnVenderSubmit.setAttribute("disabled", "true");
                         btnReservarSubmit.setAttribute("disabled", "true");
                         counterAsientos.textContent = "0 Asiento(s)";
-                        containerPasajeros.innerHTML = '<p class="text-muted fs-8 text-center py-3 m-0"><i class="fa-solid fa-info-circle me-1"></i> Seleccione un asiento en el mapa interactivo para ingresar los datos del pasajero.</p>';
+                        containerPasajeros.innerHTML = '';
                         calculateTotalSum();
                         return;
                     }
 
-                    seatAlert.classList.add("d-none");
                     seatSelectedIndicator.classList.remove("d-none");
                     btnVenderSubmit.removeAttribute("disabled");
                     btnReservarSubmit.removeAttribute("disabled");
