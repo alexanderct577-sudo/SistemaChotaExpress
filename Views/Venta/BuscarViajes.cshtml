@@ -1060,6 +1060,8 @@
 
             if (searchFilterForm && origenSelect && destinoSelect) {
                 origenSelect.addEventListener("change", function() {
+                    const filtroViaje = document.getElementById("filtroViajeId");
+                    if (filtroViaje) filtroViaje.value = "";
                     const orig = this.value ? this.value.trim() : "";
                     const dest = destinoSelect.value ? destinoSelect.value.trim() : "";
                     if (orig && dest && orig.toLowerCase() === dest.toLowerCase()) {
@@ -1068,6 +1070,8 @@
                 });
 
                 destinoSelect.addEventListener("change", function() {
+                    const filtroViaje = document.getElementById("filtroViajeId");
+                    if (filtroViaje) filtroViaje.value = "";
                     const orig = origenSelect.value ? origenSelect.value.trim() : "";
                     const dest = this.value ? this.value.trim() : "";
                     if (orig && dest && orig.toLowerCase() === dest.toLowerCase()) {

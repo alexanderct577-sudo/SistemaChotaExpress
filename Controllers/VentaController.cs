@@ -180,22 +180,29 @@ namespace SistemaChotaExpress.Controllers
 
                 if (viajeRef != null)
                 {
-                    // NUNCA modificar la ruta de un viaje existente — cada viaje pertenece
-                    // a una ruta fija (Chota→Chiclayo NO es lo mismo que Chiclayo→Chota).
-                    // Si el filtro cambia, simplemente mostrar la ruta que tiene ese viaje.
-                    selectedViaje = viajeRef;
-
-                    // Si el viaje no estaba en la lista filtrada de la ruta, agregarlo para que aparezca en los horarios
-                    if (!viajes.Any(v => v.Id_Viaje == selectedViaje.Id_Viaje))
+                    // Si el viaje pertenece a la ruta actual y a la fecha consultada:
+                    if (rutaActual != null && viajeRef.Id_Ruta == rutaActual.Id_Ruta && viajeRef.FechaHoraSalida.Date == startOfDay)
                     {
-                        viajes.Add(selectedViaje);
-                        viajes = viajes.OrderBy(v => v.FechaHoraSalida).ThenBy(v => v.Id_Viaje).ToList();
+                        selectedViaje = viajeRef;
+                    }
+                    else if (viajes.Any())
+                    {
+                        // Si el usuario cambió de ruta o fecha, NO arrastrar el viaje de la otra ruta.
+                        // En su lugar, sincronizamos al viaje de la MISMA hora en la nueva ruta si existe,
+                        // o el viaje más cercano a la hora actual.
+                        int horaPrevia = viajeRef.FechaHoraSalida.Hour;
+                        selectedViaje = viajes.FirstOrDefault(v => v.FechaHoraSalida.Hour == horaPrevia)
+                                     ?? viajes.FirstOrDefault(v => v.FechaHoraSalida >= DateTime.Now)
+                                     ?? viajes.First();
                     }
                 }
-                else if (viajes.Any())
-                {
-                    selectedViaje = viajes.First();
-                }
+            }
+
+            // Si aún no hay viaje seleccionado (o no se envió viajeId), seleccionar automáticamente el viaje más cercano a la hora actual
+            if (selectedViaje == null && viajes.Any())
+            {
+                selectedViaje = viajes.FirstOrDefault(v => v.FechaHoraSalida >= DateTime.Now)
+                             ?? viajes.First();
             }
 
             var viajesDisponibles = new List<ViajeConDisponibilidad>();
