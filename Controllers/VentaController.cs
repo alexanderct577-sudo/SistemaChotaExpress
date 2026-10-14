@@ -124,21 +124,13 @@ namespace SistemaChotaExpress.Controllers
                 .ToListAsync();
             ViewBag.RutasCompletas = rutasCompletas;
 
-            DateTime selectedFecha;
-            if (!DateTime.TryParse(fecha, out selectedFecha))
-            {
-                selectedFecha = DateTime.Today;
-            }
-
-            // REGLA: Solo se puede emitir / consultar pasajes hasta 3 días hacia atrás (no más)
-            var minFechaPermitida = DateTime.Today.AddDays(-3);
-            if (selectedFecha.Date < minFechaPermitida)
-            {
-                selectedFecha = minFechaPermitida;
-                TempData["ErrorMessage"] = "Solo se permite consultar o emitir ventas de pasajes hasta con un máximo de 3 días de antigüedad.";
-            }
+            // REGLA ESTRICTA DE NEGOCIO: La venta y emisión de pasajes es ÚNICAMENTE para la FECHA DE HOY (Hora Perú UTC-5).
+            // No se permiten fechas adelantadas ni atrasadas.
+            var hoyPeru = DateTime.UtcNow.AddHours(-5).Date;
+            DateTime selectedFecha = hoyPeru;
 
             ViewBag.SelectedFecha = selectedFecha.ToString("yyyy-MM-dd");
+            ViewBag.FechaHoyFormateada = selectedFecha.ToString("dd/MM/yyyy");
 
             // Lista oficial de los 14 lugares autorizados para Tours Chota Express
             var todosLosLugares = GeneradorViajesService.LugaresOficiales.OrderBy(l => l).ToList();
@@ -332,8 +324,7 @@ namespace SistemaChotaExpress.Controllers
             }
             else
             {
-                DateTime selectedFecha;
-                if (!DateTime.TryParse(fecha, out selectedFecha)) selectedFecha = DateTime.Today;
+                DateTime selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
                 fechaHoraSalida = selectedFecha.Date.AddHours(hora ?? 0);
 
                 if (!idRutaRef.HasValue)
@@ -439,11 +430,7 @@ namespace SistemaChotaExpress.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarSalida(int viajeId, string? origen, string? destino, string fecha)
         {
-            DateTime selectedFecha;
-            if (!DateTime.TryParse(fecha, out selectedFecha))
-            {
-                selectedFecha = DateTime.Today;
-            }
+            DateTime selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
 
             var viaje = await _context.Viajes
                 .Include(v => v.Ventas)
@@ -550,7 +537,7 @@ namespace SistemaChotaExpress.Controllers
                 Id_Usuario = usuario.Id_Usuario,
                 NumeroAsiento = numeroAsiento,
                 PrecioPagado = precioPagado,
-                FechaVenta = DateTime.Now,
+                FechaVenta = DateTime.UtcNow.AddHours(-5),
                 Estado = (tipoTransaccion == "Reserva") ? "Reservado" : "Vendido",
                 TipoComprobante = comprobanteFinal,
                 RucEmpresa = (comprobanteFinal == "Factura") ? rucEmpresa?.Trim() : null,
@@ -696,7 +683,7 @@ namespace SistemaChotaExpress.Controllers
                     Id_Usuario = usuario.Id_Usuario,
                     NumeroAsiento = numAsiento,
                     PrecioPagado = precio,
-                    FechaVenta = DateTime.Now,
+                    FechaVenta = DateTime.UtcNow.AddHours(-5),
                     Estado = (tipoTransaccion == "Reserva") ? "Reservado" : "Vendido",
                     TipoComprobante = comprobanteFinal,
                     RucEmpresa = (comprobanteFinal == "Factura") ? rucEmpresa?.Trim() : null,
@@ -879,7 +866,7 @@ namespace SistemaChotaExpress.Controllers
             }
 
             venta.Estado = "Vendido";
-            venta.FechaVenta = DateTime.Now;
+            venta.FechaVenta = DateTime.UtcNow.AddHours(-5);
             await _context.SaveChangesAsync();
 
             // Generar y subir comprobante electrónico SUNAT

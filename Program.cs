@@ -280,7 +280,7 @@ using (var scope = app.Services.CreateScope())
                 using var bgScope = app.Services.CreateScope();
                 var bgContext = bgScope.ServiceProvider.GetRequiredService<AppDbContext>();
                 await GeneradorViajesService.AsegurarRutasOficialesAsync(bgContext);
-                await GeneradorViajesService.AsegurarViajesParaFechaAsync(bgContext, DateTime.Today);
+                await GeneradorViajesService.AsegurarViajesParaFechaAsync(bgContext, DateTime.UtcNow.AddHours(-5).Date);
             }
             catch { }
         });
