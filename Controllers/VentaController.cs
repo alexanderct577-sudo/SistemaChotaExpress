@@ -124,13 +124,25 @@ namespace SistemaChotaExpress.Controllers
                 .ToListAsync();
             ViewBag.RutasCompletas = rutasCompletas;
 
-            // REGLA ESTRICTA DE NEGOCIO: La venta y emisión de pasajes es ÚNICAMENTE para la FECHA DE HOY (Hora Perú UTC-5).
-            // No se permiten fechas adelantadas ni atrasadas.
+            // Fecha base de Hoy en Perú (UTC-5)
             var hoyPeru = DateTime.UtcNow.AddHours(-5).Date;
-            DateTime selectedFecha = hoyPeru;
+            DateTime selectedFecha;
+            if (!DateTime.TryParse(fecha, out selectedFecha))
+            {
+                selectedFecha = hoyPeru;
+            }
+
+            // REGLA: Se permite vender pasajes de hoy en adelante, y con un máximo de hasta 3 días anteriores
+            var minFechaPermitida = hoyPeru.AddDays(-3);
+            if (selectedFecha.Date < minFechaPermitida)
+            {
+                selectedFecha = minFechaPermitida;
+                TempData["ErrorMessage"] = "Solo se permite consultar o emitir ventas de pasajes hasta con un máximo de 3 días de antigüedad.";
+            }
 
             ViewBag.SelectedFecha = selectedFecha.ToString("yyyy-MM-dd");
-            ViewBag.FechaHoyFormateada = selectedFecha.ToString("dd/MM/yyyy");
+            ViewBag.FechaHoy = hoyPeru.ToString("yyyy-MM-dd");
+            ViewBag.FechaHoyFormateada = hoyPeru.ToString("dd/MM/yyyy");
 
             // Lista oficial de los 14 lugares autorizados para Tours Chota Express
             var todosLosLugares = GeneradorViajesService.LugaresOficiales.OrderBy(l => l).ToList();
@@ -324,7 +336,8 @@ namespace SistemaChotaExpress.Controllers
             }
             else
             {
-                DateTime selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
+                DateTime selectedFecha;
+                if (!DateTime.TryParse(fecha, out selectedFecha)) selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
                 fechaHoraSalida = selectedFecha.Date.AddHours(hora ?? 0);
 
                 if (!idRutaRef.HasValue)
@@ -430,7 +443,8 @@ namespace SistemaChotaExpress.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarSalida(int viajeId, string? origen, string? destino, string fecha)
         {
-            DateTime selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
+            DateTime selectedFecha;
+            if (!DateTime.TryParse(fecha, out selectedFecha)) selectedFecha = DateTime.UtcNow.AddHours(-5).Date;
 
             var viaje = await _context.Viajes
                 .Include(v => v.Ventas)

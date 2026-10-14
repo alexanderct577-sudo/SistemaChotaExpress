@@ -368,17 +368,13 @@
         <!-- Calendario de Salidas -->
         <div class="sidebar-card">
             <div class="sidebar-section-title text-white fw-bold fs-8 mb-2">
-                <i class="fa-solid fa-calendar-day text-warning me-1"></i> FECHA DE SALIDA (HOY)
-            </div>
-            <div class="p-2.5 rounded bg-dark border-glass text-center mb-2">
-                <span class="fs-7 fw-bold text-warning d-block"><i class="fa-regular fa-calendar-check me-1"></i> @ViewBag.FechaHoyFormateada</span>
-                <small class="text-white opacity-75 fs-9">Salidas del Día (Venta Inmediata)</small>
+                <i class="fa-solid fa-calendar-days text-warning me-1"></i> FECHA DE VIAJE
             </div>
             <div class="calendar-container" id="calendarWidget">
                 <!-- Calendar generated dynamically via Javascript -->
             </div>
             <div class="text-center mt-2">
-                <span class="badge bg-dark border-glass text-muted fs-9"><i class="fa-solid fa-lock me-1"></i> Emisión exclusiva para hoy</span>
+                <button type="button" class="btn btn-sm btn-link text-warning fs-9" id="btnGoToToday"><i class="fa-solid fa-circle-dot"></i> Ir a Hoy</button>
             </div>
         </div>
     </div>
@@ -387,7 +383,7 @@
     <div class="col-xl-9 col-lg-8 col-md-7 col-12">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="h3 text-white fw-bold m-0"><i class="fa-solid fa-cash-register text-primary me-2"></i> Módulo de Ventas & Salidas</h1>
-            <span class="badge bg-warning text-dark fs-8 fw-bold"><i class="fa-regular fa-calendar-check me-1"></i> Fecha: @ViewBag.SelectedFecha (Hoy)</span>
+            <span class="badge bg-warning text-dark fs-8 fw-bold"><i class="fa-regular fa-calendar me-1"></i> Fecha: @ViewBag.SelectedFecha</span>
         </div>
 
         <div class="sales-content-area">
@@ -1066,6 +1062,13 @@ else if (hasActiveRoute)
                     grid.appendChild(emptyCell);
                 }
 
+                const hoyParts = '@ViewBag.FechaHoy'.split('-');
+                const today = new Date(parseInt(hoyParts[0]), parseInt(hoyParts[1]) - 1, parseInt(hoyParts[2]));
+                today.setHours(0, 0, 0, 0);
+
+                const minDateAllowed = new Date(today);
+                minDateAllowed.setDate(minDateAllowed.getDate() - 3);
+
                 // Append actual days
                 for (let day = 1; day <= totalDays; day++) {
                     const cell = document.createElement("div");
@@ -1076,16 +1079,28 @@ else if (hasActiveRoute)
                     cellDate.setHours(0, 0, 0, 0);
 
                     const cellDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const isToday = (selectedDateStr === cellDateString);
 
-                    if (isToday) {
-                        cell.classList.add("selected-cell", "today-cell");
-                        cell.title = "Fecha actual de venta: Hoy";
-                    } else {
+                    if (cellDate < minDateAllowed) {
                         cell.classList.add("empty-cell");
-                        cell.style.opacity = "0.35";
+                        cell.style.opacity = "0.3";
                         cell.style.cursor = "not-allowed";
-                        cell.title = "La venta de pasajes se emite únicamente para el día de hoy (no se permiten fechas adelantadas ni atrasadas)";
+                        cell.title = "No se permite emitir ventas con más de 3 días de antigüedad";
+                    } else {
+                        // Check if selected
+                        if (selectedDateStr === cellDateString) {
+                            cell.classList.add("selected-cell");
+                        }
+
+                        // Check if today
+                        if (today.getDate() === day && today.getMonth() === month && today.getFullYear() === year) {
+                            cell.classList.add("today-cell");
+                        }
+
+                        // Handle cell click
+                        cell.addEventListener("click", function() {
+                            fechaInput.value = cellDateString;
+                            document.getElementById("searchFilterForm").submit();
+                        });
                     }
 
                     grid.appendChild(cell);
@@ -1118,6 +1133,15 @@ else if (hasActiveRoute)
             }
 
             renderCalendar(displayYear, displayMonth);
+
+            // Go to Today Button
+            const btnGoToToday = document.getElementById("btnGoToToday");
+            if (btnGoToToday) {
+                btnGoToToday.addEventListener("click", function() {
+                    fechaInput.value = '@ViewBag.FechaHoy';
+                    document.getElementById("searchFilterForm").submit();
+                });
+            }
 
             // Booking form setup (Multi-Seat selection & shared RUC invoice)
             const bookingSection = document.getElementById("bookingSection");
