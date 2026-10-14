@@ -124,7 +124,7 @@ namespace SistemaChotaExpress.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registrar(Encomienda modelo, string? origenRuta, string? destinoRuta)
+        public async Task<IActionResult> Registrar(Encomienda modelo, string? origenRuta, string? destinoRuta, string? tipoComprobante)
         {
             try
             {
@@ -181,6 +181,7 @@ namespace SistemaChotaExpress.Controllers
                 var totalEncomiendas = await _context.Encomiendas.CountAsync();
                 int siguienteNumero = totalEncomiendas + 1;
                 modelo.CodigoSeguimiento = $"ENC-{siguienteNumero:D4}";
+                
                 // Clave de envío de seguridad (si no se digitó, se autogenera una de 4 dígitos)
                 if (string.IsNullOrWhiteSpace(modelo.ClaveEnvio))
                 {
@@ -191,6 +192,13 @@ namespace SistemaChotaExpress.Controllers
                 {
                     modelo.MetodoPago = "Efectivo";
                 }
+
+                // Guardar tipo de comprobante en observaciones de forma estructurada
+                string compTag = !string.IsNullOrWhiteSpace(tipoComprobante) ? tipoComprobante : (!string.IsNullOrWhiteSpace(modelo.RucRemitente) ? "Factura" : "Boleta");
+                string obsOriginal = modelo.Observaciones ?? "";
+                modelo.Observaciones = $"[COMPROBANTE:{compTag}] {obsOriginal}".Trim();
+
+                modelo.FechaRegistro = DateTime.UtcNow.AddHours(-5);
 
                 // Asignar trabajador que registra
                 var emailActual = User.FindFirstValue(ClaimTypes.Email);
@@ -203,8 +211,8 @@ namespace SistemaChotaExpress.Controllers
                 _context.Encomiendas.Add(modelo);
                 await _context.SaveChangesAsync();
 
-                TempData["Exito"] = $"¡Encomienda N° {siguienteNumero} registrada con éxito! Código: {modelo.CodigoSeguimiento}";
-                return RedirectToAction("Detalle", new { id = modelo.Id_Encomienda });
+                TempData["Exito"] = $"¡Encomienda N° {siguienteNumero} registrada con éxito! Comprobante emitido: {compTag} ({modelo.NumeroComprobante}).";
+                return RedirectToAction("Ticket", new { id = modelo.Id_Encomienda, nuevo = true });
             }
             catch (Exception ex)
             {
@@ -228,7 +236,7 @@ namespace SistemaChotaExpress.Controllers
         }
 
         // =============================================
-        // 3. DETALLE / COMPROBANTE DE ENCOMIENDA
+        // 3. DETALLE DE ENCOMIENDA
         // =============================================
         [HttpGet]
         public async Task<IActionResult> Detalle(int id)
@@ -258,6 +266,32 @@ namespace SistemaChotaExpress.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al cargar el detalle: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+        // =============================================
+        // 3.1 COMPROBANTE / TICKET IMPRIMIBLE PARA CLIENTE
+        // =============================================
+        [HttpGet]
+        public async Task<IActionResult> Ticket(int id, string formato = "termal", bool nuevo = false)
+        {
+            try
+            {
+                var enc = await _context.Encomiendas
+                    .Include(e => e.ObjetoRuta)
+                    .Include(e => e.UsuarioRegistro)
+                    .FirstOrDefaultAsync(e => e.Id_Encomienda == id);
+
+                if (enc == null) return NotFound();
+
+                ViewBag.Formato = formato;
+                ViewBag.EsNuevo = nuevo;
+                return View(enc);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al generar comprobante: " + ex.Message;
                 return RedirectToAction("Index");
             }
         }

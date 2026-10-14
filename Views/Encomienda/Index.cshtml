@@ -141,7 +141,10 @@
                             };
                             <tr class="@(enc.Estado == "Anulado" ? "opacity-50" : "")">
                                 <td class="text-muted font-monospace fw-bold">@(numItem++)</td>
-                                <td><span class="badge bg-warning text-dark fw-bold">@enc.CodigoSeguimiento</span></td>
+                                <td>
+                                    <span class="badge bg-warning text-dark fw-bold">@enc.CodigoSeguimiento</span>
+                                    <span class="badge bg-dark border border-secondary font-monospace d-block mt-1" style="font-size: 0.65rem;">@enc.TipoComprobante: @enc.NumeroComprobante</span>
+                                </td>
                                 <td>
                                     <div class="fw-semibold">@enc.NombreRemitente</div>
                                     @if (!string.IsNullOrEmpty(enc.DniRemitente))
@@ -184,6 +187,10 @@
                                 <td><small class="text-muted">@enc.FechaRegistro.ToString("dd/MM/yy HH:mm")</small></td>
                                 <td class="text-end">
                                     <div class="d-flex gap-1 justify-content-end">
+                                        <a asp-action="Ticket" asp-route-id="@enc.Id_Encomienda" target="_blank"
+                                           class="btn btn-outline-warning btn-sm px-2" title="Imprimir Comprobante (@enc.TipoComprobante)">
+                                            <i class="fa-solid fa-print"></i>
+                                        </a>
                                         <a asp-action="Detalle" asp-route-id="@enc.Id_Encomienda"
                                            class="btn btn-outline-light btn-sm px-2" title="Ver detalle">
                                             <i class="fa-solid fa-eye"></i>

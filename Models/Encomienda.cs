@@ -107,5 +107,48 @@ namespace SistemaChotaExpress.Models
         [ForeignKey("Id_Usuario")]
         [ValidateNever]
         public virtual Usuario? UsuarioRegistro { get; set; }
+
+        // --- COMPROBANTE DE PAGO (VOUCHER) HELPERS [NOT MAPPED A BD PARA MÁXIMA COMPATIBILIDAD] ---
+        [NotMapped]
+        public string TipoComprobante
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Observaciones) && Observaciones.Contains("[COMPROBANTE:"))
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(Observaciones, @"\[COMPROBANTE:\s*([^\]]+)\]");
+                    if (match.Success) return match.Groups[1].Value.Trim();
+                }
+                if (!string.IsNullOrWhiteSpace(RucRemitente)) return "Factura";
+                return "Boleta";
+            }
+        }
+
+        [NotMapped]
+        public string ObservacionesLimpias
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Observaciones)) return "";
+                return System.Text.RegularExpressions.Regex.Replace(Observaciones, @"\[COMPROBANTE:\s*[^\]]+\]", "").Trim();
+            }
+        }
+
+        [NotMapped]
+        public string NumeroComprobante
+        {
+            get
+            {
+                string serie = TipoComprobante.Equals("Factura", StringComparison.OrdinalIgnoreCase) ? "F001" :
+                               TipoComprobante.Equals("Ticket", StringComparison.OrdinalIgnoreCase) ? "TCK1" : "B001";
+                return $"{serie}-{Id_Encomienda:D6}";
+            }
+        }
+
+        [NotMapped]
+        public decimal Subtotal => Math.Round(PrecioEnvio / 1.18m, 2);
+
+        [NotMapped]
+        public decimal Igv => Math.Round(PrecioEnvio - Subtotal, 2);
     }
 }
