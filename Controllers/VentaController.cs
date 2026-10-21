@@ -383,19 +383,6 @@ namespace SistemaChotaExpress.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ActualizarPrecioViaje(int viajeId, decimal nuevoPrecio, string? origen, string? destino, string? fecha)
-        {
-            var viaje = await _context.Viajes.FindAsync(viajeId);
-            if (viaje != null)
-            {
-                viaje.Precio = Math.Max(0, nuevoPrecio);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"¡Precio del pasaje actualizado a S/ {viaje.Precio:F2}!";
-            }
-            return RedirectToAction("BuscarViajes", new { origen, destino, fecha, viajeId });
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
