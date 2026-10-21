@@ -125,7 +125,7 @@ namespace SistemaChotaExpress.Controllers
 
                 // Top rutas - en memoria para PostgreSQL
                 var ventasConRutas = await _context.Ventas
-                    .Where(v => v.Estado == "Vendido" && v.Id_Viaje != null)
+                    .Where(v => v.Estado == "Vendido")
                     .Select(v => new {
                         v.PrecioPagado,
                         v.ObjetoViaje

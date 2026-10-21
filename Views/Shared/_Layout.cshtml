@@ -4,14 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Tours Chota Express</title>
-    
-    <!-- Fonts and Icons -->
+ 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <!-- Aplica tema guardado antes de renderizar para evitar parpadeo -->
+
     <script>if(localStorage.getItem('tema')==='claro')document.documentElement.classList.add('light-mode-pre');</script>
     <style>.light-mode-pre body,.light-mode-pre{background:#f0f0f5!important}</style>
 </head>
@@ -19,7 +18,7 @@
     <header class="no-print">
         <nav class="navbar navbar-expand-lg navbar-dark custom-navbar py-3">
             <div class="container">
-                <!-- Branding Logo Oficial Tours Chota Express -->
+             
                 <a class="navbar-brand d-flex align-items-center py-0" asp-controller="Home" asp-action="Index">
                     <div class="navbar-logo-badge">
                         <img src="~/img/logo_oficial.png?v=@DateTime.Now.Ticks" asp-append-version="true" alt="Tours Chota Express S.A.C." class="navbar-logo-img" />
@@ -172,7 +171,7 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-        // Aplica el tema guardado inmediatamente
+
         (function () {
             if (localStorage.getItem('tema') === 'claro') {
                 document.documentElement.classList.add('light-mode');

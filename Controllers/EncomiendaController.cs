@@ -525,39 +525,6 @@ namespace SistemaChotaExpress.Controllers
         }
 
         // =============================================
-        // 7. IMPRIMIR TICKET (80mm)
-        // =============================================
-        [HttpGet]
-        public async Task<IActionResult> Ticket(int id)
-        {
-            try
-            {
-                var enc = await _context.Encomiendas
-                    .Include(e => e.ObjetoRuta)
-                    .Include(e => e.UsuarioRegistro)
-                    .FirstOrDefaultAsync(e => e.Id_Encomienda == id);
-
-                if (enc == null) return NotFound();
-
-                // Vendedor solo puede ver las suyas
-                if (!User.IsInRole("Gerente"))
-                {
-                    var emailActual = User.FindFirstValue(ClaimTypes.Email);
-                    var nombreActual = User.Identity?.Name;
-                    var usuarioActual = await _context.Usuarios
-                        .FirstOrDefaultAsync(u => u.Email == emailActual || u.Name == nombreActual);
-                    if (usuarioActual != null && enc.Id_Usuario.HasValue && enc.Id_Usuario != usuarioActual.Id_Usuario)
-                        return Forbid();
-                }
-
-                return View(enc);
-            }
-            catch (Exception)
-            {
-                return NotFound();
-            }
-        }
-        // =============================================
         // 8. MANIFIESTO DE ENCOMIENDAS POR TURNO (CARGA)
         // =============================================
         [HttpGet]

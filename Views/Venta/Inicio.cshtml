@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Bienvenido";
     var nombre = TempData["BienvenidaLogin"]?.ToString() ?? User.Identity?.Name ?? "Trabajador";
-    // Hora oficial de Perú (UTC-5)
+
     var horaLocal = DateTime.UtcNow.AddHours(-5);
     var hora   = horaLocal.Hour;
     var saludo = (hora >= 5 && hora < 12) ? "Buenos días" : (hora >= 12 && hora < 19) ? "Buenas tardes" : "Buenas noches";
@@ -10,7 +10,6 @@
 }
 
 <style>
-    /* En la página de inicio, ocultar los links repetidos en la barra superior */
     .navbar .navbar-nav.me-auto > .nav-item:not(:first-child) {
         display: none !important;
     }
@@ -21,7 +20,6 @@
         padding: 1.5rem 1rem 3rem;
     }
 
-    /* Hero Header: Logo Grande y Saludo */
     .hero-header-clean {
         text-align: center;
         margin-bottom: 2.2rem;
@@ -56,7 +54,6 @@
         to { background-position: 200% center; }
     }
 
-    /* Títulos de Categoría */
     .grid-section-label {
         font-size: 0.9rem;
         font-weight: 800;
@@ -75,7 +72,6 @@
         background: linear-gradient(90deg, rgba(243, 112, 33, 0.35), transparent);
     }
 
-    /* Tarjetas Uniformes */
     .modulo-card-unified {
         border-radius: 18px;
         padding: 1.5rem 1.4rem;
@@ -110,7 +106,6 @@
         border-color: rgba(243, 112, 33, 0.45);
     }
 
-    /* Variantes de color */
     .card-pasajes-vender::before    { background: linear-gradient(90deg, #f37021, #fb923c); }
     .card-pasajes-historial::before { background: linear-gradient(90deg, #10b981, #34d399); }
     .card-proforma-viaje::before    { background: linear-gradient(90deg, #f43f5e, #fb7185); }
@@ -186,7 +181,6 @@
         gap: 10px;
     }
 
-    /* Soporte para Modo Claro */
     [data-theme="light"] .modulo-card-unified,
     body:not(.dark-mode) .modulo-card-unified {
         background: #ffffff;
@@ -202,7 +196,6 @@
         color: #64748b;
     }
 
-    /* Animación de entrada */
     .fade-up-item {
         animation: fadeUpQuick 0.45s ease forwards;
         opacity: 0;
@@ -218,7 +211,6 @@
 
 <div class="inicio-dashboard-container">
 
-    <!-- HERO: LOGO OFICIAL GRANDE & SALUDO DINÁMICO POR HORA -->
     <div class="hero-header-clean fade-up-item d-1">
         <div>
             <img src="~/img/logo_chota.jpg?v=@DateTime.Now.Ticks" asp-append-version="true" alt="Tours Chota Express S.A.C." class="hero-logo-badge" />
@@ -231,7 +223,6 @@
         </p>
     </div>
 
-    <!-- SECCIÓN 1: VENTA DE PASAJES & PROFORMAS (3 TARJETAS ALINEADAS) -->
     <div class="grid-section-label fade-up-item d-2">
         <i class="fa-solid fa-users text-warning"></i>
         <span>Venta de Pasajes & Proformas de Viaje</span>
@@ -239,7 +230,6 @@
 
     <div class="row g-3 g-lg-4 mb-4 fade-up-item d-2">
         
-        <!-- 1. Vender Pasajes -->
         <div class="col-12 col-md-4">
             <a asp-controller="Venta" asp-action="BuscarViajes" class="modulo-card-unified card-pasajes-vender">
                 <div>
@@ -261,7 +251,6 @@
             </a>
         </div>
 
-        <!-- 2. Registro de Pasajes Vendidos -->
         <div class="col-12 col-md-4">
             <a asp-controller="Venta" asp-action="MisVentas" class="modulo-card-unified card-pasajes-historial">
                 <div>
@@ -283,7 +272,6 @@
             </a>
         </div>
 
-        <!-- 3. Proforma de Viajes -->
         <div class="col-12 col-md-4">
             <a asp-controller="Proforma" asp-action="Crear" class="modulo-card-unified card-proforma-viaje">
                 <div>
@@ -307,7 +295,6 @@
 
     </div>
 
-    <!-- SECCIÓN 2: ENCOMIENDAS & CARGA (3 TARJETAS ALINEADAS) -->
     <div class="grid-section-label fade-up-item d-3">
         <i class="fa-solid fa-boxes-stacked text-info"></i>
         <span>Servicio de Encomiendas & Carga</span>
@@ -315,7 +302,6 @@
 
     <div class="row g-3 g-lg-4 mb-4 fade-up-item d-3">
 
-        <!-- 3. Registrar Encomiendas -->
         <div class="col-12 col-md-4">
             <a asp-controller="Encomienda" asp-action="Registrar" class="modulo-card-unified card-encomienda-reg">
                 <div>
@@ -337,7 +323,6 @@
             </a>
         </div>
 
-        <!-- 4. Registro de Encomiendas -->
         <div class="col-12 col-md-4">
             <a asp-controller="Encomienda" asp-action="Index" class="modulo-card-unified card-encomienda-hist">
                 <div>
@@ -359,7 +344,6 @@
             </a>
         </div>
 
-        <!-- 5. Manifiesto de Encomiendas por Turno -->
         <div class="col-12 col-md-4">
             <a asp-controller="Encomienda" asp-action="ManifiestoTurno" class="modulo-card-unified card-encomienda-manif">
                 <div>
@@ -383,7 +367,6 @@
 
     </div>
 
-    <!-- FOOTER INFORMACIÓN DE SESIÓN -->
     <div class="text-center pt-3 text-muted fade-up-item d-3" style="font-size: 0.8rem;">
         <div>
             <i class="fa-regular fa-clock me-1 text-warning"></i>

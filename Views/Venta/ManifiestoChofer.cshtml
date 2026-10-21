@@ -40,7 +40,6 @@
             font-size: 11px;
         }
 
-        /* Barra de Control interactiva (No imprimible) */
         .no-print {
             max-width: 210mm;
             margin: 0 auto 10px auto;
@@ -51,7 +50,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.3);
         }
 
-        /* Hoja A4 Oficial - Altura Completa 297mm */
         .a4-sheet {
             width: 210mm;
             height: 288mm;
@@ -67,7 +65,6 @@
             position: relative;
         }
 
-        /* Encabezado Oficial */
         .manifest-header {
             display: flex;
             align-items: center;
@@ -173,7 +170,6 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Franja de Permiso de Ruta Oficial */
         .route-banner {
             border: 1.5px solid #1e3a8a;
             background-color: #eff6ff;
@@ -187,7 +183,6 @@
             text-transform: uppercase;
         }
 
-        /* Cajas de Datos Técnicos (3 columnas) */
         .tech-data-row {
             display: flex;
             gap: 5px;
@@ -266,7 +261,6 @@
             min-height: 16px;
         }
 
-        /* Campos Editables para rellenar */
         .editable-field {
             outline: none;
             padding: 1px 3px;
@@ -278,7 +272,6 @@
             box-shadow: 0 0 0 1px #ca8a04;
         }
 
-        /* Sección Tripulación */
         .crew-section {
             border: 1.3px solid #1e3a8a;
             border-radius: 4px;
@@ -322,7 +315,6 @@
             padding-left: 10px;
         }
 
-        /* Tabla de Pasajeros - Altura completa A4 */
         .table-wrapper {
             flex: 1;
             display: flex;
@@ -354,7 +346,7 @@
             padding: 2px 4px;
             border: 1px solid #cbd5e1;
             vertical-align: middle;
-            height: calc((288mm - 198mm) / 16); /* Distribuir simétricamente en el alto A4 */
+            height: calc((288mm - 198mm) / 16); 
             min-height: 22px;
         }
 
@@ -370,7 +362,6 @@
         .col-price { width: 10%; text-align: right; font-weight: 700; }
         .col-obs { width: 16%; font-size: 7pt; }
 
-        /* Pie de página oficial */
         .manifest-footer {
             display: flex;
             justify-content: space-between;
@@ -397,7 +388,6 @@
             text-transform: uppercase;
         }
 
-        /* Ajustes de Impresión Limpia A4 Completa */
         @@media print {
             html, body {
                 background: #ffffff !important;
@@ -453,7 +443,6 @@
 </head>
 <body>
 
-    <!-- BARRA DE CONTROL Y ACCIONES (NO IMPRIMIBLE) -->
     <div class="no-print">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
             <div>
@@ -461,7 +450,6 @@
                 <small class="text-white-50 fs-9">Campos en blanco listos para rellenar a mano con lapicero o digitalmente con un clic.</small>
             </div>
 
-            <!-- Botones Rápidos de Llenado -->
             <div class="d-flex align-items-center gap-2">
                 <button type="button" class="btn btn-xs btn-outline-info" onclick="alternarModoLista()" id="btnModoLista" title="Alternar entre ver por número de asiento del croquis o lista continua">
                     <i class="fa-solid fa-list-ol me-1"></i> <span id="lblModoLista">Modo Continuo (1..N)</span>
@@ -474,7 +462,6 @@
                 </button>
             </div>
             
-            <!-- Selector de Permiso de Ruta -->
             <div class="d-flex align-items-center gap-2">
                 <span class="small fw-bold text-white fs-9"><i class="fa-solid fa-route text-warning me-1"></i>Permiso:</span>
                 <div class="btn-group" role="group">
@@ -487,7 +474,6 @@
                 </div>
             </div>
 
-            <!-- Botones de Acción -->
             <div class="d-flex gap-2">
                 <button onclick="window.print();" class="btn btn-sm btn-warning fw-bold text-dark px-3 shadow-sm">
                     <i class="fa-solid fa-print me-1"></i> Imprimir Hoja A4
@@ -502,12 +488,10 @@
         </div>
     </div>
 
-    <!-- DOCUMENTO FÍSICO OFICIAL EN HOJA A4 COMPLETA -->
     <div class="a4-sheet">
         
-        <!-- 1. ENCABEZADO FISCAL CON LOGO OFICIAL Y FOTO DE LA COMBI -->
         <div class="manifest-header">
-            <!-- Bloque Empresa, Marca, Logo, Combi y Domicilios -->
+
             <div class="header-company-block">
                 <div class="header-top-sub">EMPRESA DE MULTISERVICIOS Y TRANSPORTES</div>
                 <div class="header-brand-row">
@@ -523,7 +507,6 @@
                 </div>
             </div>
 
-            <!-- RUC y Serie del Manifiesto -->
             <div class="header-right-box">
                 <div class="ruc-badge">R.U.C. 20600308883</div>
                 <div class="doc-title">MANIFIESTO DE PASAJEROS</div>
@@ -531,17 +514,14 @@
             </div>
         </div>
 
-        <!-- 2. FRANJA DE RUTA AUTORIZADA SEGÚN PERMISO (INTERCAMBIABLE Y EDITABLE) -->
         <div class="route-banner editable-field" id="bannerRutaPermiso" contenteditable="true" title="Clic para editar texto de ruta">
             @(esRutaCutervo
                 ? "CAJAMARCA - PORCON - EL COBRO - PUENTE PIEDRA - SAMANGAY - CHOTA - CUTERVO Y VICIVERSA"
                 : "CAJAMARCA - PORCON - EL COBRO - PUENTE PIEDRA - SAMANGAY - CHOTA Y VICIVERSA")
         </div>
 
-        <!-- 3. CUADROS TÉCNICOS (RUTA / COMBI / CAPACIDAD EN BLANCO PARA REGISTRAR) -->
         <div class="tech-data-row">
             
-            <!-- Cuadro 1: RUTA -->
             <div class="tech-box">
                 <div class="tech-box-side-label" title="Ruta">
                     <span>R</span><span>U</span><span>T</span><span>A</span>
@@ -570,7 +550,6 @@
                 </div>
             </div>
 
-            <!-- Cuadro 2: COMBI -->
             <div class="tech-box">
                 <div class="tech-box-side-label" title="Combi">
                     <span>C</span><span>O</span><span>M</span><span>B</span><span>I</span>
@@ -595,7 +574,6 @@
                 </div>
             </div>
 
-            <!-- Cuadro 3: CAPACIDAD COMPLETA -->
             <div class="tech-box">
                 <div class="tech-box-side-label" title="Capacidad">
                     <span>C</span><span>A</span><span>P</span><span>A</span><span>C</span><span>I</span><span>D</span><span>A</span><span>D</span>
@@ -622,7 +600,6 @@
 
         </div>
 
-        <!-- 4. TRIPULACIÓN (EN BLANCO PARA REGISTRAR) -->
         <div class="crew-section">
             <div class="crew-header">TRIPULACIÓN</div>
             <div class="crew-body">
@@ -637,7 +614,6 @@
             </div>
         </div>
 
-        <!-- 5. TABLA OFICIAL DE 16 PASAJEROS (COMPILADA CON VENTAS DEL CROQUIS DE LA COMBI) -->
         <div class="table-wrapper">
             <table class="passenger-table" id="tablaPasajerosOficial">
                 <thead>
@@ -653,7 +629,6 @@
                 </thead>
                 <tbody id="tablaPasajerosBody">
                     @{
-                        // Mapeo por número de asiento de la combi (Asientos 1..15)
                         var ventasDict = new Dictionary<int, SistemaChotaExpress.Models.Venta>();
                         if (ventas != null)
                         {
@@ -709,7 +684,6 @@
             </table>
         </div>
 
-        <!-- 6. PIE DE PÁGINA OFICIAL -->
         <div class="manifest-footer">
             <div class="print-legend">
                 IMPRENTA GRAFICER UNIVERSA EIRL CALLE MANUEL SEOANE N° 173 - CAJAMARCA - RUC: 20604621004, AUT. 3041990163, N° SERIE: 0002, DEL 6001 AL 6750 - FECHA: 18/06/2026
@@ -721,9 +695,7 @@
 
     </div>
 
-    <!-- SCRIPTS INTERACTIVOS (CAMBIO DE RUTA, AUTOCOMPLETAR Y WHATSAPP) -->
     <script>
-        // Alternar el permiso de ruta oficial
         function cambiarRutaPermiso(tipo) {
             const banner = document.getElementById('bannerRutaPermiso');
             const btnCutervo = document.getElementById('btnRutaCutervo');
@@ -740,7 +712,6 @@
             }
         }
 
-        // Lista de pasajes activos serializados
         const ventasData = [
         @if (ventas != null && ventas.Any())
         {
@@ -761,9 +732,7 @@
         }
         ];
 
-        let modoActual = 'asiento'; // 'asiento' o 'continuo'
-
-        // Alternar entre modo por Asiento (fila 2 = asiento 2) y modo Continuo (fila 1, 2, 3...)
+        let modoActual = 'asiento';
         function alternarModoLista() {
             modoActual = (modoActual === 'asiento') ? 'continuo' : 'asiento';
             const btn = document.getElementById('btnModoLista');
@@ -825,7 +794,6 @@
             });
         }
 
-        // Cargar los datos del turno registrado en el sistema
         function cargarDatosDelTurno() {
             document.getElementById('valOrigen').innerText = "@(Model.ObjetoRuta?.Origen.ToUpper() ?? "CAJAMARCA")";
             document.getElementById('valDestino').innerText = "@(Model.ObjetoRuta?.Destino.ToUpper() ?? "CHOTA")";
@@ -853,7 +821,6 @@
             }
         }
 
-        // Dejar todos los campos técnicos y tabla en blanco para llenar a mano recién
         function limpiarCamposEnBlanco() {
             document.getElementById('valOrigen').innerText = "";
             document.getElementById('valDestino').innerText = "";
@@ -874,7 +841,6 @@
             document.getElementById('valPiloto').innerText = "";
             document.getElementById('valLicencia').innerText = "";
 
-            // Limpiar celdas de la tabla para llenar 100% a mano con lapicero
             const rows = document.querySelectorAll('#tablaPasajerosBody tr');
             rows.forEach((tr, idx) => {
                 tr.querySelector('.col-name').innerText = "";
@@ -886,7 +852,6 @@
             });
         }
 
-        // Enviar FOTO del Manifiesto a WhatsApp (sin mensaje de texto plano)
         async function enviarWhatsApp() {
             const btn = document.getElementById('btnWhatsAppFoto') || event?.target;
             const originalHtml = btn ? btn.innerHTML : '';
@@ -901,7 +866,6 @@
                     document.activeElement.blur();
                 }
 
-                // Capturar el manifiesto en alta resolución
                 const canvas = await html2canvas(sheet, {
                     scale: 2,
                     useCORS: true,
@@ -919,7 +883,6 @@
                     const fileName = `Manifiesto_Salida_@(Model.Id_Viaje).png`;
                     const file = new File([blob], fileName, { type: 'image/png' });
 
-                    // 1. En dispositivos con Web Share de archivos (móviles/tablets): abre WhatsApp directamente con la foto
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         try {
                             await navigator.share({
@@ -938,8 +901,6 @@
                         }
                     }
 
-                    // 2. En PC / Navegador de Escritorio (WhatsApp Web):
-                    // Copiar foto al portapapeles del sistema para pegar directo con Ctrl + V
                     let copiado = false;
                     if (navigator.clipboard && window.ClipboardItem) {
                         try {

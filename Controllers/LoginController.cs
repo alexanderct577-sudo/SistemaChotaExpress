@@ -109,46 +109,6 @@ namespace SistemaChotaExpress.Controllers
             return View("Login", modelo);
         }
 
-        [HttpGet]
-        public IActionResult Registro() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro(VendedorVM modelo)
-        {
-            if (ModelState.IsValid)
-            {
-                var emailNorm = modelo.Email?.Trim().ToLower();
-
-                if (emailNorm == "gerente@chotaexpress.com")
-                {
-                    ModelState.AddModelError("Email", "Este correo está reservado para el Gerente del sistema.");
-                    return View(modelo);
-                }
-
-                var existe = await _context.Usuarios.AnyAsync(u => u.Email == emailNorm);
-                if (existe)
-                {
-                    ModelState.AddModelError("Email", "Este correo electrónico ya se encuentra registrado.");
-                    return View(modelo);
-                }
-
-                var nuevoUsuario = new Usuario
-                {
-                    Name = modelo.Name,
-                    Email = emailNorm!,
-                    Password = modelo.Password,
-                    Telefono = modelo.Telefono,
-                    Id_Rol = 2 // Vendedor
-                };
-
-                _context.Usuarios.Add(nuevoUsuario);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Login");
-            }
-            return View(modelo);
-        }
-
         public async Task<IActionResult> Salir()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -163,7 +123,7 @@ namespace SistemaChotaExpress.Controllers
         [HttpGet]
         public IActionResult AccesoDenegado()
         {
-            return View("~/Views/Account/AccessDenied.cshtml");
+            return View();
         }
 
         // Redirige al dashboard según el rol del usuario autenticado

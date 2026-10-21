@@ -7,7 +7,7 @@
 }
 
 <style>
-    /* Inline Glassmorphic Calendar Styles */
+
     .calendar-container {
         background: rgba(15, 14, 19, 0.6);
         border: 1px solid var(--border-glass);
@@ -236,7 +236,7 @@
         padding: 20px 24px;
         animation: slideInRight 0.5s cubic-bezier(.22,1,.36,1) forwards;
         overflow: hidden;">
-        <!-- Barra de progreso -->
+
         <div id="toastProgressBar" style="
             position: absolute;
             bottom: 0; left: 0;
@@ -291,21 +291,18 @@
                 t.style.animation = 'slideOutRight 0.4s cubic-bezier(.22,1,.36,1) forwards';
                 setTimeout(() => t.remove(), 400);
             }
-        }
-        // Auto-cierre a los 5 segundos
+
         setTimeout(cerrarToast, 5000);
     </script>
 }
 
-<!-- Unified Ticket Sales Screen -->
 <div class="row g-4">
-    <!-- LEFT SIDEBAR -->
+
     <div class="col-xl-3 col-lg-4 col-md-5 col-12">
         <form method="get" id="searchFilterForm" class="m-0" action="@Url.Action("BuscarViajes")">
-            <!-- Search Date hidden input -->
+
             <input type="hidden" name="fecha" id="fechaInput" value="@ViewBag.SelectedFecha" />
 
-            <!-- Selección de Origen y Destino -->
             <div class="sidebar-card border-warning">
                 <div class="sidebar-section-title text-warning fw-bold fs-7 mb-2">
                     <i class="fa-solid fa-route me-1"></i> SELECCIÓN DE RUTA
@@ -365,13 +362,12 @@
             </div>
         </form>
 
-        <!-- Calendario de Salidas -->
         <div class="sidebar-card">
             <div class="sidebar-section-title text-white fw-bold fs-8 mb-2">
                 <i class="fa-solid fa-calendar-days text-warning me-1"></i> FECHA DE VIAJE
             </div>
             <div class="calendar-container" id="calendarWidget">
-                <!-- Calendar generated dynamically via Javascript -->
+
             </div>
             <div class="text-center mt-2">
                 <button type="button" class="btn btn-sm btn-link text-warning fs-9" id="btnGoToToday"><i class="fa-solid fa-circle-dot"></i> Ir a Hoy</button>
@@ -379,7 +375,6 @@
         </div>
     </div>
 
-    <!-- RIGHT MAIN CONTENT (PASO 2: SELECCIONAR HORARIO & VENDER) -->
     <div class="col-xl-9 col-lg-8 col-md-7 col-12">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="h3 text-white fw-bold m-0"><i class="fa-solid fa-cash-register text-primary me-2"></i> Módulo de Ventas & Salidas</h1>
@@ -387,9 +382,9 @@
         </div>
 
         <div class="sales-content-area">
-            <!-- VENTA DE PASAJES Y MAPA DE ASIENTOS -->
+ 
             <div id="capaVenta">
-                <!-- SELECCIONAR HORARIO (24 HORAS) -->
+
                 @{
                     var viajesEnMismaHora = ViewBag.ViajesEnMismaHora as List<SistemaChotaExpress.Controllers.VentaController.ViajeConDisponibilidad>;
                     DateTime fechaBase = DateTime.Parse(ViewBag.SelectedFecha as string ?? DateTime.Today.ToString("yyyy-MM-dd"));
@@ -454,7 +449,7 @@
                 {
                     @if (viajesEnMismaHora != null && viajesEnMismaHora.Count > 0)
                     {
-                        <!-- BARRA PROMINENTE DE SELECCIÓN DE VEHÍCULOS / COMBIS -->
+
                         <div class="card bg-dark text-white border-glass p-3 mb-3 shadow-lg">
                             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                 <span class="fs-8 font-weight-700 text-warning">
@@ -502,8 +497,6 @@
                                         }
                                     </div>
                                 }
-
-                                <!-- Botón + Agregar Otra Combi en esta Hora -->
                                 <form asp-action="AgregarSalidaAdicional" method="post" class="d-inline m-0">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
@@ -522,9 +515,9 @@
                     var combiIndexPos = (viajesEnMismaHora != null) ? viajesEnMismaHora.OrderBy(v => v.Viaje.Id_Viaje).ToList().FindIndex(v => v.Viaje.Id_Viaje == selectedViaje.Id_Viaje) + 1 : 1;
                     if (combiIndexPos <= 0) combiIndexPos = 1;
                     var displayNombreCombi = $"COMBI {combiIndexPos:D2}";
-                    <!-- SEAT MAP & REGISTRATION AREA -->
+
                     <div class="row g-4" id="bookingSection">
-                        <!-- Bus Seats Cabin Column -->
+
                         <div class="col-lg-5 col-12">
                             <div class="card bg-dark text-white border-glass p-3">
                                 <div class="sidebar-section-title mb-2 d-flex flex-wrap align-items-center justify-content-between gap-1">
@@ -545,9 +538,9 @@
                                         <i class="fa-solid fa-print me-1"></i> Imprimir Manifiesto A4
                                     </a>
                                 </div>
-                                <!-- Panel DATOS DEL VEHÍCULO: Placa + Conductor -->
+
                                 <div class="row g-2 mb-2">
-                                    <!-- Placa -->
+
                                     <div class="col-12">
                                         <form asp-action="ActualizarPlacaViaje" method="post" class="d-flex align-items-center gap-2 m-0 bg-dark-card border-glass p-2 rounded">
                                             @Html.AntiForgeryToken()
@@ -580,7 +573,7 @@
                                             }
                                         </form>
                                     </div>
-                                    <!-- Conductor -->
+
                                     <div class="col-12">
                                         <div class="d-flex align-items-center gap-2 bg-dark-card border-glass p-2 rounded">
                                             <i class="fa-solid fa-id-card text-warning fs-8 flex-shrink-0"></i>
@@ -593,8 +586,6 @@
                                     </div>
                                 </div>
 
-
-                                               <!-- Seat Legends -->
                                 <div class="d-flex flex-wrap gap-3 mb-3 justify-content-center bg-dark-card border-glass p-2 rounded">
                                     <div class="d-flex align-items-center gap-1.5 fs-8">
                                         <div class="seat-legend-box seat-available-demo"></div>
@@ -614,9 +605,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Interactive Bus Chassis (Combi Horizontal) -->
                                 <div class="bus-outer-body p-3 mx-auto mb-3 position-relative">
-                                    <!-- Llantas Horizontales (2 arriba, 2 abajo) -->
+
                                     <div class="bus-wheel bus-wheel-top-front" title="Llanta Delantera Superior"></div>
                                     <div class="bus-wheel bus-wheel-top-rear" title="Llanta Trasera Superior"></div>
                                     <div class="bus-wheel bus-wheel-bottom-front" title="Llanta Delantera Inferior"></div>
@@ -626,28 +616,26 @@
                                         <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Combi Estándar</div>
                                         
                                         <div class="seats-grid">
-                                            <!-- Fila 1 (Superior) -->
+
                                             @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 1))
                                             <div class="seat-space" style="grid-row: 1; grid-column: 2;"></div>
                                             @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 1, 3))
                                             @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 1, 4))
                                             @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 1, 5))
 
-                                            <!-- Fila 2 -->
+        
                                             @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 2, 1))
                                             @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 2))
                                             <div class="seat-space" style="grid-row: 2; grid-column: 3;"></div>
                                             <div class="seat-space" style="grid-row: 2; grid-column: 4;"></div>
                                             @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 2, 5))
 
-                                            <!-- Fila 3 -->
                                             <div class="seat-space" style="grid-row: 3; grid-column: 1;"></div>
                                             @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 3, 2))
                                             @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 3))
                                             @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 3, 4))
                                             @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 3, 5))
 
-                                            <!-- Fila 4 (Inferior / Chofer) -->
                                             <div class="driver-wheel" style="grid-row: 4; grid-column: 1;" title="Chofer">
                                                 <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 2rem;"></i>
                                             </div>
@@ -659,35 +647,17 @@
                                     </div>
                                 </div>
 
-                                              <!-- Price display & inline editor -->
                                   <div class="px-3 py-2.5 bg-dark-card border-glass rounded mb-2">
                                       <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                                           <div>
                                               <span class="fs-9 text-muted d-block text-uppercase fw-bold"><i class="fa-solid fa-coins text-warning me-1"></i> MONTO TOTAL A COBRAR (<span id="totalPasajesCount" class="text-info font-monospace">0 pasajes</span>)</span>
                                               <span class="big-price-text text-success fw-bold" id="priceDisplay">S/ 0.00</span>
                                           </div>
-                                          <form asp-action="ActualizarPrecioViaje" method="post" class="d-flex align-items-center gap-1 m-0">
-                                              @Html.AntiForgeryToken()
-                                              <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
-                                              <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                                              <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                                              <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
-                                              <span class="fs-9 text-muted">Precio base S/</span>
-                                              <input type="number" step="0.50" min="0" name="nuevoPrecio" id="inputPrecioBase"
-                                                     class="form-control form-control-sm bg-dark-input text-warning font-monospace border-glass-field text-end" 
-                                                     style="width: 90px;" 
-                                                     value="@selectedViaje.Precio.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" placeholder="0.00" 
-                                                     onblur="if(this.value) this.value = parseFloat(this.value).toFixed(2);" required />
-                                              <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-2 py-1 fs-9" style="background-color: #f7941d; border: none;" title="Guardar nuevo precio del pasaje">
-                                                  <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
-                                              </button>
-                                          </form>
                                       </div>
                                   </div>
                              </div>
                          </div>
 
-                         <!-- Transaction Booking Form Column -->
                          <div class="col-lg-7 col-12">
                              <div class="card bg-dark text-white border-glass p-3 h-100">
                                  <div class="sidebar-section-title mb-2"><i class="fa-solid fa-receipt text-primary me-1"></i> Emisión de Pasaje & Comprobante</div>
@@ -700,14 +670,10 @@
                                      <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
                                      <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
 
-                                     <!-- Indicadores de Selección de Asientos -->
                                      <div id="seatSelectedIndicator" class="alert alert-success p-2 mb-3 fs-8 text-center d-none fw-bold" role="alert">
                                          <i class="fa-solid fa-circle-check me-1"></i> Asiento(s): <span id="selectedSeatLabel" class="badge bg-dark px-2 py-1 fs-8 text-success border border-success">Ninguno</span>
                                      </div>
 
-                                     <!-- ============================================== -->
-                                     <!-- CUADRO 1: REGISTRO DE PASAJEROS POR ASIENTO    -->
-                                     <!-- ============================================== -->
                                      <div class="panel-cuadro mb-3">
                                          <div class="cuadro-title text-info d-flex justify-content-between align-items-center">
                                              <span><i class="fa-solid fa-users me-1"></i> CUADRO 1: Registro de Pasajero(s) por Asiento</span>
@@ -718,9 +684,6 @@
                                          </div>
                                      </div>
 
-                                     <!-- ============================================== -->
-                                     <!-- CUADRO 2: FACTURACIÓN & RUC ÚNICO PARA GRUPO   -->
-                                     <!-- ============================================== -->
                                      <div class="panel-cuadro mb-3">
                                          <div class="cuadro-title text-success">
                                              <i class="fa-solid fa-file-invoice-dollar me-1"></i> CUADRO 2: Comprobante & Datos de Facturación (RUC Único para Empresa)
@@ -746,7 +709,6 @@
                                              </div>
                                          </div>
 
-                                         <!-- Sección RUC Único de la Empresa (Aplica a todos los pasajes seleccionados) -->
                                          <div id="seccionFactura" class="d-none p-2.5 bg-dark rounded border border-success mb-2">
                                              <div class="row g-2 mb-2">
                                                  <div class="col-6">
@@ -770,7 +732,6 @@
                                              </div>
                                          </div>
 
-                                         <!-- Descuento y Observaciones -->
                                          <div class="row g-2 mt-2">
                                              <div class="col-6">
                                                  <label class="form-label text-muted fs-9 mb-1">Descuento Especial (S/)</label>
@@ -786,7 +747,6 @@
                                          </div>
                                      </div>
 
-                                     <!-- Form Actions -->
                                      <div class="d-flex gap-2">
                                          <button type="button" class="btn btn-success flex-grow-1 py-2.5 fw-bold fs-8 border-0" style="background-color: #198754;" id="btnVenderSubmit" disabled>
                                              <i class="fa-solid fa-cart-shopping me-1"></i> VENDER PASAJE(S)
@@ -839,7 +799,6 @@
     }
 }
 
-<!-- Modal 1: Agregar Salida con Nombre de Conductor (botón +) -->
 <div class="modal fade" id="modalAgregarSalidaConductor" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-white border-glass shadow-lg">
@@ -877,7 +836,6 @@
 
 @if (selectedViaje != null)
 {
-    <!-- Modal 2: Editar Conductor Actual -->
     <div class="modal fade" id="modalCambiarConductor" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content bg-dark text-white border-glass shadow-lg">
@@ -908,8 +866,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal 3: Detalle y Anulación Directa de Asiento Ocupado (Al dar clic al asiento ocupado) -->
     <div class="modal fade" id="modalDetalleAsientoOcupado" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content bg-dark text-white border-glass shadow-lg">
@@ -1000,8 +956,6 @@ else if (hasActiveRoute)
                     }
                 });
             }
-
-            // Handle date integration
             const fechaInput = document.getElementById("fechaInput");
             const selectedDateStr = fechaInput.value; // yyyy-MM-dd
 
@@ -1014,7 +968,6 @@ else if (hasActiveRoute)
             let displayYear = currentDate.getFullYear();
             let displayMonth = currentDate.getMonth();
 
-            // Render calendar widget
             const calendarWidget = document.getElementById("calendarWidget");
 
             function getMonthName(monthIdx) {
@@ -1025,7 +978,6 @@ else if (hasActiveRoute)
             function renderCalendar(year, month) {
                 calendarWidget.innerHTML = "";
 
-                // Header HTML
                 const header = document.createElement("div");
                 header.className = "calendar-header";
                 header.innerHTML = `
@@ -1035,11 +987,9 @@ else if (hasActiveRoute)
                 `;
                 calendarWidget.appendChild(header);
 
-                // Grid Container
                 const grid = document.createElement("div");
                 grid.className = "calendar-grid";
 
-                // Days headers
                 const daysAbbr = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
                 daysAbbr.forEach(abbr => {
                     const dayHeader = document.createElement("div");
@@ -1048,14 +998,12 @@ else if (hasActiveRoute)
                     grid.appendChild(dayHeader);
                 });
 
-                // Calculate first day of the month and total days
                 const firstDay = new Date(year, month, 1);
                 let startOffset = firstDay.getDay() - 1;
-                if (startOffset === -1) startOffset = 6; // Sunday
+                if (startOffset === -1) startOffset = 6; 
 
                 const totalDays = new Date(year, month + 1, 0).getDate();
 
-                // Append empty cells for offset
                 for (let i = 0; i < startOffset; i++) {
                     const emptyCell = document.createElement("div");
                     emptyCell.className = "calendar-day-cell empty-cell";
@@ -1069,7 +1017,6 @@ else if (hasActiveRoute)
                 const minDateAllowed = new Date(today);
                 minDateAllowed.setDate(minDateAllowed.getDate() - 3);
 
-                // Append actual days
                 for (let day = 1; day <= totalDays; day++) {
                     const cell = document.createElement("div");
                     cell.className = "calendar-day-cell";
@@ -1086,17 +1033,14 @@ else if (hasActiveRoute)
                         cell.style.cursor = "not-allowed";
                         cell.title = "No se permite emitir ventas con más de 3 días de antigüedad";
                     } else {
-                        // Check if selected
                         if (selectedDateStr === cellDateString) {
                             cell.classList.add("selected-cell");
                         }
 
-                        // Check if today
                         if (today.getDate() === day && today.getMonth() === month && today.getFullYear() === year) {
                             cell.classList.add("today-cell");
                         }
 
-                        // Handle cell click
                         cell.addEventListener("click", function() {
                             fechaInput.value = cellDateString;
                             document.getElementById("searchFilterForm").submit();
@@ -1108,7 +1052,6 @@ else if (hasActiveRoute)
 
                 calendarWidget.appendChild(grid);
 
-                // Wire month navigation buttons
                 document.getElementById("prevMonthBtn").addEventListener("click", function(e) {
                     e.stopPropagation();
                     let newMonth = month - 1;
@@ -1134,7 +1077,6 @@ else if (hasActiveRoute)
 
             renderCalendar(displayYear, displayMonth);
 
-            // Go to Today Button
             const btnGoToToday = document.getElementById("btnGoToToday");
             if (btnGoToToday) {
                 btnGoToToday.addEventListener("click", function() {
@@ -1143,7 +1085,6 @@ else if (hasActiveRoute)
                 });
             }
 
-            // Booking form setup (Multi-Seat selection & shared RUC invoice)
             const bookingSection = document.getElementById("bookingSection");
             if (bookingSection) {
                 const seats = document.querySelectorAll(".seat-box.seat-available");
@@ -1247,7 +1188,6 @@ else if (hasActiveRoute)
                         containerPasajeros.insertAdjacentHTML('beforeend', cardHtml);
                     });
 
-                    // Listeners de auto-consulta inmediata al ingresar documento
                     selectedSeatsList.forEach(numSeat => {
                         const docInp = document.getElementById(`numDoc_${numSeat}`);
                         const selDoc = document.getElementById(`tipoDoc_${numSeat}`);
@@ -1271,7 +1211,7 @@ else if (hasActiveRoute)
                         docInp.addEventListener('input', function() {
                             clearTimeout(debounceDoc);
                             const val = this.value.trim();
-                            // Si escribe 9 dígitos o empieza con 00, cambiar a CE automáticamente
+                      
                             if (selDoc.value === 'DNI' && (val.length === 9 || (val.startsWith('00') && val.length >= 7))) {
                                 selDoc.value = 'CE';
                                 if (lblBtn) lblBtn.textContent = 'CE';
@@ -1299,7 +1239,7 @@ else if (hasActiveRoute)
                         });
                     });
 
-                    // Eventos para auto-formatear a 2 decimales en blur y recalcular suma total en tiempo real
+                
                     const priceInputs = containerPasajeros.querySelectorAll(".seat-price-input");
                     priceInputs.forEach(inp => {
                         inp.addEventListener("blur", function() {
@@ -1316,7 +1256,6 @@ else if (hasActiveRoute)
                     calculateTotalSum();
                 }
 
-                // Handle occupied/reserved seat clicks to pop up detail & cancellation modal
                 @{
                     var listVentasActivas = ViewBag.VentasActivasDetalle as List<SistemaChotaExpress.Models.Venta> ?? new List<SistemaChotaExpress.Models.Venta>();
                     var ventasJsonDto = listVentasActivas.Select(v => new {
@@ -1365,7 +1304,6 @@ else if (hasActiveRoute)
                     });
                 });
 
-                // Handle seat clicks (multi-selection for available seats)
                 seats.forEach(seat => {
                     seat.addEventListener("click", function() {
                         const seatNum = parseInt(this.getAttribute("data-seat"));
@@ -1395,8 +1333,6 @@ else if (hasActiveRoute)
                         if (!isAuto) alert("Por favor, ingrese un número de documento.");
                         return;
                     }
-
-                    // Auto-cambiar a CE si tiene 9 dígitos o formato de carnet
                     if (tipo === 'DNI' && (numero.length === 9 || numero.startsWith('00'))) {
                         tipo = 'CE';
                         selDoc.value = 'CE';
@@ -1433,7 +1369,6 @@ else if (hasActiveRoute)
                     }
                 };
 
-                // Invoicing / Comprobante switcher
                 const tipoComprobante = document.getElementById("tipoComprobante");
                 const seccionFactura = document.getElementById("seccionFactura");
                 const rucEmpresa = document.getElementById("rucEmpresa");
@@ -1451,7 +1386,6 @@ else if (hasActiveRoute)
                     }
                 });
 
-                // Sunat RUC lookup
                 const btnConsultarRuc = document.getElementById("btnConsultarRuc");
                 const btnRucText = document.getElementById("btnRucText");
                 const btnRucSpinner = document.getElementById("btnRucSpinner");
@@ -1491,7 +1425,6 @@ else if (hasActiveRoute)
                     }
                 });
 
-                // Discount logic
                 const btnAplicarDescuento = document.getElementById("btnAplicarDescuento");
                 const descuentoInput = document.getElementById("descuentoInput");
 
@@ -1504,11 +1437,9 @@ else if (hasActiveRoute)
                     alert("Descuento registrado.");
                 });
 
-                // Handle submits
                 const ventaForm = document.getElementById("ventaForm");
                 const tipoTransaccionInput = document.getElementById("tipoTransaccionInput");
 
-                // Smooth scroll directly to booking section
                 if (bookingSection) {
                     setTimeout(function() {
                         bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1521,7 +1452,6 @@ else if (hasActiveRoute)
                         return;
                     }
 
-                    // Validar que TODOS los precios sean mayores a S/ 0.00
                     const priceInputs = document.querySelectorAll("input[name='preciosPagados']");
                     let preciosValidos = true;
                     priceInputs.forEach(function(inp) {
@@ -1541,11 +1471,9 @@ else if (hasActiveRoute)
 
                     tipoTransaccionInput.value = "Venta";
 
-                    // Indicador de carga en el botón
                     btnVenderSubmit.disabled = true;
                     btnVenderSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Imprimiendo Ticket...';
 
-                    // Imprimir directo en iframe oculto SIN abrir pestaña ni carpeta nueva
                     let printFrame = document.getElementById("ticketPrintFrame");
                     if (!printFrame) {
                         printFrame = document.createElement("iframe");
@@ -1573,7 +1501,6 @@ else if (hasActiveRoute)
                     ventaForm.target = "ticketPrintFrame";
                     ventaForm.submit();
 
-                    // Fallback por si la respuesta no activa onload
                     setTimeout(function() {
                         if (!recargado) {
                             recargado = true;
