@@ -352,8 +352,8 @@
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
-                    <button type="submit" class="btn btn-sm btn-primary btn-orange-solid flex-grow-1 py-2 fw-bold fs-8">
-                        <i class="fa-solid fa-magnifying-glass me-1"></i> Filtrar Ruta
+                    <button type="submit" id="btnFiltrarRuta" aria-label="Filtrar Ruta" class="btn btn-sm btn-primary btn-orange-solid flex-grow-1 py-2 fw-bold fs-8">
+                        <i class="fa-solid fa-magnifying-glass me-1" aria-hidden="true"></i> Filtrar Ruta
                     </button>
                     <a href="@Url.Action("BuscarViajes", new { reset = true })" class="btn btn-sm btn-outline-secondary border-glass-btn py-2 px-2.5 text-white" title="Limpiar Filtros">
                         <i class="fa-solid fa-rotate-left"></i>
@@ -431,7 +431,7 @@
                                        onclick="window.location.href = this.href; return false;"
                                        class="btn hour-pill-btn mb-1 me-1 @(isSelected ? "btn-teal-active shadow-lg" : "btn-glass-pill")"
                                        title="Salida a las @horaTexto (@cantidadVehiculos vehículo(s))">
-                                        <i class="fa-regular fa-clock me-1 fs-9"></i>@horaTexto
+                                        <i class="fa-regular fa-clock me-1 fs-9" aria-hidden="true"></i>@horaTexto
                                     </a>
                                 }
                                 else
@@ -748,8 +748,8 @@
                                      </div>
 
                                      <div class="d-flex gap-2">
-                                         <button type="button" class="btn btn-success flex-grow-1 py-2.5 fw-bold fs-8 border-0" style="background-color: #198754;" id="btnVenderSubmit" disabled>
-                                             <i class="fa-solid fa-cart-shopping me-1"></i> VENDER PASAJE(S)
+                                         <button type="button" class="btn btn-success flex-grow-1 py-2.5 fw-bold fs-8 border-0" style="background-color: #198754;" id="btnVenderSubmit" aria-label="VENDER PASAJE(S)" disabled>
+                                             <i class="fa-solid fa-cart-shopping me-1" aria-hidden="true"></i> VENDER PASAJE(S)
                                          </button>
                                          <button type="button" class="btn btn-warning flex-grow-1 py-2.5 fw-bold fs-8 text-white border-0" style="background-color: #f7941d;" id="btnReservarSubmit" disabled>
                                              <i class="fa-solid fa-hourglass-half me-1"></i> RESERVAR PASAJE(S)

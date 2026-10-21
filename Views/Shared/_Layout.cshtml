@@ -66,8 +66,8 @@
                             {
                                 <!-- Pasajes -->
                                 <li class="nav-item">
-                                    <a class="nav-link nav-link-custom @(currentCtrl == "Venta" && currentAct == "BuscarViajes" ? "active" : "")" asp-controller="Venta" asp-action="BuscarViajes">
-                                        <i class="fa-solid fa-cart-shopping me-1"></i> Vender Pasajes
+                                    <a class="nav-link nav-link-custom @(currentCtrl == "Venta" && currentAct == "BuscarViajes" ? "active" : "")" asp-controller="Venta" asp-action="BuscarViajes" id="navLinkVenderPasajes">
+                                        <i class="fa-solid fa-cart-shopping me-1" aria-hidden="true"></i> Vender Pasajes
                                     </a>
                                 </li>
                                 <li class="nav-item">
