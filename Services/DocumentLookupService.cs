@@ -141,7 +141,112 @@ namespace SistemaChotaExpress.Services
                 }
             }
 
-            // 2. CONSULTAR EN TIEMPO REAL DNI / RUC A API OFICIAL (apiperu.dev)
+            // 2. CONSULTAR EN TIEMPO REAL DNI / RUC (PROVEEDOR 1: apis.net.pe - Gratuito y de Alta Disponibilidad)
+            if (tipoDocumento == "DNI")
+            {
+                try
+                {
+                    var reqApisNet = new HttpRequestMessage(HttpMethod.Get, $"https://api.apis.net.pe/v1/dni?numero={numeroDocumento}");
+                    reqApisNet.Headers.Add("User-Agent", "SistemaChotaExpress/1.0");
+
+                    var resApisNet = await _httpClient.SendAsync(reqApisNet);
+                    if (resApisNet.IsSuccessStatusCode)
+                    {
+                        var json = await resApisNet.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(json);
+                        var root = doc.RootElement;
+
+                        string nombreCompleto = "";
+                        if (root.TryGetProperty("nombre", out var nProp) && !string.IsNullOrWhiteSpace(nProp.GetString()))
+                        {
+                            nombreCompleto = nProp.GetString()!.Trim().ToUpper();
+                        }
+                        else
+                        {
+                            string nombres = root.TryGetProperty("nombres", out var nomP) ? (nomP.GetString() ?? "") : "";
+                            string apPat = root.TryGetProperty("apellidoPaterno", out var apP) ? (apP.GetString() ?? "") : "";
+                            string apMat = root.TryGetProperty("apellidoMaterno", out var amP) ? (amP.GetString() ?? "") : "";
+                            nombreCompleto = $"{nombres} {apPat} {apMat}".Trim().ToUpper();
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(nombreCompleto))
+                        {
+                            var existingPassenger = await _context.Pasajeros
+                                .FirstOrDefaultAsync(p => p.TipoDocumento == "DNI" && p.NumeroDocumento == numeroDocumento);
+
+                            if (existingPassenger != null)
+                            {
+                                if (existingPassenger.NombreCompleto != nombreCompleto)
+                                {
+                                    existingPassenger.NombreCompleto = nombreCompleto;
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                _context.Pasajeros.Add(new Pasajero
+                                {
+                                    TipoDocumento = "DNI",
+                                    NumeroDocumento = numeroDocumento,
+                                    NombreCompleto = nombreCompleto
+                                });
+                                await _context.SaveChangesAsync();
+                            }
+
+                            return new LookupResult
+                            {
+                                Success = true,
+                                TipoDocumento = "DNI",
+                                Documento = numeroDocumento,
+                                NombreCompleto = nombreCompleto,
+                                Mensaje = "Datos verificados en RENIEC en tiempo real."
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[DocumentLookupService] Error consultando apis.net.pe DNI: {ex.Message}");
+                }
+            }
+            else if (tipoDocumento == "RUC")
+            {
+                try
+                {
+                    var reqApisNet = new HttpRequestMessage(HttpMethod.Get, $"https://api.apis.net.pe/v1/ruc?numero={numeroDocumento}");
+                    reqApisNet.Headers.Add("User-Agent", "SistemaChotaExpress/1.0");
+
+                    var resApisNet = await _httpClient.SendAsync(reqApisNet);
+                    if (resApisNet.IsSuccessStatusCode)
+                    {
+                        var json = await resApisNet.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(json);
+                        var root = doc.RootElement;
+
+                        string razonSocial = root.TryGetProperty("nombre", out var rzP) ? (rzP.GetString() ?? "") : "";
+                        string direccion = root.TryGetProperty("direccion", out var dirP) ? (dirP.GetString() ?? "") : "";
+
+                        if (!string.IsNullOrWhiteSpace(razonSocial))
+                        {
+                            return new LookupResult
+                            {
+                                Success = true,
+                                TipoDocumento = "RUC",
+                                Documento = numeroDocumento,
+                                NombreCompleto = razonSocial.Trim().ToUpper(),
+                                Direccion = direccion.Trim().ToUpper(),
+                                Mensaje = "Datos verificados en SUNAT en tiempo real."
+                            };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[DocumentLookupService] Error consultando apis.net.pe RUC: {ex.Message}");
+                }
+            }
+
+            // 3. CONSULTAR A PROVEEDOR SECUNDARIO (apiperu.dev)
             string? tokenApiPeru = _configuration["DocumentLookup:ApiPeruToken"] 
                 ?? "85f31ca800c9cc8b6c485aff467578a53fc5f9e29bfe6576c268558703407e60";
 
@@ -178,7 +283,6 @@ namespace SistemaChotaExpress.Services
 
                                 if (!string.IsNullOrWhiteSpace(nombreCompleto))
                                 {
-                                    // Actualizar en base de datos si ya existía con nombre incorrecto previo
                                     var existingPassenger = await _context.Pasajeros
                                         .FirstOrDefaultAsync(p => p.TipoDocumento == "DNI" && p.NumeroDocumento == numeroDocumento);
 
@@ -189,6 +293,16 @@ namespace SistemaChotaExpress.Services
                                             existingPassenger.NombreCompleto = nombreCompleto;
                                             await _context.SaveChangesAsync();
                                         }
+                                    }
+                                    else
+                                    {
+                                        _context.Pasajeros.Add(new Pasajero
+                                        {
+                                            TipoDocumento = "DNI",
+                                            NumeroDocumento = numeroDocumento,
+                                            NombreCompleto = nombreCompleto
+                                        });
+                                        await _context.SaveChangesAsync();
                                     }
 
                                     return new LookupResult
