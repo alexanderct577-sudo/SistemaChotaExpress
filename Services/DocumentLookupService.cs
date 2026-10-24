@@ -248,7 +248,7 @@ namespace SistemaChotaExpress.Services
 
             // 3. CONSULTAR A PROVEEDOR SECUNDARIO (apiperu.dev)
             string? tokenApiPeru = _configuration["DocumentLookup:ApiPeruToken"] 
-                ?? "85f31ca800c9cc8b6c485aff467578a53fc5f9e29bfe6576c268558703407e60";
+                ?? "b7fa00cce920132c72d011608d0a3d9a2b39c2fc21f6397d765c3ab9670544da";
 
             if (!string.IsNullOrWhiteSpace(tokenApiPeru))
             {
