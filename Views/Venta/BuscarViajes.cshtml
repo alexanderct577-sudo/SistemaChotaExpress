@@ -1416,12 +1416,6 @@ else if (hasActiveRoute)
                                 <div class="mb-1.5">
                                     <input type="text" name="nombresCompletos" id="nombre_${numSeat}" class="form-control bg-dark-input text-white border-glass-field fs-9 py-1" placeholder="Nombres y Apellidos del Pasajero #${numSeat}" required />
                                 </div>
-                                <div class="d-flex align-items-center gap-1.5 bg-dark-card border-glass p-1.5 rounded">
-                                    <span class="fs-9 text-warning text-nowrap fw-bold"><i class="fa-solid fa-location-dot me-1"></i>Destino / Bajada:</span>
-                                    <select name="destinosPasajeros" class="form-select form-select-sm bg-dark-input text-white border-glass-field fs-9 py-0.5">
-                                        ${destinosOptionsHtml}
-                                    </select>
-                                </div>
                             </div>
                         `;
                         containerPasajeros.insertAdjacentHTML('beforeend', cardHtml);
