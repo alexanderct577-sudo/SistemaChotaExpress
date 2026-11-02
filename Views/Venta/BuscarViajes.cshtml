@@ -375,10 +375,7 @@
                             </button>
                         </div>
                         <div class="col-4">
-                            <button type="button" class="btn-fleet-card @(selTipoFlota == "30" ? "active" : "") w-100 p-2 text-center" data-tipo="30" title="MinibÃºs PanorÃ¡mico (30 Asientos)">
-                                <i class="fa-solid fa-bus-simple fleet-icon d-block mb-1"></i>
-                                <span class="fleet-name d-block">MINIBUS</span>
-                                <span class="fleet-cap d-block">30 PAS.</span>
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "30" ? "active" : "") w-100 p-2 text-center" data-tipo="30" title="MINIBUS 30 PAS.</span>
                             </button>
                         </div>
                     </div>
@@ -563,7 +560,7 @@
                                         }
                                         <i class="fa-solid @(selTipoFlota == "30" ? "fa-bus-simple" : (selTipoFlota == "18" ? "fa-shuttle-van" : "fa-van-shuttle")) me-1 text-primary"></i> <strong>@displayNombreCombi</strong>
                                         <span class="badge bg-warning text-dark ms-1 fs-9 font-monospace">@rutaDisplay</span>
-                                        <span id="tipoUnidadTitleBadge" class="badge bg-primary text-white ms-1 fs-9 font-monospace">@(selTipoFlota == "30" ? "MINIBÃšS 30 PAS." : (selTipoFlota == "18" ? "COMBI 18 PAS." : "COMBI 15 PAS."))</span>
+                                        <span id="tipoUnidadTitleBadge" class="badge bg-primary text-white ms-1 fs-9 font-monospace">@(selTipoFlota == "30" ? "MINIBUS 30 PAS." : (selTipoFlota == "18" ? "COMBI 18 PAS." : "COMBI 15 PAS."))</span>
                                     </div>
                                     <a href="@Url.Action("ManifiestoChofer", "Venta", new { viajeId = selectedViaje.Id_Viaje })" 
                                        target="_blank" 
@@ -1311,7 +1308,7 @@ else if (hasActiveRoute)
                     c18.classList.add('d-none');
                     c30.classList.add('d-none');
 
-                    const activeContainer = document.getElementById(croquisContainer-);
+                    const activeContainer = document.getElementById('croquisContainer-' + newTipo);
                     if (activeContainer) {
                         activeContainer.classList.remove('d-none');
                     }
@@ -1324,7 +1321,7 @@ else if (hasActiveRoute)
 
                     const badge = document.getElementById('tipoUnidadTitleBadge');
                     if (badge) {
-                        if (newTipo === '30') badge.innerText = 'MINIBÃšS 30 PAS.';
+                        if (newTipo === '30') badge.innerText = 'MINIBUS 30 PAS.';
                         else if (newTipo === '18') badge.innerText = 'COMBI 18 PAS.';
                         else badge.innerText = 'COMBI 15 PAS.';
                     }
