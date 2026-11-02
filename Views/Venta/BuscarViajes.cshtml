@@ -576,38 +576,7 @@
 
                                 <div class="row g-2 mb-2">
 
-                                    <div class="col-12">
-                                        <form asp-action="ActualizarPlacaViaje" method="post" class="d-flex align-items-center gap-2 m-0 bg-dark-card border-glass p-2 rounded">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
-                                            <input type="hidden" name="origen"  value="@ViewBag.SelectedOrigen" />
-                                            <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                                            <input type="hidden" name="fecha"   value="@ViewBag.SelectedFecha" />
-                                            <i class="fa-solid fa-id-badge text-warning fs-8 flex-shrink-0"></i>
-                                            <span class="fs-9 text-muted text-nowrap">PLACA:</span>
-                                            <input type="text"
-                                                   name="placaVehiculo"
-                                                   class="form-control form-control-sm bg-dark-input border-glass-field text-warning font-monospace text-uppercase text-center fw-bold"
-                                                   style="max-width:110px; letter-spacing:2px;"
-                                                   value="@(string.IsNullOrWhiteSpace(selectedViaje.PlacaVehiculo) ? "" : selectedViaje.PlacaVehiculo.ToUpper())"
-                                                   placeholder="123-ABC"
-                                                   maxlength="8"
-                                                   pattern="[0-9]{3}-[A-Za-z]{3}"
-                                                   title="Formato: 123-ABC"
-                                                   oninput="this.value=this.value.toUpperCase()" />
-                                            <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-2 py-1 fs-9 flex-shrink-0" style="background:#f7941d;border:none;" title="Guardar placa">
-                                                <i class="fa-solid fa-floppy-disk"></i>
-                                            </button>
-                                            @if (!string.IsNullOrWhiteSpace(selectedViaje.PlacaVehiculo))
-                                            {
-                                                <span class="badge bg-success text-white fs-9 font-monospace ms-1">@selectedViaje.PlacaVehiculo.ToUpper()</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary text-white fs-9 font-monospace ms-1">SIN PLACA</span>
-                                            }
-                                        </form>
-                                    </div>
+                                    
 
                                     <div class="col-12">
                                         <div class="d-flex align-items-center gap-2 bg-dark-card border-glass p-2 rounded">
