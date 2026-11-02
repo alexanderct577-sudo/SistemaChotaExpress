@@ -84,32 +84,6 @@
 
     <div class="row g-4">
 
-        <!-- SELECCIÓN DE COMPROBANTE DE PAGO -->
-        <div class="col-12">
-            <div class="card bg-dark border-glass p-3">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                        <span class="text-warning fw-bold fs-7 d-block">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>Tipo de Comprobante & Facturación
-                        </span>
-                        <small class="text-muted">Seleccione si emitirá Boleta de Venta o Factura con RUC (para empresas)</small>
-                    </div>
-                    <div class="d-flex gap-2" role="group">
-                        <input type="hidden" name="tipoComprobante" id="txtTipoComprobante" value="Boleta" />
-                        <button type="button" class="btn btn-outline-warning active px-3 py-2 fw-bold fs-8 btn-comprobante" id="btnCompBoleta" onclick="cambiarTipoComprobante('Boleta')">
-                            <i class="fa-solid fa-receipt me-1"></i> Boleta de Venta
-                        </button>
-                        <button type="button" class="btn btn-outline-warning px-3 py-2 fw-bold fs-8 btn-comprobante" id="btnCompFactura" onclick="cambiarTipoComprobante('Factura')">
-                            <i class="fa-solid fa-building me-1"></i> Factura Electrónica
-                        </button>
-                                            </div>
-                </div>
-                <div id="alertaFactura" class="alert alert-warning bg-dark border-warning text-warning p-2.5 mt-2.5 mb-0 fs-8 d-none">
-                    <i class="fa-solid fa-circle-info me-1"></i> <strong>Modo Factura:</strong> Ingrese el <strong>RUC (11 dígitos)</strong> en los datos del Remitente. La Razón Social se autocompletará con la búsqueda oficial de SUNAT.
-                </div>
-            </div>
-        </div>
-
         <!-- REMITENTE (QUIEN ENVÍA) -->
         <div class="col-md-6">
             <div class="card bg-dark border-glass h-100">
