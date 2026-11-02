@@ -713,10 +713,10 @@ footer.custom-footer {
    SELECTOR DE TIPO DE UNIDAD (FLOTA) & CROQUIS DINAMICOS
    ==================================================== */
 .btn-fleet-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
     border-radius: 12px;
-    color: #e2e8f0;
+    color: #64748b;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 10px 4px 8px 4px;
@@ -727,18 +727,24 @@ footer.custom-footer {
     outline: none;
     user-select: none;
 }
-.btn-fleet-card:hover {
-    border-color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-    color: #fbbf24;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+
+.btn-fleet-card * {
+    pointer-events: none;
 }
+
+.btn-fleet-card:hover {
+    border-color: #f7941d;
+    background: #fff8f0;
+    color: #f7941d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(247, 148, 29, 0.15);
+}
+
 .btn-fleet-card.active {
-    border-color: #f7941d !important;
-    background: rgba(247, 148, 29, 0.2) !important;
-    color: #ff9d3b !important;
-    box-shadow: 0 0 14px rgba(247, 148, 29, 0.4) !important;
+    border: 2px solid #f7941d !important;
+    background: #fff3e6 !important;
+    color: #f7941d !important;
+    box-shadow: 0 4px 14px rgba(247, 148, 29, 0.3) !important;
     font-weight: 700;
 }
 .btn-fleet-card .fleet-icon {

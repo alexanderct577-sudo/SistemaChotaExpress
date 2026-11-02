@@ -292,6 +292,7 @@
                 t.style.animation = 'slideOutRight 0.4s cubic-bezier(.22,1,.36,1) forwards';
                 setTimeout(() => t.remove(), 400);
             }
+        }
 
         setTimeout(cerrarToast, 5000);
     </script>
@@ -361,21 +362,21 @@
                     
                     <div class="row g-1.5 text-center" id="fleetTypeSelector">
                         <div class="col-4">
-                            <button type="button" class="btn-fleet-card @(selTipoFlota == "15" ? "active" : "") w-100 p-2 text-center" data-tipo="15" title="Combi EstÃ¡ndar (15 Asientos)">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "15" ? "active" : "") w-100 p-2 text-center" data-tipo="15" onclick="switchFleetType('15');" title="Combi EstÃ¡ndar (15 Asientos)">
                                 <i class="fa-solid fa-van-shuttle fleet-icon d-block mb-1"></i>
                                 <span class="fleet-name d-block">COMBI</span>
                                 <span class="fleet-cap d-block">15 PAS.</span>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button type="button" class="btn-fleet-card @(selTipoFlota == "18" ? "active" : "") w-100 p-2 text-center" data-tipo="18" title="Combi Extendida (18 Asientos)">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "18" ? "active" : "") w-100 p-2 text-center" data-tipo="18" onclick="switchFleetType('18');" title="Combi Extendida (18 Asientos)">
                                 <i class="fa-solid fa-shuttle-van fleet-icon d-block mb-1"></i>
                                 <span class="fleet-name d-block">COMBI</span>
                                 <span class="fleet-cap d-block">18 PAS.</span>
                             </button>
                         </div>
                         <div class="col-4">
-                            <button type="button" class="btn-fleet-card @(selTipoFlota == "30" ? "active" : "") w-100 p-2 text-center" data-tipo="30" title="Minibus (30 Asientos)">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "30" ? "active" : "") w-100 p-2 text-center" data-tipo="30" onclick="switchFleetType('30');" title="MinibÃºs (30 Asientos)">
                                 <i class="fa-solid fa-bus-simple fleet-icon d-block mb-1"></i>
                                 <span class="fleet-name d-block">MINIBUS</span>
                                 <span class="fleet-cap d-block">30 PAS.</span>
@@ -1109,6 +1110,74 @@ else if (hasActiveRoute)
             window.location.href = "@Url.Action("BuscarViajes", new { reset = true })";
         }
 
+        window.switchFleetType = function(newTipo) {
+            newTipo = String(newTipo);
+            
+            // 1. Alternar clase active en los 3 botones
+            document.querySelectorAll('.btn-fleet-card').forEach(btn => {
+                if (btn.getAttribute('data-tipo') === newTipo) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 2. Actualizar campo oculto para envÃ­o de formulario
+            const tipoInput = document.getElementById('tipoUnidadInput');
+            if (tipoInput) tipoInput.value = newTipo;
+
+            // 3. Actualizar enlaces de horarios disponibles
+            document.querySelectorAll('.hour-pill-btn').forEach(btn => {
+                if (btn.href) {
+                    try {
+                        const u = new URL(btn.href, window.location.origin);
+                        u.searchParams.set('tipoUnidad', newTipo);
+                        btn.href = u.pathname + u.search;
+                    } catch(e) {}
+                }
+            });
+
+            document.querySelectorAll('.hour-container a, #bookingSection a').forEach(a => {
+                if (a.href && a.href.includes('BuscarViajes')) {
+                    try {
+                        const u = new URL(a.href, window.location.origin);
+                        u.searchParams.set('tipoUnidad', newTipo);
+                        a.href = u.pathname + u.search;
+                    } catch(e) {}
+                }
+            });
+
+            // 4. Conmutar el contenedor de croquis correspondiente
+            const allCroquis = document.querySelectorAll('.croquis-unit-container');
+            allCroquis.forEach(c => c.classList.add('d-none'));
+
+            const targetCroquis = document.getElementById('croquisContainer-' + newTipo);
+            if (targetCroquis) {
+                targetCroquis.classList.remove('d-none');
+            }
+
+            // 5. Actualizar badge del tÃ­tulo de unidad si estÃ¡ visible
+            const badge = document.getElementById('tipoUnidadTitleBadge');
+            if (badge) {
+                if (newTipo === '30') badge.innerText = 'MINIBUS 30 PAS.';
+                else if (newTipo === '18') badge.innerText = 'COMBI 18 PAS.';
+                else badge.innerText = 'COMBI 15 PAS.';
+            }
+
+            // 6. Limpiar asientos seleccionados
+            document.querySelectorAll('.seat-box.seat-selected').forEach(s => s.classList.remove('seat-selected'));
+            if (typeof window.clearSeatSelection === 'function') {
+                window.clearSeatSelection();
+            }
+
+            // 7. Reflejar tipo de unidad en la URL
+            try {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('tipoUnidad', newTipo);
+                window.history.replaceState({}, '', currentUrl.pathname + currentUrl.search);
+            } catch(e) {}
+        };
+
         document.addEventListener("DOMContentLoaded", function() {
             const origenSelect = document.getElementById("origenSelect");
             const destinoSelect = document.getElementById("destinoSelect");
@@ -1265,88 +1334,23 @@ else if (hasActiveRoute)
                 });
             }
 
-            // ==========================================
-            // CONTROLADOR DEL SELECTOR DE TIPO DE FLOTA
-            // ==========================================
-            let selectedSeatsList = [];
-
-            window.switchFleetType = function(newTipo) {
-                document.querySelectorAll('.btn-fleet-card').forEach(btn => {
-                    if (btn.getAttribute('data-tipo') === newTipo) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-
-                const tipoInput = document.getElementById('tipoUnidadInput');
-                if (tipoInput) tipoInput.value = newTipo;
-
-                document.querySelectorAll('.hour-pill-btn').forEach(btn => {
-                    if (btn.href) {
-                        try {
-                            const u = new URL(btn.href, window.location.origin);
-                            u.searchParams.set('tipoUnidad', newTipo);
-                            btn.href = u.pathname + u.search;
-                        } catch(e) {}
-                    }
-                });
-
-                document.querySelectorAll('.hour-container a, #bookingSection a').forEach(a => {
-                    if (a.href && a.href.includes('BuscarViajes')) {
-                        try {
-                            const u = new URL(a.href, window.location.origin);
-                            u.searchParams.set('tipoUnidad', newTipo);
-                            a.href = u.pathname + u.search;
-                        } catch(e) {}
-                    }
-                });
-
-                const c15 = document.getElementById('croquisContainer-15');
-                const c18 = document.getElementById('croquisContainer-18');
-                const c30 = document.getElementById('croquisContainer-30');
-
-                if (c15 && c18 && c30) {
-                    c15.classList.add('d-none');
-                    c18.classList.add('d-none');
-                    c30.classList.add('d-none');
-
-                    const activeContainer = document.getElementById('croquisContainer-' + newTipo);
-                    if (activeContainer) {
-                        activeContainer.classList.remove('d-none');
-                    }
-
-                    selectedSeatsList = [];
-                    document.querySelectorAll('.seat-box.seat-selected').forEach(s => s.classList.remove('seat-selected'));
-                    if (typeof updatePassengerFormRows === 'function') {
-                        updatePassengerFormRows();
-                    }
-
-                    const badge = document.getElementById('tipoUnidadTitleBadge');
-                    if (badge) {
-                        if (newTipo === '30') badge.innerText = 'MINIBUS 30 PAS.';
-                        else if (newTipo === '18') badge.innerText = 'COMBI 18 PAS.';
-                        else badge.innerText = 'COMBI 15 PAS.';
-                    }
-                }
-
-                try {
-                    const currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.set('tipoUnidad', newTipo);
-                    window.history.replaceState({}, '', currentUrl.pathname + currentUrl.search);
-                } catch(e) {}
-            };
-
+                        // Sincronizar eventos delegados para fleet cards
             document.querySelectorAll('.btn-fleet-card').forEach(card => {
                 card.addEventListener('click', function(e) {
                     e.preventDefault();
                     const tipo = this.getAttribute('data-tipo');
-                    switchFleetType(tipo);
+                    window.switchFleetType(tipo);
                 });
             });
 
             const bookingSection = document.getElementById("bookingSection");
             if (bookingSection) {
+                window.clearSeatSelection = function() {
+                    selectedSeatsList = [];
+                    if (typeof updatePassengerFormRows === 'function') {
+                        updatePassengerFormRows();
+                    }
+                };
                 const seats = document.querySelectorAll(".seat-box.seat-available");
                 const selectedSeatLabel = document.getElementById("selectedSeatLabel");
                 const seatSelectedIndicator = document.getElementById("seatSelectedIndicator");
@@ -1569,10 +1573,10 @@ else if (hasActiveRoute)
                         const seatNum = parseInt(this.getAttribute("data-seat"));
                         if (selectedSeatsList.includes(seatNum)) {
                             selectedSeatsList = selectedSeatsList.filter(s => s !== seatNum);
-                            document.querySelectorAll(.seat-box[data-seat=""]).forEach(b => b.classList.remove("seat-selected"));
+                            document.querySelectorAll(`.seat-box[data-seat="${seatNum}"]`).forEach(b => b.classList.remove("seat-selected"));
                         } else {
                             selectedSeatsList.push(seatNum);
-                            document.querySelectorAll(.seat-box[data-seat=""]).forEach(b => b.classList.add("seat-selected"));
+                            document.querySelectorAll(`.seat-box[data-seat="${seatNum}"]`).forEach(b => b.classList.add("seat-selected"));
                         }
                         updatePassengerFormRows();
                     });
