@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace SistemaChotaExpress.Controllers
         // 1. BUSCAR VIAJES & TABLERO DE VENTAS
         // ==========================================
         [HttpGet]
-        public async Task<IActionResult> BuscarViajes(string? origen, string? destino, string? fecha, int? viajeId, int? idRuta, bool reset = false)
+        public async Task<IActionResult> BuscarViajes(string? origen, string? destino, string? fecha, int? viajeId, int? idRuta, string? tipoUnidad = null, bool reset = false)
         {
             // Purga preventiva de rutas inválidas (Origen == Destino) de la base de datos
             var rutasInvalidas = await _context.Rutas
@@ -57,9 +57,11 @@ namespace SistemaChotaExpress.Controllers
             {
                 HttpContext.Session.Remove("LastSelectedOrigen");
                 HttpContext.Session.Remove("LastSelectedDestino");
+                HttpContext.Session.Remove("LastSelectedTipoUnidad");
                 origen = null;
                 destino = null;
                 idRuta = null;
+                tipoUnidad = null;
             }
             else if (idRuta.HasValue && idRuta.Value > 0)
             {
@@ -116,6 +118,18 @@ namespace SistemaChotaExpress.Controllers
             }
 
             ViewBag.IdRutaActual = rutaActual?.Id_Ruta;
+
+            if (string.IsNullOrWhiteSpace(tipoUnidad))
+            {
+                tipoUnidad = HttpContext.Session.GetString("LastSelectedTipoUnidad");
+            }
+            if (tipoUnidad != "18" && tipoUnidad != "30")
+            {
+                tipoUnidad = "15";
+            }
+            HttpContext.Session.SetString("LastSelectedTipoUnidad", tipoUnidad);
+            ViewBag.SelectedTipoUnidad = tipoUnidad;
+            int capDefault = tipoUnidad == "30" ? 30 : (tipoUnidad == "18" ? 18 : 15);
 
             var rutasCompletas = await _context.Rutas
                 .Where(r => r.Origen.ToLower() != r.Destino.ToLower())
@@ -199,7 +213,7 @@ namespace SistemaChotaExpress.Controllers
                     .Where(vt => vt.Id_Viaje == v.Id_Viaje && vt.Estado != "Cancelado")
                     .CountAsync();
 
-                var cap = v.ObjetoBus?.Capacidad ?? 15;
+                var cap = v.ObjetoBus?.Capacidad ?? capDefault;
                 viajesDisponibles.Add(new ViajeConDisponibilidad
                 {
                     Viaje = v,
@@ -229,7 +243,7 @@ namespace SistemaChotaExpress.Controllers
                 if (!viajesEnMismaHora.Any(v => v.Viaje.Id_Viaje == selectedViaje.Id_Viaje))
                 {
                     var countOcup = await _context.Ventas.CountAsync(vt => vt.Id_Viaje == selectedViaje.Id_Viaje && vt.Estado != "Cancelado");
-                    var cap = selectedViaje.ObjetoBus?.Capacidad ?? 15;
+                    var cap = selectedViaje.ObjetoBus?.Capacidad ?? capDefault;
                     viajesEnMismaHora.Add(new ViajeConDisponibilidad {
                         Viaje = selectedViaje,
                         AsientosDisponibles = Math.Max(0, cap - countOcup)

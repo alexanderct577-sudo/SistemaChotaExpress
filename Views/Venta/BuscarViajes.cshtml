@@ -1,9 +1,10 @@
-@model IEnumerable<SistemaChotaExpress.Controllers.VentaController.ViajeConDisponibilidad>
+﻿@model IEnumerable<SistemaChotaExpress.Controllers.VentaController.ViajeConDisponibilidad>
 @{
     ViewData["Title"] = "Venta de Pasajes y Salidas";
     var selectedViaje = ViewBag.SelectedViaje as SistemaChotaExpress.Models.Viaje;
     var asientosOcupados = ViewBag.AsientosOcupados as List<int> ?? new List<int>();
     var asientosReservados = ViewBag.AsientosReservados as List<int> ?? new List<int>();
+    var selTipoFlota = ViewBag.SelectedTipoUnidad as string ?? "15";
 }
 
 <style>
@@ -351,6 +352,38 @@
                     </select>
                 </div>
 
+                <!-- TIPO DE UNIDAD (FLOTA) -->
+                <div class="mb-3">
+                    <label class="form-label text-warning fw-bold fs-8 mb-1.5 d-flex align-items-center">
+                        <i class="fa-solid fa-van-shuttle me-1 text-warning"></i> TIPO DE UNIDAD (FLOTA):
+                    </label>
+                    <input type="hidden" name="tipoUnidad" id="tipoUnidadInput" value="@selTipoFlota" />
+                    
+                    <div class="row g-1.5 text-center" id="fleetTypeSelector">
+                        <div class="col-4">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "15" ? "active" : "") w-100 p-2 text-center" data-tipo="15" title="Combi EstÃ¡ndar (15 Asientos)">
+                                <i class="fa-solid fa-van-shuttle fleet-icon d-block mb-1"></i>
+                                <span class="fleet-name d-block">COMBI</span>
+                                <span class="fleet-cap d-block">15 PAS.</span>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "18" ? "active" : "") w-100 p-2 text-center" data-tipo="18" title="Combi Extendida (18 Asientos)">
+                                <i class="fa-solid fa-shuttle-van fleet-icon d-block mb-1"></i>
+                                <span class="fleet-name d-block">COMBI</span>
+                                <span class="fleet-cap d-block">18 PAS.</span>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn-fleet-card @(selTipoFlota == "30" ? "active" : "") w-100 p-2 text-center" data-tipo="30" title="MinibÃºs PanorÃ¡mico (30 Asientos)">
+                                <i class="fa-solid fa-bus-simple fleet-icon d-block mb-1"></i>
+                                <span class="fleet-name d-block">MINIBUS</span>
+                                <span class="fleet-cap d-block">30 PAS.</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex gap-2 mt-3">
                     <button type="submit" id="btnFiltrarRuta" aria-label="Filtrar Ruta" class="btn btn-sm btn-primary btn-orange-solid flex-grow-1 py-2 fw-bold fs-8">
                         <i class="fa-solid fa-magnifying-glass me-1" aria-hidden="true"></i> Filtrar Ruta
@@ -427,7 +460,7 @@
                                     var isSelected = itemSeleccionado != null;
                                     var targetTrip = (itemSeleccionado ?? tripsEnHora.First()).Viaje;
 
-                                    <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = targetTrip.Id_Viaje })" 
+                                    <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = targetTrip.Id_Viaje, tipoUnidad = ViewBag.SelectedTipoUnidad })" 
                                        onclick="window.location.href = this.href; return false;"
                                        class="btn hour-pill-btn mb-1 me-1 @(isSelected ? "btn-teal-active shadow-lg" : "btn-glass-pill")"
                                        title="Salida a las @horaTexto (@cantidadVehiculos vehículo(s))">
@@ -471,7 +504,7 @@
                                     var chofer = string.IsNullOrWhiteSpace(itemV.Viaje.NombreConductor) ? "Sin Conductor" : itemV.Viaje.NombreConductor;
 
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = itemV.Viaje.Id_Viaje })"
+                                        <a href="@Url.Action("BuscarViajes", new { origen = ViewBag.SelectedOrigen, destino = ViewBag.SelectedDestino, fecha = ViewBag.SelectedFecha, viajeId = itemV.Viaje.Id_Viaje, tipoUnidad = ViewBag.SelectedTipoUnidad })"
                                            onclick="window.location.href = this.href; return false;"
                                            class="btn @(isThisSelected ? "btn-teal-active shadow-lg text-white font-weight-700" : "btn-outline-light border-glass-btn opacity-85") fs-8 py-1.5 px-3">
                                             <i class="fa-solid fa-van-shuttle me-1 text-warning"></i>
@@ -528,8 +561,9 @@
                                                 : "RUTA LIBRE";
                                             var placaActual = string.IsNullOrWhiteSpace(selectedViaje.PlacaVehiculo) ? "S/P" : selectedViaje.PlacaVehiculo.ToUpper();
                                         }
-                                        <i class="fa-solid fa-van-shuttle me-1 text-primary"></i> <strong>@displayNombreCombi</strong>
+                                        <i class="fa-solid @(selTipoFlota == "30" ? "fa-bus-simple" : (selTipoFlota == "18" ? "fa-shuttle-van" : "fa-van-shuttle")) me-1 text-primary"></i> <strong>@displayNombreCombi</strong>
                                         <span class="badge bg-warning text-dark ms-1 fs-9 font-monospace">@rutaDisplay</span>
+                                        <span id="tipoUnidadTitleBadge" class="badge bg-primary text-white ms-1 fs-9 font-monospace">@(selTipoFlota == "30" ? "MINIBÃšS 30 PAS." : (selTipoFlota == "18" ? "COMBI 18 PAS." : "COMBI 15 PAS."))</span>
                                     </div>
                                     <a href="@Url.Action("ManifiestoChofer", "Venta", new { viajeId = selectedViaje.Id_Viaje })" 
                                        target="_blank" 
@@ -605,44 +639,190 @@
                                     </div>
                                 </div>
 
-                                <div class="bus-outer-body p-3 mx-auto mb-3 position-relative">
+                                <!-- CROQUIS 1: COMBI 15 PASAJEROS (EstÃ¡ndar) -->
+                                <div id="croquisContainer-15" class="croquis-unit-container @(selTipoFlota == "15" ? "" : "d-none")">
+                                    <div class="bus-outer-body bus-combi-15 p-3 mx-auto mb-3 position-relative">
+                                        <div class="bus-wheel bus-wheel-left-front" title="Llanta Delantera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-left-rear" title="Llanta Trasera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-right-front" title="Llanta Delantera Derecha"></div>
+                                        <div class="bus-wheel bus-wheel-right-rear" title="Llanta Trasera Derecha"></div>
 
-                                    <div class="bus-wheel bus-wheel-top-front" title="Llanta Delantera Superior"></div>
-                                    <div class="bus-wheel bus-wheel-top-rear" title="Llanta Trasera Superior"></div>
-                                    <div class="bus-wheel bus-wheel-bottom-front" title="Llanta Delantera Inferior"></div>
-                                    <div class="bus-wheel bus-wheel-bottom-rear" title="Llanta Trasera Inferior"></div>
+                                        <div class="bus-inner-cabin position-relative">
+                                            <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Combi Est&aacute;ndar (15 Asientos)</div>
+                                            
+                                            <div class="seats-grid seats-grid-15">
+                                                <!-- Fila 1: Cabina / Chofer y Copilotos -->
+                                                <div class="driver-wheel" style="grid-row: 1; grid-column: 1;" title="Chofer">
+                                                    <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 1.8rem;"></i>
+                                                </div>
+                                                <div class="seat-space" style="grid-row: 1; grid-column: 2;"></div>
+                                                @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 1, 3))
+                                                @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 4))
 
-                                    <div class="bus-inner-cabin position-relative">
-                                        <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Combi Estándar</div>
-                                        
-                                        <div class="seats-grid">
+                                                <!-- Fila 2: Asientos 3, 4, 5 y puerta de ingreso -->
+                                                @Html.Raw(RenderSeatHtml(3, asientosOcupados, asientosReservados, 2, 1))
+                                                @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 2, 2))
+                                                @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 3))
+                                                <div class="seat-space d-flex flex-column align-items-center justify-content-center" style="grid-row: 2; grid-column: 4;" title="Puerta de Subida">
+                                                    <span class="door-text-badge">PUERTA</span>
+                                                </div>
 
-                                            @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 1))
-                                            <div class="seat-space" style="grid-row: 1; grid-column: 2;"></div>
-                                            @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 1, 3))
-                                            @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 1, 4))
-                                            @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 1, 5))
+                                                <!-- Fila 3: Asientos 6, 7, pasillo, 8 -->
+                                                @Html.Raw(RenderSeatHtml(6, asientosOcupados, asientosReservados, 3, 1))
+                                                @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 2))
+                                                <div class="seat-space" style="grid-row: 3; grid-column: 3;"></div>
+                                                @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 3, 4))
 
-        
-                                            @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 2, 1))
-                                            @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 2))
-                                            <div class="seat-space" style="grid-row: 2; grid-column: 3;"></div>
-                                            <div class="seat-space" style="grid-row: 2; grid-column: 4;"></div>
-                                            @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 2, 5))
+                                                <!-- Fila 4: Asientos 9, 10, pasillo, 11 -->
+                                                @Html.Raw(RenderSeatHtml(9, asientosOcupados, asientosReservados, 4, 1))
+                                                @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 4, 2))
+                                                <div class="seat-space" style="grid-row: 4; grid-column: 3;"></div>
+                                                @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 4, 4))
 
-                                            <div class="seat-space" style="grid-row: 3; grid-column: 1;"></div>
-                                            @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 3, 2))
-                                            @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 3))
-                                            @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 3, 4))
-                                            @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 3, 5))
-
-                                            <div class="driver-wheel" style="grid-row: 4; grid-column: 1;" title="Chofer">
-                                                <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 2rem;"></i>
+                                                <!-- Fila 5: Ãšltima fila (12, 13, 14, 15) -->
+                                                @Html.Raw(RenderSeatHtml(12, asientosOcupados, asientosReservados, 5, 1))
+                                                @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 5, 2))
+                                                @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 5, 3))
+                                                @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 5, 4))
                                             </div>
-                                            @Html.Raw(RenderSeatHtml(3, asientosOcupados, asientosReservados, 4, 2))
-                                            @Html.Raw(RenderSeatHtml(6, asientosOcupados, asientosReservados, 4, 3))
-                                            @Html.Raw(RenderSeatHtml(9, asientosOcupados, asientosReservados, 4, 4))
-                                            @Html.Raw(RenderSeatHtml(12, asientosOcupados, asientosReservados, 4, 5))
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CROQUIS 2: COMBI 18 PASAJEROS (Imagen 2) -->
+                                <div id="croquisContainer-18" class="croquis-unit-container @(selTipoFlota == "18" ? "" : "d-none")">
+                                    <div class="bus-outer-body bus-combi-18 p-3 mx-auto mb-3 position-relative">
+                                        <div class="bus-wheel bus-wheel-left-front" title="Llanta Delantera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-left-rear" title="Llanta Trasera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-right-front" title="Llanta Delantera Derecha"></div>
+                                        <div class="bus-wheel bus-wheel-right-rear" title="Llanta Trasera Derecha"></div>
+
+                                        <div class="bus-inner-cabin position-relative">
+                                            <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Combi Extendida (18 Asientos)</div>
+                                            
+                                            <div class="seats-grid seats-grid-18">
+                                                <!-- Fila 1: Cabina (Chofer a la izquierda, consola, copilotos 1 y 2 a la derecha) -->
+                                                <div class="driver-wheel" style="grid-row: 1; grid-column: 1;" title="Conductor / Chofer">
+                                                    <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 1.8rem;"></i>
+                                                </div>
+                                                <div class="seat-space d-flex align-items-center justify-content-center" style="grid-row: 1; grid-column: 2;">
+                                                    <div class="dash-console-box" title="Consola"></div>
+                                                </div>
+                                                @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 1, 3))
+                                                @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 4))
+
+                                                <!-- Fila 2: Asientos 3, 4, 5 y puerta vertical a la derecha -->
+                                                @Html.Raw(RenderSeatHtml(3, asientosOcupados, asientosReservados, 2, 1))
+                                                @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 2, 2))
+                                                @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 3))
+                                                <div class="door-vertical-text" style="grid-row: 2; grid-column: 4;" title="Puerta de Ingreso">
+                                                    <span>P<br>U<br>E<br>R<br>T<br>A</span>
+                                                </div>
+
+                                                <!-- Pasadizo vertical central en Columna 3 (Filas 3 a 5) -->
+                                                <div class="pasadizo-vertical-text" style="grid-row: 3 / 6; grid-column: 3;" title="Pasadizo Central">
+                                                    <span>P<br>A<br>S<br>A<br>D<br>I<br>Z<br>O</span>
+                                                </div>
+
+                                                <!-- Fila 3: Asientos 6, 7 y asiento 8 a la derecha -->
+                                                @Html.Raw(RenderSeatHtml(6, asientosOcupados, asientosReservados, 3, 1))
+                                                @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 3, 2))
+                                                @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 3, 4))
+
+                                                <!-- Fila 4: Asientos 9, 10 y asiento 11 a la derecha -->
+                                                @Html.Raw(RenderSeatHtml(9, asientosOcupados, asientosReservados, 4, 1))
+                                                @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 4, 2))
+                                                @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 4, 4))
+
+                                                <!-- Fila 5: Asientos 12, 13 y asiento 14 a la derecha -->
+                                                @Html.Raw(RenderSeatHtml(12, asientosOcupados, asientosReservados, 5, 1))
+                                                @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 5, 2))
+                                                @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 5, 4))
+
+                                                <!-- Fila 6: Ãšltima fila de 4 asientos (15, 16, 17, 18) -->
+                                                @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 6, 1))
+                                                @Html.Raw(RenderSeatHtml(16, asientosOcupados, asientosReservados, 6, 2))
+                                                @Html.Raw(RenderSeatHtml(17, asientosOcupados, asientosReservados, 6, 3))
+                                                @Html.Raw(RenderSeatHtml(18, asientosOcupados, asientosReservados, 6, 4))
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CROQUIS 3: MINIBUS 30 PASAJEROS (Imagen 3) -->
+                                <div id="croquisContainer-30" class="croquis-unit-container @(selTipoFlota == "30" ? "" : "d-none")">
+                                    <div class="bus-outer-body bus-minibus-30 p-3 mx-auto mb-3 position-relative">
+                                        <div class="bus-wheel bus-wheel-left-front" title="Llanta Delantera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-left-rear" title="Llanta Trasera Izquierda"></div>
+                                        <div class="bus-wheel bus-wheel-right-front" title="Llanta Delantera Derecha"></div>
+                                        <div class="bus-wheel bus-wheel-right-rear" title="Llanta Trasera Derecha"></div>
+
+                                        <div class="bus-inner-cabin position-relative">
+                                            <div class="bus-title text-center text-danger fw-bold mb-2 fs-9">Piso 1 - Minib&uacute;s Panor&aacute;mico (30 Asientos)</div>
+                                            
+                                            <!-- Cabina frontal chofer & puerta -->
+                                            <div class="d-flex justify-content-between align-items-center px-1 mb-2">
+                                                <div class="driver-wheel" title="Chofer">
+                                                    <i class="fa-solid fa-circle-radiation text-muted" style="transform: rotate(45deg); font-size: 1.6rem;"></i>
+                                                </div>
+                                                <div class="text-center text-muted fs-9 fw-bold">
+                                                    <i class="fa-solid fa-arrow-up me-1"></i> FRENTE
+                                                </div>
+                                                <div class="door-text-badge" title="Puerta de Ingreso">
+                                                    <i class="fa-solid fa-door-open me-1"></i> PUERTA
+                                                </div>
+                                            </div>
+
+                                            <div class="seats-grid seats-grid-30">
+                                                <!-- Pasadizo amplio central que recorre todo el bus (filas 1 a 6, columnas 3 y 4) -->
+                                                <div class="pasadizo-vertical-text" style="grid-row: 1 / 7; grid-column: 3 / 5;" title="Pasadizo Central">
+                                                    <span class="pasadizo-large">P<br>A<br>S<br>A<br>D<br>I<br>Z<br>O</span>
+                                                </div>
+
+                                                <!-- Fila 1: Asientos 1, 2 | Pasadizo | Asientos 3, 4 -->
+                                                @Html.Raw(RenderSeatHtml(1, asientosOcupados, asientosReservados, 1, 1))
+                                                @Html.Raw(RenderSeatHtml(2, asientosOcupados, asientosReservados, 1, 2))
+                                                @Html.Raw(RenderSeatHtml(3, asientosOcupados, asientosReservados, 1, 5))
+                                                @Html.Raw(RenderSeatHtml(4, asientosOcupados, asientosReservados, 1, 6))
+
+                                                <!-- Fila 2: Asientos 5, 6 | Pasadizo | Asientos 7, 8 -->
+                                                @Html.Raw(RenderSeatHtml(5, asientosOcupados, asientosReservados, 2, 1))
+                                                @Html.Raw(RenderSeatHtml(6, asientosOcupados, asientosReservados, 2, 2))
+                                                @Html.Raw(RenderSeatHtml(7, asientosOcupados, asientosReservados, 2, 5))
+                                                @Html.Raw(RenderSeatHtml(8, asientosOcupados, asientosReservados, 2, 6))
+
+                                                <!-- Fila 3: Asientos 9, 10 | Pasadizo | Asientos 11, 12 -->
+                                                @Html.Raw(RenderSeatHtml(9, asientosOcupados, asientosReservados, 3, 1))
+                                                @Html.Raw(RenderSeatHtml(10, asientosOcupados, asientosReservados, 3, 2))
+                                                @Html.Raw(RenderSeatHtml(11, asientosOcupados, asientosReservados, 3, 5))
+                                                @Html.Raw(RenderSeatHtml(12, asientosOcupados, asientosReservados, 3, 6))
+
+                                                <!-- Fila 4: Asientos 13, 14 | Pasadizo | Asientos 15, 16 -->
+                                                @Html.Raw(RenderSeatHtml(13, asientosOcupados, asientosReservados, 4, 1))
+                                                @Html.Raw(RenderSeatHtml(14, asientosOcupados, asientosReservados, 4, 2))
+                                                @Html.Raw(RenderSeatHtml(15, asientosOcupados, asientosReservados, 4, 5))
+                                                @Html.Raw(RenderSeatHtml(16, asientosOcupados, asientosReservados, 4, 6))
+
+                                                <!-- Fila 5: Asientos 17, 18 | Pasadizo | Asientos 19, 20 -->
+                                                @Html.Raw(RenderSeatHtml(17, asientosOcupados, asientosReservados, 5, 1))
+                                                @Html.Raw(RenderSeatHtml(18, asientosOcupados, asientosReservados, 5, 2))
+                                                @Html.Raw(RenderSeatHtml(19, asientosOcupados, asientosReservados, 5, 5))
+                                                @Html.Raw(RenderSeatHtml(20, asientosOcupados, asientosReservados, 5, 6))
+
+                                                <!-- Fila 6: Asientos 21, 22 | Pasadizo | Asientos 23, 24 -->
+                                                @Html.Raw(RenderSeatHtml(21, asientosOcupados, asientosReservados, 6, 1))
+                                                @Html.Raw(RenderSeatHtml(22, asientosOcupados, asientosReservados, 6, 2))
+                                                @Html.Raw(RenderSeatHtml(23, asientosOcupados, asientosReservados, 6, 5))
+                                                @Html.Raw(RenderSeatHtml(24, asientosOcupados, asientosReservados, 6, 6))
+
+                                                <!-- Fila 7 (Fila posterior de 6 asientos: 25 al 30) -->
+                                                @Html.Raw(RenderSeatHtml(25, asientosOcupados, asientosReservados, 7, 1))
+                                                @Html.Raw(RenderSeatHtml(26, asientosOcupados, asientosReservados, 7, 2))
+                                                @Html.Raw(RenderSeatHtml(27, asientosOcupados, asientosReservados, 7, 3))
+                                                @Html.Raw(RenderSeatHtml(28, asientosOcupados, asientosReservados, 7, 4))
+                                                @Html.Raw(RenderSeatHtml(29, asientosOcupados, asientosReservados, 7, 5))
+                                                @Html.Raw(RenderSeatHtml(30, asientosOcupados, asientosReservados, 7, 6))
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1085,6 +1265,86 @@ else if (hasActiveRoute)
                 });
             }
 
+            // ==========================================
+            // CONTROLADOR DEL SELECTOR DE TIPO DE FLOTA
+            // ==========================================
+            let selectedSeatsList = [];
+
+            window.switchFleetType = function(newTipo) {
+                document.querySelectorAll('.btn-fleet-card').forEach(btn => {
+                    if (btn.getAttribute('data-tipo') === newTipo) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                const tipoInput = document.getElementById('tipoUnidadInput');
+                if (tipoInput) tipoInput.value = newTipo;
+
+                document.querySelectorAll('.hour-pill-btn').forEach(btn => {
+                    if (btn.href) {
+                        try {
+                            const u = new URL(btn.href, window.location.origin);
+                            u.searchParams.set('tipoUnidad', newTipo);
+                            btn.href = u.pathname + u.search;
+                        } catch(e) {}
+                    }
+                });
+
+                document.querySelectorAll('.hour-container a, #bookingSection a').forEach(a => {
+                    if (a.href && a.href.includes('BuscarViajes')) {
+                        try {
+                            const u = new URL(a.href, window.location.origin);
+                            u.searchParams.set('tipoUnidad', newTipo);
+                            a.href = u.pathname + u.search;
+                        } catch(e) {}
+                    }
+                });
+
+                const c15 = document.getElementById('croquisContainer-15');
+                const c18 = document.getElementById('croquisContainer-18');
+                const c30 = document.getElementById('croquisContainer-30');
+
+                if (c15 && c18 && c30) {
+                    c15.classList.add('d-none');
+                    c18.classList.add('d-none');
+                    c30.classList.add('d-none');
+
+                    const activeContainer = document.getElementById(croquisContainer-);
+                    if (activeContainer) {
+                        activeContainer.classList.remove('d-none');
+                    }
+
+                    selectedSeatsList = [];
+                    document.querySelectorAll('.seat-box.seat-selected').forEach(s => s.classList.remove('seat-selected'));
+                    if (typeof updatePassengerFormRows === 'function') {
+                        updatePassengerFormRows();
+                    }
+
+                    const badge = document.getElementById('tipoUnidadTitleBadge');
+                    if (badge) {
+                        if (newTipo === '30') badge.innerText = 'MINIBÃšS 30 PAS.';
+                        else if (newTipo === '18') badge.innerText = 'COMBI 18 PAS.';
+                        else badge.innerText = 'COMBI 15 PAS.';
+                    }
+                }
+
+                try {
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('tipoUnidad', newTipo);
+                    window.history.replaceState({}, '', currentUrl.pathname + currentUrl.search);
+                } catch(e) {}
+            };
+
+            document.querySelectorAll('.btn-fleet-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tipo = this.getAttribute('data-tipo');
+                    switchFleetType(tipo);
+                });
+            });
+
             const bookingSection = document.getElementById("bookingSection");
             if (bookingSection) {
                 const seats = document.querySelectorAll(".seat-box.seat-available");
@@ -1304,15 +1564,15 @@ else if (hasActiveRoute)
                     });
                 });
 
-                seats.forEach(seat => {
+                document.querySelectorAll(".seat-box.seat-available").forEach(seat => {
                     seat.addEventListener("click", function() {
                         const seatNum = parseInt(this.getAttribute("data-seat"));
                         if (selectedSeatsList.includes(seatNum)) {
                             selectedSeatsList = selectedSeatsList.filter(s => s !== seatNum);
-                            this.classList.remove("seat-selected");
+                            document.querySelectorAll(.seat-box[data-seat=""]).forEach(b => b.classList.remove("seat-selected"));
                         } else {
                             selectedSeatsList.push(seatNum);
-                            this.classList.add("seat-selected");
+                            document.querySelectorAll(.seat-box[data-seat=""]).forEach(b => b.classList.add("seat-selected"));
                         }
                         updatePassengerFormRows();
                     });

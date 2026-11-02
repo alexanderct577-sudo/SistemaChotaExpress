@@ -1,4 +1,4 @@
-/* Core Premium CSS System - Tours Chota Express S.A.C. */
+﻿/* Core Premium CSS System - Tours Chota Express S.A.C. */
 :root {
     --primary: #F37021;
     --primary-light: #ff9248;
@@ -509,37 +509,38 @@ footer.custom-footer {
 }
 
 /* ====================================================
-   BUS SEAT MAP CHASSIS & INTERACTIVE MAP STYLING (COMBI HORIZONTAL)
+   BUS SEAT MAP CHASSIS & INTERACTIVE MAP STYLING (COMBI VERTICAL)
    ==================================================== */
 .bus-outer-body {
     width: 100%;
-    max-width: 430px;
+    max-width: 300px;
     background: #fdfdfd;
     border: 6px solid #b5b5c3;
-    border-radius: 35px 15px 15px 35px;
+    border-radius: 35px 35px 18px 18px;
     box-shadow: inset 0 0 15px rgba(0,0,0,0.08), 0 15px 40px rgba(0,0,0,0.35);
     position: relative;
-    padding: 18px 20px !important;
+    padding: 22px 14px 18px 14px !important;
 }
 
-/* Defensa / Parabrisas delantero a la izquierda */
+/* Defensa / Parabrisas delantero arriba */
 .bus-outer-body::before {
     content: '';
     position: absolute;
-    left: -6px;
-    top: 22%;
-    bottom: 22%;
-    width: 8px;
+    top: -6px;
+    left: 20%;
+    right: 20%;
+    height: 8px;
+    width: auto;
     background: #3f4254;
     border-radius: 4px;
 }
 
-/* Llantas horizontales de la combi (2 arriba, 2 abajo) */
+/* Llantas verticales de la combi (2 a la izquierda, 2 a la derecha) */
 .bus-wheel {
     position: absolute;
-    width: 44px;
-    height: 14px;
-    background: linear-gradient(180deg, #18181b 0%, #27272a 50%, #18181b 100%);
+    width: 14px;
+    height: 44px;
+    background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%);
     border: 2px solid #3f3f46;
     border-radius: 4px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
@@ -552,43 +553,43 @@ footer.custom-footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 22px;
-    height: 4px;
+    width: 4px;
+    height: 22px;
     background: #52525b;
     border-radius: 2px;
 }
 
-/* Llantas superiores (arriba) */
-.bus-wheel-top-front, .bus-wheel-fl {
-    top: -14px;
-    left: 45px;
+/* Llantas izquierdas */
+.bus-wheel-left-front, .bus-wheel-top-front, .bus-wheel-fl {
+    top: 50px;
+    left: -14px;
 }
-.bus-wheel-top-rear, .bus-wheel-rl {
-    top: -14px;
-    right: 45px;
+.bus-wheel-left-rear, .bus-wheel-bottom-front, .bus-wheel-rl {
+    bottom: 50px;
+    left: -14px;
 }
 
-/* Llantas inferiores (abajo) */
-.bus-wheel-bottom-front, .bus-wheel-fr {
-    bottom: -14px;
-    left: 45px;
+/* Llantas derechas */
+.bus-wheel-right-front, .bus-wheel-top-rear, .bus-wheel-fr {
+    top: 50px;
+    right: -14px;
 }
-.bus-wheel-bottom-rear, .bus-wheel-rr {
-    bottom: -14px;
-    right: 45px;
+.bus-wheel-right-rear, .bus-wheel-bottom-rear, .bus-wheel-rr {
+    bottom: 50px;
+    right: -14px;
 }
 
 .bus-inner-cabin {
     background: #eef2f5;
-    padding: 12px 14px;
+    padding: 14px 12px;
     border-radius: 20px;
 }
 
 .seats-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 12px 8px;
     align-items: center;
     justify-items: center;
 }
@@ -706,4 +707,161 @@ footer.custom-footer {
         background: #fff !important;
         color: #000 !important;
     }
+}
+
+/* ====================================================
+   SELECTOR DE TIPO DE UNIDAD (FLOTA) & CROQUIS DINAMICOS
+   ==================================================== */
+.btn-fleet-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 10px 4px 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    user-select: none;
+}
+.btn-fleet-card:hover {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+.btn-fleet-card.active {
+    border-color: #f7941d !important;
+    background: rgba(247, 148, 29, 0.2) !important;
+    color: #ff9d3b !important;
+    box-shadow: 0 0 14px rgba(247, 148, 29, 0.4) !important;
+    font-weight: 700;
+}
+.btn-fleet-card .fleet-icon {
+    font-size: 1.35rem;
+    color: inherit;
+    transition: transform 0.2s ease;
+}
+.btn-fleet-card:hover .fleet-icon {
+    transform: scale(1.1);
+}
+.btn-fleet-card .fleet-name {
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+.btn-fleet-card .fleet-cap {
+    font-size: 0.65rem;
+    font-weight: 700;
+    opacity: 0.9;
+    line-height: 1.1;
+}
+
+/* Grillas especÃ­ficas por tipo de unidad */
+.bus-outer-body.bus-minibus-30 {
+    max-width: 350px !important;
+}
+.bus-outer-body.bus-combi-18,
+.bus-outer-body.bus-combi-15 {
+    max-width: 300px !important;
+}
+
+.seats-grid-15 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 12px 8px;
+    align-items: center;
+    justify-items: center;
+}
+
+.seats-grid-18 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 10px 8px;
+    align-items: center;
+    justify-items: center;
+}
+
+.seats-grid-30 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 8px 6px;
+    align-items: center;
+    justify-items: center;
+}
+.seats-grid-30 .seat-box {
+    width: 35px;
+    height: 35px;
+    font-size: 0.8rem;
+}
+.seats-grid-30 .seat-space {
+    width: 35px;
+    height: 35px;
+}
+
+/* Indicadores de Puerta y Pasadizo vertical */
+.door-vertical-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    line-height: 1.35;
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.12);
+    border: 1.5px dashed rgba(217, 119, 6, 0.5);
+    border-radius: 6px;
+    padding: 6px 0;
+    user-select: none;
+    height: 100%;
+}
+.pasadizo-vertical-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    line-height: 1.45;
+    color: #64748b;
+    background: rgba(100, 116, 139, 0.08);
+    border-radius: 6px;
+    padding: 6px 0;
+    user-select: none;
+    height: 100%;
+}
+.pasadizo-large {
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    line-height: 1.5;
+    color: #475569;
+}
+.door-text-badge {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #d97706;
+    letter-spacing: 1px;
+    background: rgba(217, 119, 6, 0.12);
+    border: 1px dashed #d97706;
+    border-radius: 4px;
+    padding: 2px 5px;
+    white-space: nowrap;
+}
+.dash-console-box {
+    width: 28px;
+    height: 12px;
+    background: #475569;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
 }
