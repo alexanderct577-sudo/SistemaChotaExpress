@@ -16,6 +16,9 @@
     DateTime horaDt;
     string horaFormato12 = DateTime.TryParse(horaFiltro, out horaDt) ? horaDt.ToString("hh:mm tt") : horaFiltro;
 
+    // Número de manifiesto: MENC-YYYYMMDD-HHmm
+    string numeroManifiesto = $"MENC-{fechaFiltro:yyyyMMdd}-{horaFiltro.Replace(":", "")}";
+
     // Datos del vehículo y piloto
     var modeloVehiculo = viaje?.ObjetoBus?.Modelo ?? "Toyota HiAce";
     var marcaVehiculo = viaje?.ObjetoBus?.Marca ?? "Toyota";
@@ -29,472 +32,608 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manifiesto de Encomiendas - @origenFiltro a @destinoFiltro (@horaFormato12) - Chota Express</title>
+    <title>Manifiesto de Encomiendas @numeroManifiesto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #0b1120;
-            color: #0f172a;
-            margin: 0;
-            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #1a1a2e;
+            padding: 24px 16px;
         }
 
-        /* Barra de Control y Filtros (No imprimible) */
-        .controls-wrapper {
-            max-width: 980px;
+        /* ── BARRA DE CONTROL (solo pantalla) ── */
+        .controls-bar {
+            max-width: 900px;
             margin: 0 auto 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
+        .controls-bar .btn { font-size: 0.82rem; font-weight: 700; }
+
+        /* ── PANEL FILTRO ── */
         .filter-panel {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
             background: #1e293b;
             border-radius: 10px;
-            padding: 16px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 14px 18px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
         }
-
         .hour-pill-btn {
             border-radius: 20px !important;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 600;
             padding: 3px 9px;
-            transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
         }
         .btn-glass-pill {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255,255,255,0.08);
             color: #cbd5e1;
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255,255,255,0.12);
         }
-        .btn-glass-pill:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-        }
+        .btn-glass-pill:hover { background: rgba(255,255,255,0.2); color: #fff; }
         .btn-teal-active {
             background: #10b981 !important;
-            color: #ffffff !important;
+            color: #fff !important;
             border-color: #10b981 !important;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 8px rgba(16,185,129,0.5);
             font-weight: bold;
         }
 
-        /* Hoja de Impresión A4 Oficial */
-        .paper-sheet {
-            max-width: 980px;
+        /* ══════════════════════════════════════
+           HOJA A4 OFICIAL
+        ══════════════════════════════════════ */
+        .a4-sheet {
+            max-width: 900px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 28px 36px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            border: 1px solid #cbd5e1;
-            color: #0f172a;
+            border-radius: 6px;
+            box-shadow: 0 6px 28px rgba(0,0,0,0.45);
+            overflow: hidden;
         }
 
-        .header-brand {
-            display: flex;
+        /* ── ENCABEZADO OFICIAL (fiel a la imagen) ── */
+        .official-header {
+            display: grid;
+            grid-template-columns: 130px 1fr 170px;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #f37021;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            border-bottom: 3px solid #003087;
+            padding: 8px 14px;
+            background: #fff;
+            gap: 8px;
         }
-        .company-name {
-            font-size: 1.5rem;
+        .header-logo img {
+            height: 62px;
+            width: auto;
+            object-fit: contain;
+        }
+        .header-center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .header-center .empresa-line {
+            font-size: 0.72rem;
             font-weight: 800;
-            color: #f37021;
+            color: #003087;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin: 0;
         }
-        .manifest-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1e293b;
+        .header-center .empresa-nombre {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #003087;
             text-transform: uppercase;
             letter-spacing: 1px;
+            line-height: 1.1;
+        }
+        .header-center .empresa-sac {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #555;
+        }
+        .header-center .combi-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+        .header-right {
+            text-align: right;
+            border-left: 2px solid #003087;
+            padding-left: 12px;
+        }
+        .header-right .ruc-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #003087;
+            text-transform: uppercase;
+        }
+        .header-right .ruc-num {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #003087;
+        }
+        .header-right .doc-title {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: #003087;
+            text-transform: uppercase;
+            line-height: 1.2;
             margin-top: 4px;
         }
 
-        .meta-box {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-        }
-        .meta-label {
-            font-size: 0.72rem;
+        /* ── BANDA NÚMERO DE MANIFIESTO ── */
+        .manifest-number-band {
+            background: #003087;
+            color: #fff;
+            text-align: center;
+            padding: 7px 14px;
+            font-size: 0.85rem;
             font-weight: 700;
-            color: #64748b;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .manifest-number-band .num-code {
+            font-size: 1.1rem;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* ── CUERPO DEL DOCUMENTO ── */
+        .doc-body {
+            padding: 14px 20px 20px 20px;
+        }
+
+        /* ── CUADRO DE DATOS DEL TURNO ── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1.5px solid #003087;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            font-size: 0.78rem;
+        }
+        .info-cell {
+            padding: 7px 10px;
+            border-right: 1px solid #c8d4e8;
+            border-bottom: 1px solid #c8d4e8;
+        }
+        .info-cell:nth-child(4n) { border-right: none; }
+        .info-cell.span2 { grid-column: span 2; }
+        .info-cell.span4 { grid-column: span 4; border-right: none; }
+        .info-cell:nth-last-child(-n+4) { border-bottom: none; }
+        .info-label {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: #003087;
             text-transform: uppercase;
             margin-bottom: 2px;
         }
-        .meta-value {
-            font-size: 0.88rem;
+        .info-value {
             font-weight: 700;
-            color: #0f172a;
+            color: #111;
+            font-size: 0.82rem;
+        }
+        .info-header-row {
+            grid-column: span 4;
+            background: #003087;
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            letter-spacing: 0.5px;
+            border-bottom: none;
         }
 
-        .manifest-table {
+        /* ── TABLA DE ENCOMIENDAS ── */
+        .enc-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.78rem;
-            margin-bottom: 24px;
+            font-size: 0.74rem;
+            margin-bottom: 20px;
         }
-        .manifest-table th {
-            background-color: #0f172a;
-            color: #ffffff;
-            font-weight: 700;
+        .enc-table thead tr th {
+            background: #003087;
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.67rem;
             text-transform: uppercase;
-            font-size: 0.7rem;
-            padding: 8px 6px;
-            border: 1px solid #0f172a;
+            padding: 7px 5px;
+            border: 1px solid #003087;
             text-align: left;
         }
-        .manifest-table td {
-            padding: 7px 6px;
-            border: 1px solid #cbd5e1;
+        .enc-table tbody td {
+            padding: 6px 5px;
+            border: 1px solid #c8d4e8;
             vertical-align: middle;
         }
-        .manifest-table tr:nth-child(even) td {
-            background-color: #f8fafc;
+        .enc-table tbody tr:nth-child(even) td {
+            background: #f0f4fb;
+        }
+        .enc-table .no-data td {
+            text-align: center;
+            padding: 28px;
+            color: #888;
+            font-style: italic;
         }
 
-        .signatures-area {
+        /* ── RESUMEN TOTALES ── */
+        .totals-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 24px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #003087;
+            border-top: 2px solid #003087;
+            padding-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* ── FIRMAS ── */
+        .signatures {
             display: flex;
             justify-content: space-around;
-            margin-top: 36px;
-            padding-top: 16px;
+            margin-top: 24px;
+            padding-top: 10px;
         }
         .sig-block {
             text-align: center;
-            width: 240px;
+            width: 210px;
         }
         .sig-line {
-            border-top: 1.5px solid #0f172a;
-            margin-bottom: 6px;
+            border-top: 1.5px solid #111;
+            margin-bottom: 5px;
         }
         .sig-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #1e293b;
+            font-size: 0.72rem;
+            font-weight: 800;
             text-transform: uppercase;
+            color: #003087;
         }
         .sig-sub {
-            font-size: 0.68rem;
-            color: #64748b;
+            font-size: 0.65rem;
+            color: #555;
         }
 
+        /* ══ IMPRESIÓN ══ */
         @@media print {
-            body {
-                background: #ffffff !important;
-                padding: 0 !important;
-                color: #000000 !important;
-            }
-            .controls-wrapper {
-                display: none !important;
-            }
-            .paper-sheet {
+            body { background: #fff !important; padding: 0 !important; }
+            .controls-bar, .filter-panel { display: none !important; }
+            .a4-sheet {
                 max-width: 100% !important;
-                border: none !important;
                 box-shadow: none !important;
-                padding: 0 !important;
+                border-radius: 0 !important;
             }
-            .manifest-table th {
-                background-color: #000000 !important;
-                color: #ffffff !important;
+            .enc-table thead tr th {
+                background: #003087 !important;
+                color: #fff !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            .btn-check-print {
-                display: none !important;
+            .official-header, .manifest-number-band, .info-header-row {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
+            @@page { size: A4; margin: 10mm; }
         }
     </style>
 </head>
 <body>
 
-    <!-- BARRA DE ACCIONES Y FILTRO POR TURNO -->
-    <div class="controls-wrapper">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <div class="d-flex gap-2">
-                <a href="@Url.Action("Index", "Encomienda")" class="btn btn-outline-light btn-sm fw-bold px-3">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Volver a Encomiendas
-                </a>
-                <button onclick="window.print();" class="btn btn-warning fw-bold btn-sm px-4">
-                    <i class="fa-solid fa-print me-1"></i> Imprimir Manifiesto
-                </button>
-                <button onclick="enviarWhatsAppEncomiendas();" class="btn btn-success fw-bold btn-sm px-3 shadow-sm">
-                    <i class="fa-brands fa-whatsapp me-1"></i> Compartir por WhatsApp
-                </button>
-            </div>
-            <div class="text-white-50 small">
-                <i class="fa-solid fa-circle-info me-1 text-warning"></i> Formato oficial A4 para control de carga y encomiendas por turno.
-            </div>
-        </div>
+    <!-- ══ BARRA DE ACCIONES (solo pantalla) ══ -->
+    <div class="controls-bar">
+        <a href="@Url.Action("Index", "Encomienda")" class="btn btn-outline-light btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver
+        </a>
+        <button onclick="window.print();" class="btn btn-warning btn-sm">
+            <i class="fa-solid fa-print me-1"></i> Imprimir
+        </button>
+        <button onclick="enviarWhatsAppEncomiendas();" class="btn btn-success btn-sm">
+            <i class="fa-brands fa-whatsapp me-1"></i> Compartir por WhatsApp
+        </button>
+        <span class="text-white-50 small ms-auto">
+            <i class="fa-solid fa-circle-info me-1 text-warning"></i> Formato oficial A4 — Encomiendas por turno
+        </span>
+    </div>
 
-        <!-- Panel de Filtro de Turno y Franjas Horarias -->
-        <div class="filter-panel">
-            <form method="get" asp-action="ManifiestoTurno" class="row g-2 align-items-end mb-3">
-                <div class="col-md-3">
-                    <label for="txtFechaManifiesto" class="form-label text-warning small fw-bold mb-1"><i class="fa-regular fa-calendar me-1"></i> Fecha:</label>
-                    <input type="date" id="txtFechaManifiesto" name="fecha" aria-label="Fecha de manifiesto" class="form-control form-control-sm bg-dark text-white border-secondary" 
-                           value="@fechaFiltro.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
-                </div>
-                <div class="col-md-3">
-                    <label for="selOrigenManifiesto" class="form-label text-warning small fw-bold mb-1"><i class="fa-solid fa-location-dot me-1"></i> Origen:</label>
-                    <select id="selOrigenManifiesto" name="origen" aria-label="Origen de encomienda" class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()">
-                        @foreach (var l in lugares)
-                        {
-                            <option value="@l" selected="@(l.Equals(origenFiltro, StringComparison.OrdinalIgnoreCase))">@l</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="selDestinoManifiesto" class="form-label text-warning small fw-bold mb-1"><i class="fa-solid fa-map-pin me-1"></i> Destino:</label>
-                    <select id="selDestinoManifiesto" name="destino" aria-label="Destino de encomienda" class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()">
-                        @foreach (var l in lugares)
-                        {
-                            <option value="@l" selected="@(l.Equals(destinoFiltro, StringComparison.OrdinalIgnoreCase))">@l</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="hidden" name="hora" id="hiddenHoraFiltro" value="@horaFiltro" />
-                    <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold">
-                        <i class="fa-solid fa-filter me-1"></i> Filtrar Turno
-                    </button>
-                </div>
-            </form>
-
-            <!-- 24 Franjas Horarias Disponibles -->
-            <div class="pt-2 border-top border-secondary">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="text-warning fw-bold fs-9 text-uppercase">
-                        <i class="fa-regular fa-clock me-1"></i> SELECCIONAR TURNO / HORA DE SALIDA (@origenFiltro → @destinoFiltro):
-                    </span>
-                    <small class="text-muted fs-9">24 FRANJAS HORARIAS</small>
-                </div>
-                <div class="d-flex flex-wrap gap-1">
-                    @{
-                        string[] horas24 = new string[] {
-                            "00:00", "01:00", "02:00", "03:00", "04:00", "05:00",
-                            "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
-                            "12:00", "13:00", "14:00", "15:00", "16:00", "17:00",
-                            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
-                        };
-                        string[] horasLabels = new string[] {
-                            "12:00 AM", "01:00 AM", "02:00 AM", "03:00 AM", "04:00 AM", "05:00 AM",
-                            "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
-                            "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
-                            "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM", "11:00 PM"
-                        };
-                    }
-                    @for (int i = 0; i < 24; i++)
+    <!-- ══ PANEL FILTRO DE TURNO (solo pantalla) ══ -->
+    <div class="filter-panel">
+        <form method="get" asp-action="ManifiestoTurno" class="row g-2 align-items-end mb-3">
+            <div class="col-md-3">
+                <label for="txtFechaManifiesto" class="form-label text-warning small fw-bold mb-1">
+                    <i class="fa-regular fa-calendar me-1"></i> Fecha:
+                </label>
+                <input type="date" id="txtFechaManifiesto" name="fecha"
+                       aria-label="Fecha de manifiesto"
+                       class="form-control form-control-sm bg-dark text-white border-secondary"
+                       value="@fechaFiltro.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+            </div>
+            <div class="col-md-3">
+                <label for="selOrigenManifiesto" class="form-label text-warning small fw-bold mb-1">
+                    <i class="fa-solid fa-location-dot me-1"></i> Origen:
+                </label>
+                <select id="selOrigenManifiesto" name="origen" aria-label="Origen de encomienda"
+                        class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()">
+                    @foreach (var l in lugares)
                     {
-                        var hVal = horas24[i];
-                        var hLabel = horasLabels[i];
-                        var isActiva = (horaFiltro == hVal);
-                        <a href="@Url.Action("ManifiestoTurno", new { fecha = fechaFiltro.ToString("yyyy-MM-dd"), origen = origenFiltro, destino = destinoFiltro, hora = hVal })"
-                           class="btn hour-pill-btn @(isActiva ? "btn-teal-active shadow" : "btn-glass-pill")">
-                            <i class="fa-regular fa-clock me-1"></i>@hLabel
-                        </a>
+                        <option value="@l" selected="@(l.Equals(origenFiltro, StringComparison.OrdinalIgnoreCase))">@l</option>
                     }
-                </div>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="selDestinoManifiesto" class="form-label text-warning small fw-bold mb-1">
+                    <i class="fa-solid fa-map-pin me-1"></i> Destino:
+                </label>
+                <select id="selDestinoManifiesto" name="destino" aria-label="Destino de encomienda"
+                        class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()">
+                    @foreach (var l in lugares)
+                    {
+                        <option value="@l" selected="@(l.Equals(destinoFiltro, StringComparison.OrdinalIgnoreCase))">@l</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="hidden" name="hora" id="hiddenHoraFiltro" value="@horaFiltro" />
+                <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold">
+                    <i class="fa-solid fa-filter me-1"></i> Filtrar Turno
+                </button>
+            </div>
+        </form>
+
+        <!-- Franjas horarias -->
+        <div class="pt-2 border-top border-secondary">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-warning fw-bold small text-uppercase">
+                    <i class="fa-regular fa-clock me-1"></i> TURNO / HORA DE SALIDA (@origenFiltro → @destinoFiltro):
+                </span>
+                <small class="text-muted" style="font-size:0.68rem;">24 FRANJAS</small>
+            </div>
+            <div class="d-flex flex-wrap gap-1">
+                @{
+                    string[] horas24 = new string[] {
+                        "00:00","01:00","02:00","03:00","04:00","05:00",
+                        "06:00","07:00","08:00","09:00","10:00","11:00",
+                        "12:00","13:00","14:00","15:00","16:00","17:00",
+                        "18:00","19:00","20:00","21:00","22:00","23:00"
+                    };
+                    string[] horasLabels = new string[] {
+                        "12:00 AM","01:00 AM","02:00 AM","03:00 AM","04:00 AM","05:00 AM",
+                        "06:00 AM","07:00 AM","08:00 AM","09:00 AM","10:00 AM","11:00 AM",
+                        "12:00 PM","01:00 PM","02:00 PM","03:00 PM","04:00 PM","05:00 PM",
+                        "06:00 PM","07:00 PM","08:00 PM","09:00 PM","10:00 PM","11:00 PM"
+                    };
+                }
+                @for (int i = 0; i < 24; i++)
+                {
+                    var hVal = horas24[i];
+                    var hLabel = horasLabels[i];
+                    var isActiva = (horaFiltro == hVal);
+                    <a href="@Url.Action("ManifiestoTurno", new { fecha = fechaFiltro.ToString("yyyy-MM-dd"), origen = origenFiltro, destino = destinoFiltro, hora = hVal })"
+                       class="hour-pill-btn @(isActiva ? "btn-teal-active shadow" : "btn-glass-pill")">
+                        @hLabel
+                    </a>
+                }
             </div>
         </div>
     </div>
 
-    <!-- DOCUMENTO OFICIAL PARA IMPRESIÓN (HOJA A4) -->
-    <div class="paper-sheet">
-        <div class="header-brand">
-            <div>
-                <h1 class="company-name">TOURS CHOTA EXPRESS S.A.C.</h1>
-                <div class="manifest-title">MANIFIESTO OFICIAL DE ENCOMIENDAS (CARGA POR TURNO)</div>
-                <small class="text-muted">Servicio de Transporte Interprovincial & Encomiendas | RUC: 20600308883</small>
+    <!-- ══════════════════════════════════════════
+         HOJA A4 OFICIAL
+    ══════════════════════════════════════════ -->
+    <div class="a4-sheet">
+
+        <!-- ENCABEZADO OFICIAL (igual a la imagen) -->
+        <div class="official-header">
+            <!-- Logo empresa (izquierda) -->
+            <div class="header-logo">
+                <img src="~/img/logo_chota.jpg" alt="Logo Chota Express" />
             </div>
-            <div class="text-end">
-                <span class="badge bg-dark fs-7 px-3 py-2 font-monospace">TURNO @horaFormato12</span>
-                <div class="fs-9 text-muted mt-1">Impreso: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</div>
+
+            <!-- Centro: nombre empresa + combi -->
+            <div class="header-center">
+                <div class="empresa-line">Empresa de Multiservicios y Transportes</div>
+                <div>
+                    <span class="empresa-nombre">TURS CHOTA EXPRESS</span>
+                    <span class="empresa-sac"> S.A.C.</span>
+                </div>
+                <img src="~/img/combi_manifiesto.png" class="combi-img" alt="Vehículo Chota Express" />
             </div>
-        </div>
 
-        <!-- PANEL METADATA CON LOS 10 CAMPOS COMPLETOS -->
-        <div class="meta-box">
-            <div class="row g-2">
-                <!-- Fila 1: ORIGEN, DESTINO, FECHA, HORA -->
-                <div class="col-3">
-                    <div class="meta-label">📍 ORIGEN:</div>
-                    <div class="meta-value text-primary">@origenFiltro.ToUpper()</div>
-                </div>
-                <div class="col-3">
-                    <div class="meta-label">🏁 DESTINO:</div>
-                    <div class="meta-value text-primary">@destinoFiltro.ToUpper()</div>
-                </div>
-                <div class="col-3">
-                    <div class="meta-label">📅 FECHA:</div>
-                    <div class="meta-value">@fechaFiltro.ToString("dd/MM/yyyy")</div>
-                </div>
-                <div class="col-3">
-                    <div class="meta-label">⏰ HORA:</div>
-                    <div class="meta-value text-warning fs-6" style="color: #ea580c !important;">
-                        @horaFormato12
-                    </div>
-                </div>
-
-                <!-- Fila 2: MODELO, PLACA, MARCA, CAPACIDAD COMBI -->
-                <div class="col-3 pt-2 border-top border-light">
-                    <div class="meta-label">🚐 MODELO:</div>
-                    <div class="meta-value font-monospace">@modeloVehiculo</div>
-                </div>
-                <div class="col-3 pt-2 border-top border-light">
-                    <div class="meta-label">🏷️ MARCA:</div>
-                    <div class="meta-value">@marcaVehiculo</div>
-                </div>
-                <div class="col-3 pt-2 border-top border-light">
-                    <div class="meta-label">🛡️ PLACA:</div>
-                    <div class="meta-value font-monospace">
-                        <span class="badge bg-dark px-2">@placaVehiculo.ToUpper()</span>
-                    </div>
-                </div>
-                <div class="col-3 pt-2 border-top border-light">
-                    <div class="meta-label">💺 CAPACIDAD COMBI:</div>
-                    <div class="meta-value">@capacidadVehiculo asientos</div>
-                </div>
-
-                <!-- Fila 3: PILOTO, N° LICENCIA -->
-                <div class="col-6 pt-2 border-top border-light">
-                    <div class="meta-label">🧑‍✈️ PILOTO:</div>
-                    <div class="meta-value text-uppercase">@piloto</div>
-                </div>
-                <div class="col-6 pt-2 border-top border-light">
-                    <div class="meta-label">🪪 N° LICENCIA:</div>
-                    <div class="meta-value font-monospace text-uppercase">@licencia</div>
-                </div>
-
-                <!-- Resumen de Carga del Turno -->
-                <div class="col-12 mt-1 pt-2 border-top border-light d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div class="fs-8">
-                        <strong>Total Encomiendas:</strong> <span class="badge bg-secondary px-2">@count bultos</span>
-                        @if (totalKilos > 0)
-                        {
-                            <span class="ms-2">| <strong>Peso Total:</strong> @totalKilos.ToString("0.0") kg</span>
-                        }
-                    </div>
-                    <div class="fs-8 text-success fw-bold font-monospace">
-                        <strong>Recaudación Total:</strong> S/ @totalRecaudado.ToString("N2")
-                    </div>
-                </div>
+            <!-- Derecha: RUC + Título -->
+            <div class="header-right">
+                <div class="ruc-label">R.U.C.</div>
+                <div class="ruc-num">20600308883</div>
+                <div class="doc-title">MANIFIESTO DE<br>ENCOMIENDAS</div>
             </div>
         </div>
 
-        <h6 class="fw-bold text-uppercase fs-8 mb-2">
-            <i class="fa-solid fa-box-open me-1 text-warning"></i> Relación Oficial de Encomiendas para Despacho y Embarque
-        </h6>
+        <!-- BANDA NÚMERO DE MANIFIESTO -->
+        <div class="manifest-number-band">
+            <span>N° DE MANIFIESTO:</span>
+            <span class="num-code">@numeroManifiesto</span>
+            <span>Fecha: @fechaFiltro.ToString("dd/MM/yyyy") &nbsp;|&nbsp; Turno: @horaFormato12</span>
+        </div>
 
-        <table class="manifest-table">
-            <thead>
-                <tr>
-                    <th style="width: 35px; text-align: center;">#</th>
-                    <th style="width: 95px;">Código</th>
-                    <th>Remitente (Envía)</th>
-                    <th>Destinatario (Recibe)</th>
-                    <th>Descripción / Contenido</th>
-                    <th style="width: 55px; text-align: center;">Peso</th>
-                    <th style="width: 70px; text-align: right;">Total S/</th>
-                    <th style="width: 80px; text-align: center;">Estado</th>
-                    <th style="width: 65px; text-align: center;">Embarcado</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model == null || !Model.Any())
-                {
+        <!-- CUERPO DEL DOCUMENTO -->
+        <div class="doc-body">
+
+            <!-- DATOS DEL TURNO -->
+            <div class="info-grid">
+                <div class="info-header-row">Datos del Turno y Vehículo</div>
+
+                <!-- Fila 1 -->
+                <div class="info-cell">
+                    <div class="info-label">📍 Origen</div>
+                    <div class="info-value">@origenFiltro.ToUpper()</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">🏁 Destino</div>
+                    <div class="info-value">@destinoFiltro.ToUpper()</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">📅 Fecha</div>
+                    <div class="info-value">@fechaFiltro.ToString("dd/MM/yyyy")</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">⏰ Hora Salida</div>
+                    <div class="info-value" style="color:#003087;">@horaFormato12</div>
+                </div>
+
+                <!-- Fila 2 -->
+                <div class="info-cell">
+                    <div class="info-label">🚐 Modelo</div>
+                    <div class="info-value">@modeloVehiculo</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">🏷️ Marca</div>
+                    <div class="info-value">@marcaVehiculo</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">🛡️ Placa</div>
+                    <div class="info-value">@placaVehiculo.ToUpper()</div>
+                </div>
+                <div class="info-cell">
+                    <div class="info-label">💺 Capacidad</div>
+                    <div class="info-value">@capacidadVehiculo asientos</div>
+                </div>
+
+                <!-- Fila 3 -->
+                <div class="info-cell span2">
+                    <div class="info-label">🧑‍✈️ Conductor / Piloto</div>
+                    <div class="info-value">@piloto.ToUpper()</div>
+                </div>
+                <div class="info-cell span2">
+                    <div class="info-label">🪪 N° Licencia</div>
+                    <div class="info-value">@licencia.ToUpper()</div>
+                </div>
+            </div>
+
+            <!-- TABLA DE ENCOMIENDAS -->
+            <table class="enc-table">
+                <thead>
                     <tr>
-                        <td colspan="9" class="text-center text-muted py-4">
-                            <i class="fa-solid fa-box-open fa-2x mb-2 d-block opacity-50"></i>
-                            <em>No hay encomiendas registradas para el turno de salida de las <strong>@horaFormato12</strong> en la ruta <strong>@origenFiltro → @destinoFiltro</strong>.</em>
-                        </td>
+                        <th style="width:32px; text-align:center;">#</th>
+                        <th style="width:90px;">Código</th>
+                        <th>Remitente (Envía)</th>
+                        <th>Destinatario (Recibe)</th>
+                        <th>Descripción / Contenido</th>
+                        <th style="width:55px; text-align:center;">Peso</th>
+                        <th style="width:68px; text-align:right;">Total S/</th>
+                        <th style="width:70px; text-align:center;">Estado</th>
+                        <th style="width:60px; text-align:center;">✔</th>
                     </tr>
-                }
-                else
-                {
-                    int i = 1;
-                    foreach (var enc in Model)
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
                     {
-                        <tr>
-                            <td class="text-center font-monospace fw-bold">@i</td>
-                            <td class="font-monospace fw-bold fs-9 text-dark">@enc.CodigoSeguimiento</td>
-                            <td>
-                                <div><strong class="text-uppercase">@enc.NombreRemitente</strong></div>
-                                @if (!string.IsNullOrEmpty(enc.DniRemitente))
-                                {
-                                    <div class="text-muted fs-9">Doc: @enc.DniRemitente</div>
-                                }
-                            </td>
-                            <td>
-                                <div><strong class="text-uppercase">@enc.NombreDestinatario</strong></div>
-                                @if (!string.IsNullOrEmpty(enc.TelefonoDestinatario))
-                                {
-                                    <div class="text-muted fs-9"><i class="fa-solid fa-phone me-1"></i>@enc.TelefonoDestinatario</div>
-                                }
-                            </td>
-                            <td class="fs-9">
-                                @enc.Descripcion
-                            </td>
-                            <td class="text-center fs-9">
-                                @(enc.PesoKg.HasValue ? enc.PesoKg.Value.ToString("0.0") + " kg" : "—")
-                            </td>
-                            <td class="text-end fw-bold font-monospace">
-                                S/ @enc.PrecioEnvio.ToString("N2")
-                            </td>
-                            <td class="text-center">
-                                @if (enc.Estado == "Registrado")
-                                {
-                                    <span class="badge bg-secondary" style="font-size: 0.65rem;">BODEGA</span>
-                                }
-                                else if (enc.Estado == "En transito")
-                                {
-                                    <span class="badge bg-info text-dark" style="font-size: 0.65rem;">EN RUTA</span>
-                                }
-                                else if (enc.Estado == "Entregado")
-                                {
-                                    <span class="badge bg-success" style="font-size: 0.65rem;">ENTREGADO</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-light text-dark" style="font-size: 0.65rem;">@enc.Estado</span>
-                                }
-                            </td>
-                            <td class="text-center">
-                                <input type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform: scale(1.15);" checked />
+                        <tr class="no-data">
+                            <td colspan="9">
+                                <i class="fa-solid fa-box-open fa-2x d-block mb-2 opacity-40"></i>
+                                No hay encomiendas registradas para el turno de las <strong>@horaFormato12</strong>
+                                en la ruta <strong>@origenFiltro → @destinoFiltro</strong>.
                             </td>
                         </tr>
-                        i++;
                     }
-                }
-            </tbody>
-        </table>
+                    else
+                    {
+                        int idx = 1;
+                        foreach (var enc in Model)
+                        {
+                            <tr>
+                                <td style="text-align:center; font-weight:700;">@idx</td>
+                                <td style="font-family:'Courier New',monospace; font-weight:700; font-size:0.7rem;">@enc.CodigoSeguimiento</td>
+                                <td>
+                                    <strong style="text-transform:uppercase;">@enc.NombreRemitente</strong>
+                                    @if (!string.IsNullOrEmpty(enc.DniRemitente))
+                                    {
+                                        <div style="font-size:0.64rem; color:#666;">Doc: @enc.DniRemitente</div>
+                                    }
+                                </td>
+                                <td>
+                                    <strong style="text-transform:uppercase;">@enc.NombreDestinatario</strong>
+                                    @if (!string.IsNullOrEmpty(enc.TelefonoDestinatario))
+                                    {
+                                        <div style="font-size:0.64rem; color:#666;"><i class="fa-solid fa-phone" style="font-size:0.6rem;"></i> @enc.TelefonoDestinatario</div>
+                                    }
+                                </td>
+                                <td style="font-size:0.72rem;">@enc.Descripcion</td>
+                                <td style="text-align:center; font-size:0.72rem;">
+                                    @(enc.PesoKg.HasValue ? enc.PesoKg.Value.ToString("0.0") + " kg" : "—")
+                                </td>
+                                <td style="text-align:right; font-weight:700; font-family:'Courier New',monospace;">
+                                    S/ @enc.PrecioEnvio.ToString("N2")
+                                </td>
+                                <td style="text-align:center;">
+                                    @if (enc.Estado == "Registrado")
+                                    {
+                                        <span style="background:#64748b;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">BODEGA</span>
+                                    }
+                                    else if (enc.Estado == "En transito")
+                                    {
+                                        <span style="background:#0ea5e9;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">EN RUTA</span>
+                                    }
+                                    else if (enc.Estado == "Entregado")
+                                    {
+                                        <span style="background:#16a34a;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">ENTREGADO</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background:#e2e8f0;color:#333;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">@enc.Estado</span>
+                                    }
+                                </td>
+                                <td style="text-align:center;">
+                                    <input type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform:scale(1.2);" checked />
+                                </td>
+                            </tr>
+                            idx++;
+                        }
+                    }
+                </tbody>
+            </table>
 
-        <!-- Firmas de Conformidad -->
-        <div class="signatures-area">
-            <div class="sig-block">
-                <div class="sig-line"></div>
-                <div class="sig-title">DESPACHADOR DE ENCOMIENDAS</div>
-                <div class="sig-sub">Tours Chota Express S.A.C.</div>
+            <!-- TOTALES -->
+            <div class="totals-row">
+                <span>Total Bultos: <strong>@count</strong></span>
+                @if (totalKilos > 0)
+                {
+                    <span>Peso Total: <strong>@totalKilos.ToString("0.0") kg</strong></span>
+                }
+                <span>Recaudación: <strong>S/ @totalRecaudado.ToString("N2")</strong></span>
             </div>
-            <div class="sig-block">
-                <div class="sig-line"></div>
-                <div class="sig-title">CONDUCTOR / PILOTO</div>
-                <div class="sig-sub">@piloto</div>
+
+            <!-- FIRMAS -->
+            <div class="signatures">
+                <div class="sig-block">
+                    <div class="sig-line"></div>
+                    <div class="sig-title">Despachador de Encomiendas</div>
+                    <div class="sig-sub">Tours Chota Express S.A.C.</div>
+                </div>
+                <div class="sig-block">
+                    <div class="sig-line"></div>
+                    <div class="sig-title">Conductor / Piloto</div>
+                    <div class="sig-sub">@piloto</div>
+                </div>
             </div>
         </div>
+        <!-- fin doc-body -->
     </div>
+    <!-- fin a4-sheet -->
 
     <script>
         async function enviarWhatsAppEncomiendas() {
@@ -502,105 +641,62 @@
             var originalHtml = btn ? btn.innerHTML : '';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Generando Foto...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Generando...';
             }
-
             try {
-                var sheet = document.querySelector('.paper-sheet');
-                if (document.activeElement && document.activeElement.blur) {
-                    document.activeElement.blur();
-                }
+                var sheet = document.querySelector('.a4-sheet');
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 
-                var canvas = await html2canvas(sheet, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: '#ffffff'
-                });
+                var canvas = await html2canvas(sheet, { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' });
 
                 canvas.toBlob(async function(blob) {
-                    if (!blob) {
-                        alert("No se pudo generar la imagen del manifiesto.");
-                        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-                        return;
-                    }
+                    if (!blob) { alert("No se pudo generar la imagen."); if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; }
 
-                    var fileName = `Manifiesto_Encomiendas_@(fechaFiltro.ToString("yyyyMMdd"))_@(horaFiltro).png`;
+                    var fileName = `Manifiesto_Enc_@(fechaFiltro.ToString("yyyyMMdd"))_@(horaFiltro.Replace(":", "")).png`;
                     var file = new File([blob], fileName, { type: 'image/png' });
 
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Manifiesto de Encomiendas - Chota Express',
-                                text: 'Foto oficial del Manifiesto de Encomiendas'
-                            });
-                            if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-                            return;
-                        } catch(e) {
-                            if (e.name === 'AbortError') {
-                                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
-                                return;
-                            }
-                            console.warn("Share error:", e);
-                        }
+                        try { await navigator.share({ files: [file], title: 'Manifiesto de Encomiendas - Chota Express' }); if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; }
+                        catch(e) { if (e.name === 'AbortError') { if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; } }
                     }
 
                     var copiado = false;
                     if (navigator.clipboard && window.ClipboardItem) {
-                        try {
-                            await navigator.clipboard.write([
-                                new ClipboardItem({ 'image/png': blob })
-                            ]);
-                            copiado = true;
-                        } catch(cErr) {
-                            console.warn("Clipboard err:", cErr);
-                        }
+                        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); copiado = true; } catch(e) {}
                     }
 
                     var urlBlob = URL.createObjectURL(blob);
                     var link = document.createElement('a');
-                    link.href = urlBlob;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
+                    link.href = urlBlob; link.download = fileName;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
                     window.open("https://web.whatsapp.com/", "_blank");
 
-                    var modalExistente = document.getElementById('modalFotoWhatsAppEnc');
-                    if (modalExistente) modalExistente.remove();
-
-                    var modalHtml = `
-                        <div id="modalFotoWhatsAppEnc" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:999999;display:flex;align-items:center;justify-content:center;padding:15px;">
-                            <div style="background:#1e293b;color:#fff;padding:24px;border-radius:14px;max-width:480px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);">
-                                <div style="font-size:44px;color:#10b981;margin-bottom:12px;">
-                                    <i class="fa-solid fa-camera"></i>
-                                </div>
-                                <h4 style="font-weight:800;margin-bottom:10px;">¡Foto del Manifiesto Generada!</h4>
-                                <p style="font-size:13px;line-height:1.5;color:#e2e8f0;margin-bottom:16px;">
-                                    ${copiado ? '✅ <strong>La foto del manifiesto fue copiada a tu portapapeles.</strong><br>' : ''}
-                                    📂 Se descargó el archivo <strong>${fileName}</strong> en tu equipo.<br><br>
-                                    👉 En la pestaña de <strong>WhatsApp Web</strong> que se abrió, entra al chat del chofer y presiona <strong>Ctrl + V</strong> para pegar y enviar la foto.
+                    document.body.insertAdjacentHTML('beforeend', `
+                        <div id="modalWA" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:999999;display:flex;align-items:center;justify-content:center;padding:15px;">
+                            <div style="background:#1e293b;color:#fff;padding:24px;border-radius:14px;max-width:460px;text-align:center;border:1px solid rgba(255,255,255,0.15);">
+                                <div style="font-size:40px;color:#10b981;margin-bottom:10px;"><i class="fa-solid fa-camera"></i></div>
+                                <h4 style="font-weight:800;margin-bottom:8px;">¡Foto del Manifiesto Lista!</h4>
+                                <p style="font-size:13px;color:#e2e8f0;margin-bottom:16px;">
+                                    ${copiado ? '✅ <strong>Copiada al portapapeles.</strong><br>' : ''}
+                                    📂 Archivo <strong>${fileName}</strong> descargado.<br><br>
+                                    👉 En WhatsApp Web, ve al chat del chofer y presiona <strong>Ctrl + V</strong>.
                                 </p>
-                                <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
-                                    <a href="https://web.whatsapp.com/" target="_blank" style="background:#10b981;color:#fff;padding:9px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;">
+                                <div style="display:flex;justify-content:center;gap:10px;">
+                                    <a href="https://web.whatsapp.com/" target="_blank" style="background:#10b981;color:#fff;padding:9px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;">
                                         <i class="fa-brands fa-whatsapp"></i> Ir a WhatsApp
                                     </a>
-                                    <button type="button" onclick="document.getElementById('modalFotoWhatsAppEnc').remove();" style="background:#475569;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;">
+                                    <button type="button" onclick="document.getElementById('modalWA').remove();" style="background:#475569;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;">
                                         Entendido
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+                        </div>`);
 
                     if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
                 }, 'image/png');
             } catch(e) {
-                console.error("Error al capturar imagen:", e);
-                alert("Ocurrió un error al capturar la imagen: " + e.message);
+                console.error(e);
+                alert("Error al capturar: " + e.message);
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             }
         }
