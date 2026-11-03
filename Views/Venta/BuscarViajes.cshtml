@@ -981,8 +981,8 @@
                 
                 <div class="modal-body py-3">
                     <div class="mb-3">
-                        <label class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
-                        <input type="text" name="conductorNombre" id="inputModalConductor" class="form-control bg-dark-input text-white border-glass-field" 
+                        <label for="inputModalConductor" class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
+                        <input type="text" name="conductorNombre" id="inputModalConductor" aria-label="Nombre del conductor" class="form-control bg-dark-input text-white border-glass-field" 
                                placeholder="Nombre del conductor" required />
                     </div>
                 </div>
@@ -1015,8 +1015,8 @@
                     <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
                     <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
                     <div class="modal-body py-3">
-                        <label class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
-                        <input type="text" name="nombreConductor" class="form-control bg-dark-input text-white border-glass-field" 
+                        <label for="txtCambiarConductor" class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
+                        <input type="text" id="txtCambiarConductor" name="nombreConductor" aria-label="Nombre del Conductor" class="form-control bg-dark-input text-white border-glass-field" 
                                value="@(selectedViaje.NombreConductor ?? selectedViaje.ObjetoBus?.NombreConductor ?? "")" 
                                placeholder="Ej. Carlos Gómez" required />
                     </div>
