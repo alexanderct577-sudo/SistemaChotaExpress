@@ -37,14 +37,14 @@
 
             <form method="get" class="row g-2 mb-3 bg-dark-card border-glass p-2.5 rounded">
                 <div class="col-md-5">
-                    <label class="form-label text-muted fs-9 mb-1">Filtrar por Ruta:</label>
-                    <select name="idRuta" asp-items="ViewBag.Rutas" class="form-select form-select-sm bg-dark-input text-white border-glass-field fs-8">
+                    <label for="filtroRutaViaje" class="form-label text-muted fs-9 mb-1">Filtrar por Ruta:</label>
+                    <select id="filtroRutaViaje" name="idRuta" asp-items="ViewBag.Rutas" aria-label="Filtrar por Ruta" class="form-select form-select-sm bg-dark-input text-white border-glass-field fs-8">
                         <option value="">-- Todas las Rutas --</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label text-muted fs-9 mb-1">Fecha de Salida:</label>
-                    <input type="date" name="fecha" value="@ViewBag.SelectedFecha" class="form-control form-control-sm bg-dark-input text-white border-glass-field fs-8" />
+                    <label for="filtroFechaSalida" class="form-label text-muted fs-9 mb-1">Fecha de Salida:</label>
+                    <input type="date" id="filtroFechaSalida" name="fecha" value="@ViewBag.SelectedFecha" aria-label="Fecha de Salida" class="form-control form-control-sm bg-dark-input text-white border-glass-field fs-8" />
                 </div>
                 <div class="col-md-3 d-flex align-items-end gap-1">
                     <button type="submit" class="btn btn-sm btn-primary btn-orange-solid flex-grow-1 py-1.5 fs-8">
@@ -153,27 +153,27 @@
             <form asp-action="CrearViaje" method="post">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Ruta de Viaje</label>
-                    <select name="Id_Ruta" asp-items="ViewBag.Rutas" class="form-select bg-dark-input text-white border-glass-field" required>
+                    <label for="selRutaModal" class="form-label text-muted fs-8 font-weight-600">Ruta de Viaje</label>
+                    <select id="selRutaModal" name="Id_Ruta" asp-items="ViewBag.Rutas" aria-label="Ruta de Viaje" class="form-select bg-dark-input text-white border-glass-field" required>
                         <option value="">-- Seleccionar Ruta --</option>
                     </select>
                 </div>
                 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Vehículo / Conductor Asignado</label>
-                    <select name="Id_Bus" asp-items="ViewBag.Buses" class="form-select bg-dark-input text-white border-glass-field" required>
+                    <label for="selBusModal" class="form-label text-muted fs-8 font-weight-600">Vehículo / Conductor Asignado</label>
+                    <select id="selBusModal" name="Id_Bus" asp-items="ViewBag.Buses" aria-label="Vehículo o Conductor Asignado" class="form-select bg-dark-input text-white border-glass-field" required>
                         <option value="">-- Seleccionar Vehículo --</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Fecha y Hora de Salida</label>
-                    <input type="datetime-local" name="FechaHoraSalida" class="form-control bg-dark-input text-white border-glass-field" required />
+                    <label for="dtpFechaHoraSalida" class="form-label text-muted fs-8 font-weight-600">Fecha y Hora de Salida</label>
+                    <input type="datetime-local" id="dtpFechaHoraSalida" name="FechaHoraSalida" aria-label="Fecha y Hora de Salida" class="form-control bg-dark-input text-white border-glass-field" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Precio del Pasaje (S/)</label>
-                    <input type="number" step="0.50" name="Precio" value="0.00" class="form-control bg-dark-input text-white border-glass-field" placeholder="0.00" min="0.00" required />
+                    <label for="numPrecioModal" class="form-label text-muted fs-8 font-weight-600">Precio del Pasaje (S/)</label>
+                    <input type="number" step="0.50" id="numPrecioModal" name="Precio" value="0.00" aria-label="Precio del Pasaje en Soles" class="form-control bg-dark-input text-white border-glass-field" placeholder="0.00" min="0.00" required />
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2.5 mt-2 btn-orange-solid">

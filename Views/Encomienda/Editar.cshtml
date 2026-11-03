@@ -65,9 +65,9 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label asp-for="DniRemitente" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
+                        <label for="txtDniRemitente" asp-for="DniRemitente" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
                         <div class="input-group">
-                            <input asp-for="DniRemitente" id="txtDniRemitente" class="form-control bg-secondary border-0 text-white"
+                            <input asp-for="DniRemitente" id="txtDniRemitente" aria-label="DNI o RUC del Remitente" class="form-control bg-secondary border-0 text-white"
                                    placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off" />
                             <button type="button" id="btnBuscarRemitente" class="btn btn-warning fw-bold px-3">
                                 <span id="txtBtnRemitente"><i class="fa-solid fa-magnifying-glass me-1"></i> Buscar</span>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="NombreRemitente" class="form-label text-muted small">Nombre Completo / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreRemitente" id="txtNombreRemitente" class="form-control bg-secondary border-0 text-white"
+                        <input asp-for="NombreRemitente" id="txtNombreRemitente" aria-label="Nombres y Apellidos del Remitente" class="form-control bg-secondary border-0 text-white"
                                placeholder="Se completa automáticamente al ingresar DNI o RUC" />
                         <span asp-validation-for="NombreRemitente" class="text-danger small"></span>
                     </div>
@@ -99,9 +99,9 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label asp-for="DniDestinatario" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
+                        <label for="txtDniDestinatario" asp-for="DniDestinatario" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
                         <div class="input-group">
-                            <input asp-for="DniDestinatario" id="txtDniDestinatario" class="form-control bg-secondary border-0 text-white"
+                            <input asp-for="DniDestinatario" id="txtDniDestinatario" aria-label="DNI o RUC del Destinatario" class="form-control bg-secondary border-0 text-white"
                                    placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off" />
                             <button type="button" id="btnBuscarDestinatario" class="btn btn-info fw-bold text-white px-3">
                                 <span id="txtBtnDestinatario"><i class="fa-solid fa-magnifying-glass me-1"></i> Buscar</span>
@@ -112,7 +112,7 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="NombreDestinatario" class="form-label text-muted small">Nombre Completo / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreDestinatario" id="txtNombreDestinatario" class="form-control bg-secondary border-0 text-white"
+                        <input asp-for="NombreDestinatario" id="txtNombreDestinatario" aria-label="Nombres y Apellidos del Destinatario" class="form-control bg-secondary border-0 text-white"
                                placeholder="Se completa automáticamente al ingresar DNI o RUC" />
                         <span asp-validation-for="NombreDestinatario" class="text-danger small"></span>
                     </div>
@@ -202,8 +202,8 @@
                             </datalist>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen</label>
-                            <select name="origenRuta" id="origenRutaSelect" class="form-select bg-secondary border-0 text-white" required>
+                            <label for="origenRutaSelect" class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen</label>
+                            <select name="origenRuta" id="origenRutaSelect" aria-label="Origen de la encomienda" class="form-select bg-secondary border-0 text-white" required>
                                 <option value="">-- Seleccionar Origen --</option>
                                 @if (ViewBag.Lugares != null)
                                 {
@@ -216,8 +216,8 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino</label>
-                            <select name="destinoRuta" id="destinoRutaSelect" class="form-select bg-secondary border-0 text-white" required>
+                            <label for="destinoRutaSelect" class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino</label>
+                            <select name="destinoRuta" id="destinoRutaSelect" aria-label="Destino de la encomienda" class="form-select bg-secondary border-0 text-white" required>
                                 <option value="">-- Seleccionar Destino --</option>
                                 @if (ViewBag.Lugares != null)
                                 {

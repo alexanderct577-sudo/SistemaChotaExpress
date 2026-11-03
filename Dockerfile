@@ -1,4 +1,4 @@
-﻿# ===== ETAPA 1: COMPILACION =====
+# ===== ETAPA 1: COMPILACION =====
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
@@ -20,6 +20,9 @@ COPY --from=build /app/publish .
 # Railway inyecta la variable PORT automaticamente
 # ASPNETCORE_HTTP_PORTS se lee en Program.cs via variable de entorno PORT
 EXPOSE 8080
+
+# Ejecutar con usuario no-root por seguridad (SonarCloud docker:S6471)
+USER app
 
 # Iniciar la aplicacion
 ENTRYPOINT ["dotnet", "SistemaChotaExpress.dll"]

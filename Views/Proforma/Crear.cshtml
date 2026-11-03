@@ -42,7 +42,7 @@
                     <div class="row g-2 mb-3">
                         <div class="col-sm-4">
                             <label asp-for="TipoDocumento" class="form-label text-muted small fw-bold">Tipo Doc.</label>
-                            <select asp-for="TipoDocumento" id="cboTipoDoc" class="form-select bg-secondary border-0 text-white">
+                            <select asp-for="TipoDocumento" id="cboTipoDoc" aria-label="Tipo de Documento" class="form-select bg-secondary border-0 text-white">
                                 <option value="DNI">DNI (8 dígitos)</option>
                                 <option value="RUC">RUC (11 dígitos)</option>
                                 <option value="CE">C. Extranjería (CE)</option>
@@ -51,7 +51,7 @@
                         <div class="col-sm-8">
                             <label asp-for="NumeroDocumento" class="form-label text-muted small fw-bold">N° de Documento</label>
                             <div class="input-group">
-                                <input asp-for="NumeroDocumento" id="txtNumeroDoc" class="form-control bg-secondary border-0 text-white"
+                                <input asp-for="NumeroDocumento" id="txtNumeroDoc" aria-label="Número de Documento" class="form-control bg-secondary border-0 text-white"
                                        placeholder="Ingrese DNI, RUC o CE" maxlength="12" autocomplete="off" />
                                 <button type="button" id="btnBuscarDoc" class="btn btn-warning fw-bold px-3">
                                     <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
@@ -63,7 +63,7 @@
 
                     <div class="mb-3">
                         <label asp-for="NombreCliente" class="form-label text-muted small fw-bold">Cliente / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreCliente" id="txtNombreCliente" class="form-control bg-secondary border-0 text-white"
+                        <input asp-for="NombreCliente" id="txtNombreCliente" aria-label="Nombre del Cliente" class="form-control bg-secondary border-0 text-white"
                                placeholder="Nombre del solicitante o empresa" required />
                         <span asp-validation-for="NombreCliente" class="text-danger small"></span>
                     </div>
@@ -87,7 +87,7 @@
                     
                     <div class="mb-3">
                         <label asp-for="TipoServicio" class="form-label text-muted small fw-bold">Tipo de Servicio <span class="text-danger">*</span></label>
-                        <select asp-for="TipoServicio" id="cboTipoServicio" class="form-select bg-secondary border-0 text-white fw-bold">
+                        <select asp-for="TipoServicio" id="cboTipoServicio" aria-label="Tipo de Servicio" class="form-select bg-secondary border-0 text-white fw-bold">
                             <option value="Viaje Expreso (Combi Completa)">Viaje Expreso (Combi Completa / Exclusivo)</option>
                             <option value="Pasajes Individuales">Pasajes Individuales / Grupo de Asientos</option>
                         </select>
@@ -97,7 +97,7 @@
                         <div class="col-sm-6">
                             <label asp-for="CantidadPasajeros" class="form-label text-muted small fw-bold">Cantidad de Pasajeros</label>
                             <div class="input-group">
-                                <input asp-for="CantidadPasajeros" id="txtCantidadPasajeros" type="number" min="1" max="50"
+                                <input asp-for="CantidadPasajeros" id="txtCantidadPasajeros" aria-label="Cantidad de Pasajeros" type="number" min="1" max="50"
                                        class="form-control bg-secondary border-0 text-white" value="15" />
                                 <span class="input-group-text bg-secondary border-0 text-muted">asientos</span>
                             </div>
@@ -136,8 +136,8 @@
                     <div class="row g-3">
                         
                         <div class="col-md-3">
-                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen de Salida</label>
-                            <select name="origenRuta" class="form-select bg-secondary border-0 text-white" required>
+                            <label for="selOrigenProforma" class="form-label text-warning small fw-bold"><i class="fa-solid fa-location-dot me-1"></i> Origen de Salida</label>
+                            <select id="selOrigenProforma" name="origenRuta" aria-label="Origen de Salida" class="form-select bg-secondary border-0 text-white" required>
                                 <option value="">-- Seleccionar Origen --</option>
                                 @if (ViewBag.Lugares != null)
                                 {
@@ -150,8 +150,8 @@
                         </div>
 
                         <div class="col-md-3">
-                            <label class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino del Viaje</label>
-                            <select name="destinoRuta" class="form-select bg-secondary border-0 text-white" required>
+                            <label for="selDestinoProforma" class="form-label text-warning small fw-bold"><i class="fa-solid fa-map-pin me-1"></i> Destino del Viaje</label>
+                            <select id="selDestinoProforma" name="destinoRuta" aria-label="Destino del Viaje" class="form-select bg-secondary border-0 text-white" required>
                                 <option value="">-- Seleccionar Destino --</option>
                                 @if (ViewBag.Lugares != null)
                                 {

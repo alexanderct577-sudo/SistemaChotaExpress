@@ -82,18 +82,18 @@
             <form asp-action="CrearRuta" method="post">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Ciudad de Origen</label>
-                    <input type="text" name="Origen" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chiclayo" required />
+                    <label for="txtOrigenRuta" class="form-label text-muted fs-8 font-weight-600">Ciudad de Origen</label>
+                    <input type="text" id="txtOrigenRuta" name="Origen" aria-label="Ciudad de Origen" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chiclayo" required />
                 </div>
                 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Ciudad de Destino</label>
-                    <input type="text" name="Destino" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chota" required />
+                    <label for="txtDestinoRuta" class="form-label text-muted fs-8 font-weight-600">Ciudad de Destino</label>
+                    <input type="text" id="txtDestinoRuta" name="Destino" aria-label="Ciudad de Destino" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chota" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Duración Estimada (Horas)</label>
-                    <input type="number" step="0.1" name="DuracionHoras" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. 6.0" min="0.5" max="48" required />
+                    <label for="numDuracionHoras" class="form-label text-muted fs-8 font-weight-600">Duración Estimada (Horas)</label>
+                    <input type="number" step="0.1" id="numDuracionHoras" name="DuracionHoras" aria-label="Duración Estimada en Horas" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. 6.0" min="0.5" max="48" required />
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2.5 mt-2 btn-orange-solid">

@@ -124,40 +124,40 @@
                 @Html.AntiForgeryToken()
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Tipo de Rol / Permisos</label>
-                    <select name="Id_Rol" class="form-select bg-dark-input text-white border-glass-field" required>
+                    <label for="selRolTrabajador" class="form-label text-muted fs-8 font-weight-600">Tipo de Rol / Permisos</label>
+                    <select id="selRolTrabajador" name="Id_Rol" aria-label="Tipo de Rol o Permisos" class="form-select bg-dark-input text-white border-glass-field" required>
                         <option value="2" selected>Vendedor (Venta y emisión de pasajes)</option>
                         <option value="1">Gerente (Acceso total al sistema)</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Nombre Completo</label>
-                    <input type="text" name="Name" class="form-control bg-dark-input text-white border-glass-field"
+                    <label for="txtNombreTrabajador" class="form-label text-muted fs-8 font-weight-600">Nombre Completo</label>
+                    <input type="text" id="txtNombreTrabajador" name="Name" aria-label="Nombre Completo del Trabajador" class="form-control bg-dark-input text-white border-glass-field"
                            placeholder="Ej. Juan Manuel Pérez" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Correo Electrónico (Login)</label>
-                    <input type="email" name="Email" class="form-control bg-dark-input text-white border-glass-field"
+                    <label for="txtEmailTrabajador" class="form-label text-muted fs-8 font-weight-600">Correo Electrónico (Login)</label>
+                    <input type="email" id="txtEmailTrabajador" name="Email" aria-label="Correo Electrónico de Login" class="form-control bg-dark-input text-white border-glass-field"
                            placeholder="Ej. juan@chotaexpress.com" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Contraseña Inicial</label>
-                    <input type="password" name="Password" class="form-control bg-dark-input text-white border-glass-field"
+                    <label for="txtPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Contraseña Inicial</label>
+                    <input type="password" id="txtPasswordTrabajador" name="Password" aria-label="Contraseña Inicial" class="form-control bg-dark-input text-white border-glass-field"
                            placeholder="Mínimo 6 caracteres" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Confirmar Contraseña</label>
-                    <input type="password" name="RepetPassword" class="form-control bg-dark-input text-white border-glass-field"
+                    <label for="txtRepetPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Confirmar Contraseña</label>
+                    <input type="password" id="txtRepetPasswordTrabajador" name="RepetPassword" aria-label="Confirmar Contraseña" class="form-control bg-dark-input text-white border-glass-field"
                            placeholder="Repita la contraseña" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted fs-8 font-weight-600">Teléfono Celular (9 dígitos)</label>
-                    <input type="tel" name="Telefono" class="form-control bg-dark-input text-white border-glass-field"
+                    <label for="txtTelefonoTrabajador" class="form-label text-muted fs-8 font-weight-600">Teléfono Celular (9 dígitos)</label>
+                    <input type="tel" id="txtTelefonoTrabajador" name="Telefono" aria-label="Teléfono Celular de 9 dígitos" class="form-control bg-dark-input text-white border-glass-field"
                            placeholder="Ej. 987654321" pattern="[0-9]{9}" required />
                 </div>
 
@@ -165,7 +165,7 @@
                     <label class="form-label text-muted fs-8 font-weight-600">
                         <i class="fa-solid fa-location-dot me-1 text-warning"></i>Agencia / Ciudad de Salida Fija <span class="text-muted">(Opcional)</span>
                     </label>
-                    <select name="AgenciaAsignada" class="form-select bg-dark-input text-white border-glass-field">
+                    <select id="selAgenciaAsignada" name="AgenciaAsignada" aria-label="Agencia Asignada" class="form-select bg-dark-input text-white border-glass-field">
                         <option value="">-- Sin restricción (elige libremente) --</option>
                         @if (ViewBag.Lugares != null)
                         {
@@ -201,8 +201,8 @@
                     <input type="hidden" name="id" id="agenciaUserId" />
                     <p>Asignando agencia para: <strong id="agenciaUserName" class="text-warning"></strong></p>
                     <div class="mb-3">
-                        <label class="form-label text-muted fs-8 font-weight-600">Ciudad / Agencia de Salida</label>
-                        <select name="agencia" id="agenciaSelect" class="form-select bg-dark-input text-white border-glass-field">
+                        <label for="agenciaSelect" class="form-label text-muted fs-8 font-weight-600">Ciudad / Agencia de Salida</label>
+                        <select name="agencia" id="agenciaSelect" aria-label="Ciudad o Agencia de Salida" class="form-select bg-dark-input text-white border-glass-field">
                             <option value="">-- Sin restricción (elige libremente) --</option>
                             @if (ViewBag.Lugares != null)
                             {
@@ -239,8 +239,8 @@
                     <input type="hidden" name="id" id="resetUserId" />
                     <p>Vas a cambiar la contraseña para: <strong id="resetUserName" class="text-warning"></strong>.</p>
                     <div class="mb-3">
-                        <label class="form-label text-muted fs-8 font-weight-600">Nueva Contraseña</label>
-                        <input type="password" name="newPassword"
+                        <label for="txtNewPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Nueva Contraseña</label>
+                        <input type="password" id="txtNewPasswordTrabajador" name="newPassword" aria-label="Nueva Contraseña"
                                class="form-control bg-dark-input text-white border-glass-field"
                                placeholder="Nueva clave" required />
                     </div>

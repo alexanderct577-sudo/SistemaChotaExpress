@@ -68,16 +68,16 @@
     <div class="card-body p-3">
         <form method="get" class="row g-2 align-items-end">
             <div class="col-md-4">
-                <label class="form-label text-muted small">Buscar por código, remitente, destinatario o DNI</label>
+                <label for="filtroBuscarEncomiendas" class="form-label text-muted small">Buscar por código, remitente, destinatario o DNI</label>
                 <div class="input-group">
                     <span class="input-group-text bg-secondary border-0"><i class="fa-solid fa-magnifying-glass text-white"></i></span>
-                    <input type="text" name="buscar" class="form-control bg-secondary border-0 text-white"
+                    <input type="text" id="filtroBuscarEncomiendas" name="buscar" aria-label="Buscar por código, remitente o DNI" class="form-control bg-secondary border-0 text-white"
                            placeholder="Ej: ECE-2026-0001" value="@ViewBag.Buscar" />
                 </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label text-muted small">Estado</label>
-                <select name="estado" class="form-select bg-secondary border-0 text-white">
+                <label for="filtroEstadoEncomiendas" class="form-label text-muted small">Estado</label>
+                <select id="filtroEstadoEncomiendas" name="estado" aria-label="Filtrar por estado de encomienda" class="form-select bg-secondary border-0 text-white">
                     <option value="Todos" selected="@(ViewBag.EstadoFiltro == "Todos")">Todos</option>
                     <option value="Registrado" selected="@(ViewBag.EstadoFiltro == "Registrado")">Registrado</option>
                     <option value="En transito" selected="@(ViewBag.EstadoFiltro == "En transito")">En tránsito</option>
@@ -87,12 +87,12 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label text-muted small">Desde</label>
-                <input type="date" name="fechaDesde" class="form-control bg-secondary border-0 text-white" value="@ViewBag.FechaDesde" />
+                <label for="filtroFechaDesde" class="form-label text-muted small">Desde</label>
+                <input type="date" id="filtroFechaDesde" name="fechaDesde" aria-label="Fecha desde" class="form-control bg-secondary border-0 text-white" value="@ViewBag.FechaDesde" />
             </div>
             <div class="col-md-2">
-                <label class="form-label text-muted small">Hasta</label>
-                <input type="date" name="fechaHasta" class="form-control bg-secondary border-0 text-white" value="@ViewBag.FechaHasta" />
+                <label for="filtroFechaHasta" class="form-label text-muted small">Hasta</label>
+                <input type="date" id="filtroFechaHasta" name="fechaHasta" aria-label="Fecha hasta" class="form-control bg-secondary border-0 text-white" value="@ViewBag.FechaHasta" />
             </div>
             <div class="col-md-2 d-flex gap-1">
                 <button type="submit" class="btn btn-warning w-100">Filtrar</button>

@@ -311,8 +311,8 @@
                 </div>
 
                 <div class="mb-2.5">
-                    <label class="form-label text-warning fw-bold fs-8 mb-1">DESDE (ORIGEN):</label>
-                    <select name="origen" id="origenSelect" class="form-select bg-dark-input fw-bold border-glass-field fs-8 select-filter" required>
+                    <label for="origenSelect" class="form-label text-warning fw-bold fs-8 mb-1">DESDE (ORIGEN):</label>
+                    <select name="origen" id="origenSelect" aria-label="Ciudad de Origen" class="form-select bg-dark-input fw-bold border-glass-field fs-8 select-filter" required>
                         <option value="">-- Seleccionar Origen --</option>
                         @if (ViewBag.LugaresDisponibles != null)
                         {
@@ -332,8 +332,8 @@
                     </select>
                 </div>
                 <div class="mb-2.5">
-                    <label class="form-label text-warning fw-bold fs-8 mb-1">HACIA (DESTINO):</label>
-                    <select name="destino" id="destinoSelect" class="form-select bg-dark-input fw-bold border-glass-field fs-8 select-filter" required>
+                    <label for="destinoSelect" class="form-label text-warning fw-bold fs-8 mb-1">HACIA (DESTINO):</label>
+                    <select name="destino" id="destinoSelect" aria-label="Ciudad de Destino" class="form-select bg-dark-input fw-bold border-glass-field fs-8 select-filter" required>
                         <option value="">-- Seleccionar Destino --</option>
                         @if (ViewBag.LugaresDisponibles != null)
                         {
@@ -355,7 +355,7 @@
 
                 <!-- TIPO DE UNIDAD (FLOTA) -->
                 <div class="mb-3">
-                    <label class="form-label text-warning fw-bold fs-8 mb-1.5 d-flex align-items-center">
+                    <div class="text-warning fw-bold fs-8 mb-1.5 d-flex align-items-center">
                         <i class="fa-solid fa-van-shuttle me-1 text-warning"></i> TIPO DE UNIDAD (FLOTA):
                     </label>
                     <input type="hidden" name="tipoUnidad" id="tipoUnidadInput" value="@selTipoFlota" />
@@ -854,16 +854,16 @@
 
                                          <div class="row g-2 mb-2">
                                              <div class="col-6">
-                                                 <label class="form-label text-muted fs-9 mb-1">Tipo de Comprobante</label>
-                                                 <select name="tipoComprobante" id="tipoComprobante" class="form-select bg-dark-input text-white border-glass-field fs-8 py-1.5 fw-bold">
+                                                 <label for="tipoComprobante" class="form-label text-muted fs-9 mb-1">Tipo de Comprobante</label>
+                                                 <select name="tipoComprobante" id="tipoComprobante" aria-label="Tipo de Comprobante" class="form-select bg-dark-input text-white border-glass-field fs-8 py-1.5 fw-bold">
                                                      <option value="Boleta" selected>Boleta de Venta Electrónica</option>
                                                      <option value="Factura">Factura Electrónica (RUC)</option>
                                                      <option value="Ticket">Ticket de Pasaje</option>
                                                  </select>
                                              </div>
                                              <div class="col-6">
-                                                 <label class="form-label text-muted fs-9 mb-1">Método de Pago</label>
-                                                 <select name="metodoPago" id="metodoPago" class="form-select bg-dark-input text-white border-glass-field fs-8 py-1.5">
+                                                 <label for="metodoPago" class="form-label text-muted fs-9 mb-1">Método de Pago</label>
+                                                 <select name="metodoPago" id="metodoPago" aria-label="Método de Pago" class="form-select bg-dark-input text-white border-glass-field fs-8 py-1.5">
                                                      <option value="Efectivo" selected>Efectivo</option>
                                                      <option value="Yape / Plin">Yape / Plin</option>
                                                      <option value="Tarjeta">Tarjeta Débito / Crédito</option>
@@ -875,9 +875,9 @@
                                          <div id="seccionFactura" class="d-none p-2.5 bg-dark rounded border border-success mb-2">
                                              <div class="row g-2 mb-2">
                                                  <div class="col-6">
-                                                     <label class="form-label text-success fs-9 mb-1 fw-bold">N° RUC Empresa (Aplica a todos)</label>
+                                                     <label for="rucEmpresa" class="form-label text-success fs-9 mb-1 fw-bold">N° RUC Empresa (Aplica a todos)</label>
                                                      <div class="input-group input-group-sm">
-                                                         <input type="text" name="rucEmpresa" id="rucEmpresa" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" placeholder="20600308883" maxlength="11" />
+                                                         <input type="text" name="rucEmpresa" id="rucEmpresa" aria-label="RUC de la Empresa" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" placeholder="20600308883" maxlength="11" />
                                                          <button class="btn btn-success" type="button" id="btnConsultarRuc" title="Consultar RUC en SUNAT">
                                                              <span id="btnRucText"><i class="fa-solid fa-magnifying-glass me-1"></i> Sunat</span>
                                                              <span id="btnRucSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
@@ -885,27 +885,27 @@
                                                      </div>
                                                  </div>
                                                  <div class="col-6">
-                                                     <label class="form-label text-muted fs-9 mb-1">Razón Social</label>
-                                                     <input type="text" name="razonSocialEmpresa" id="razonSocialEmpresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Nombre de la empresa" />
+                                                     <label for="razonSocialEmpresa" class="form-label text-muted fs-9 mb-1">Razón Social</label>
+                                                     <input type="text" name="razonSocialEmpresa" id="razonSocialEmpresa" aria-label="Razón Social de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Nombre de la empresa" />
                                                  </div>
                                              </div>
                                              <div>
-                                                 <label class="form-label text-muted fs-9 mb-1">Domicilio / Dirección Fiscal</label>
-                                                 <input type="text" name="direccionEmpresa" id="direccionEmpresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Dirección fiscal para la factura" />
+                                                 <label for="direccionEmpresa" class="form-label text-muted fs-9 mb-1">Domicilio / Dirección Fiscal</label>
+                                                 <input type="text" name="direccionEmpresa" id="direccionEmpresa" aria-label="Dirección Fiscal de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Dirección fiscal para la factura" />
                                              </div>
                                          </div>
 
                                          <div class="row g-2 mt-2">
                                              <div class="col-6">
-                                                 <label class="form-label text-muted fs-9 mb-1">Descuento Especial (S/)</label>
+                                                 <label for="descuentoInput" class="form-label text-muted fs-9 mb-1">Descuento Especial (S/)</label>
                                                  <div class="input-group input-group-sm">
-                                                     <input type="number" step="0.50" min="0" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" id="descuentoInput" placeholder="Monto desc." />
+                                                     <input type="number" step="0.50" min="0" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" id="descuentoInput" aria-label="Descuento Especial en Soles" placeholder="Monto desc." />
                                                      <button class="btn btn-outline-success" type="button" id="btnAplicarDescuento">Aplicar</button>
                                                  </div>
                                              </div>
                                              <div class="col-6">
-                                                 <label class="form-label text-muted fs-9 mb-1">Observaciones</label>
-                                                 <input type="text" name="observaciones" id="observaciones" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Ej. Viaje corporativo, equipaje extra..." />
+                                                 <label for="observaciones" class="form-label text-muted fs-9 mb-1">Observaciones</label>
+                                                 <input type="text" name="observaciones" id="observaciones" aria-label="Observaciones de venta" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Ej. Viaje corporativo, equipaje extra..." />
                                              </div>
                                          </div>
                                      </div>

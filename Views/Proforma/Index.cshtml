@@ -37,12 +37,12 @@
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-secondary border-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" name="buscar" value="@ViewBag.Buscar" class="form-control bg-secondary border-0 text-white"
+                    <input type="text" id="txtBuscarProforma" name="buscar" value="@ViewBag.Buscar" aria-label="Buscar por código, cliente, DNI o teléfono" class="form-control bg-secondary border-0 text-white"
                            placeholder="Buscar por código, cliente, DNI o teléfono..." />
                 </div>
             </div>
             <div class="col-md-3">
-                <select name="estado" class="form-select bg-secondary border-0 text-white">
+                <select id="selectEstadoProforma" name="estado" aria-label="Filtrar por estado de proforma" class="form-select bg-secondary border-0 text-white">
                     <option value="Todos" selected="@(ViewBag.EstadoFiltro == "Todos")">-- Todos los estados --</option>
                     <option value="Emitida" selected="@(ViewBag.EstadoFiltro == "Emitida")">Emitida</option>
                     <option value="Aprobada" selected="@(ViewBag.EstadoFiltro == "Aprobada")">Aprobada</option>
