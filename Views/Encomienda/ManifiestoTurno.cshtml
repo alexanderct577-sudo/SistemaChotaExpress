@@ -12,27 +12,28 @@
     var count = Model != null ? Model.Count : 0;
     var totalKilos = Model != null ? Model.Sum(e => e.PesoKg ?? 0) : 0;
 
-    // Hora formateada para mostrar (ej: "08:00 am")
+    // Hora formateada para mostrar (ej: "08:00 AM")
     DateTime horaDt;
     string horaFormato12 = DateTime.TryParse(horaFiltro, out horaDt) ? horaDt.ToString("hh:mm tt") : horaFiltro;
 
     // Número de manifiesto: MENC-YYYYMMDD-HHmm
     string numeroManifiesto = $"MENC-{fechaFiltro:yyyyMMdd}-{horaFiltro.Replace(":", "")}";
 
-    // Datos del vehículo y piloto
-    var modeloVehiculo = viaje?.ObjetoBus?.Modelo ?? "Toyota HiAce";
-    var marcaVehiculo = viaje?.ObjetoBus?.Marca ?? "Toyota";
-    var placaVehiculo = !string.IsNullOrWhiteSpace(viaje?.PlacaVehiculo) ? viaje.PlacaVehiculo : (viaje?.ObjetoBus?.Placa ?? "S/P");
-    var capacidadVehiculo = viaje?.ObjetoBus?.Capacidad.ToString() ?? "15";
-    var piloto = !string.IsNullOrWhiteSpace(viaje?.NombreConductor) ? viaje.NombreConductor : (viaje?.ObjetoBus?.NombreConductor ?? "POR ASIGNAR");
-    var licencia = viaje?.ObjetoBus?.NumeroLicencia ?? "POR ASIGNAR";
+    // Conductor y Placa del viaje
+    var nombreConductorActual = viaje?.NombreConductor?.Trim();
+    var tieneConductor = !string.IsNullOrWhiteSpace(nombreConductorActual);
+    var displayConductor = tieneConductor ? nombreConductorActual!.ToUpper() : "SIN ASIGNAR";
+
+    var placaActual = viaje?.PlacaVehiculo?.Trim();
+    var tienePlaca = !string.IsNullOrWhiteSpace(placaActual);
+    var displayPlaca = tienePlaca ? placaActual!.ToUpper() : "SIN ASIGNAR";
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manifiesto de Encomiendas @numeroManifiesto</title>
+    <title>Manifiesto de Encomiendas - @numeroManifiesto - Tours Chota Express</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
@@ -41,30 +42,31 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #1a1a2e;
-            padding: 24px 16px;
+            background-color: #0f172a;
+            padding: 20px 14px;
+            color: #0f172a;
         }
 
-        /* ── BARRA DE CONTROL (solo pantalla) ── */
+        /* ── BARRA DE CONTROL SUPERIOR (no se imprime) ── */
         .controls-bar {
-            max-width: 900px;
-            margin: 0 auto 20px auto;
+            max-width: 920px;
+            margin: 0 auto 16px auto;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             align-items: center;
         }
-        .controls-bar .btn { font-size: 0.82rem; font-weight: 700; }
 
-        /* ── PANEL FILTRO ── */
+        /* ── PANEL DE FILTROS Y FRANJAS (no se imprime) ── */
         .filter-panel {
-            max-width: 900px;
+            max-width: 920px;
             margin: 0 auto 20px auto;
             background: #1e293b;
             border-radius: 10px;
             padding: 14px 18px;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
         .hour-pill-btn {
             border-radius: 20px !important;
@@ -73,286 +75,379 @@
             padding: 3px 9px;
             text-decoration: none;
             display: inline-block;
+            transition: all 0.15s;
         }
         .btn-glass-pill {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             color: #cbd5e1;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
-        .btn-glass-pill:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .btn-glass-pill:hover { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
         .btn-teal-active {
             background: #10b981 !important;
-            color: #fff !important;
+            color: #ffffff !important;
             border-color: #10b981 !important;
-            box-shadow: 0 0 8px rgba(16,185,129,0.5);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
             font-weight: bold;
         }
 
         /* ══════════════════════════════════════
-           HOJA A4 OFICIAL
+           HOJA A4 OFICIAL PARA IMPRESIÓN
         ══════════════════════════════════════ */
         .a4-sheet {
-            max-width: 900px;
+            max-width: 920px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 6px;
-            box-shadow: 0 6px 28px rgba(0,0,0,0.45);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
             overflow: hidden;
+            border: 1px solid #cbd5e1;
         }
 
-        /* ── ENCABEZADO OFICIAL (fiel a la imagen) ── */
+        /* ── 1. ENCABEZADO OFICIAL EXACTO AL ORIGINAL ── */
         .official-header {
-            display: grid;
-            grid-template-columns: 130px 1fr 170px;
+            display: flex;
             align-items: center;
-            border-bottom: 3px solid #003087;
-            padding: 8px 14px;
-            background: #fff;
-            gap: 8px;
+            justify-content: space-between;
+            padding: 12px 18px 8px 18px;
+            background: #ffffff;
+            border-bottom: 2.5px solid #003087;
+            gap: 12px;
         }
-        .header-logo img {
-            height: 62px;
-            width: auto;
+
+        .header-logo-box {
+            width: 170px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .header-logo-box img {
+            height: 58px;
+            max-width: 165px;
             object-fit: contain;
         }
-        .header-center {
+
+        .header-center-box {
+            flex: 1;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
         }
-        .header-center .empresa-line {
-            font-size: 0.72rem;
+        .header-center-box .empresa-sub {
+            font-size: 0.74rem;
             font-weight: 800;
             color: #003087;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 1px;
         }
-        .header-center .empresa-nombre {
-            font-size: 1.35rem;
+        .header-center-box .empresa-main {
+            font-size: 1.55rem;
             font-weight: 900;
             color: #003087;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             line-height: 1.1;
         }
-        .header-center .empresa-sac {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #555;
+        .header-center-box .empresa-sac {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #003087;
         }
-        .header-center .combi-img {
-            height: 48px;
+        .header-center-box .header-combi-img {
+            height: 44px;
             width: auto;
             object-fit: contain;
+            margin-top: 3px;
         }
-        .header-right {
-            text-align: right;
+
+        .header-right-box {
+            width: 220px;
+            flex-shrink: 0;
+            text-align: center;
             border-left: 2px solid #003087;
-            padding-left: 12px;
+            padding-left: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .header-right .ruc-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: #003087;
-            text-transform: uppercase;
-        }
-        .header-right .ruc-num {
-            font-size: 1rem;
+        .header-right-box .ruc-text {
+            font-size: 1.05rem;
             font-weight: 900;
             color: #003087;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            margin-bottom: 3px;
         }
-        .header-right .doc-title {
+        .header-right-box .doc-title {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #003087;
+            text-transform: uppercase;
+            line-height: 1.15;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── 2. BANDA N° DE MANIFIESTO (SIN FECHA NI TURNO REPETIDOS) ── */
+        .manifest-number-band {
+            background-color: #003087;
+            color: #ffffff;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+        .manifest-number-band .band-label {
             font-size: 0.95rem;
             font-weight: 900;
-            color: #003087;
-            text-transform: uppercase;
-            line-height: 1.2;
-            margin-top: 4px;
-        }
-
-        /* ── BANDA NÚMERO DE MANIFIESTO ── */
-        .manifest-number-band {
-            background: #003087;
-            color: #fff;
-            text-align: center;
-            padding: 7px 14px;
-            font-size: 0.85rem;
-            font-weight: 700;
             letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-transform: uppercase;
         }
-        .manifest-number-band .num-code {
-            font-size: 1.1rem;
+        .manifest-number-band .band-code {
+            font-size: 1.25rem;
             font-weight: 900;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 3px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 2px 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* ── CUERPO DEL DOCUMENTO ── */
+        /* ── 3. CUERPO DE LA HOJA A4 ── */
         .doc-body {
-            padding: 14px 20px 20px 20px;
+            padding: 16px 22px 22px 22px;
         }
 
-        /* ── CUADRO DE DATOS DEL TURNO ── */
-        .info-grid {
+        /* ── 4. CUADRO DE DATOS (CONDUCTOR, ORIGEN, DESTINO, FECHA, HORA, PLACA) ── */
+        .data-card {
+            border: 1.5px solid #003087;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .data-card-header {
+            background-color: #003087;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+        }
+
+        .data-grid-row1 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            border: 1.5px solid #003087;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 14px;
-            font-size: 0.78rem;
-        }
-        .info-cell {
-            padding: 7px 10px;
-            border-right: 1px solid #c8d4e8;
             border-bottom: 1px solid #c8d4e8;
+            background: #ffffff;
         }
-        .info-cell:nth-child(4n) { border-right: none; }
-        .info-cell.span2 { grid-column: span 2; }
-        .info-cell.span4 { grid-column: span 4; border-right: none; }
-        .info-cell:nth-last-child(-n+4) { border-bottom: none; }
-        .info-label {
-            font-size: 0.62rem;
+        .data-cell {
+            padding: 8px 12px;
+            border-right: 1px solid #c8d4e8;
+        }
+        .data-cell:last-child {
+            border-right: none;
+        }
+        .data-label {
+            font-size: 0.65rem;
             font-weight: 800;
             color: #003087;
             text-transform: uppercase;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        .info-value {
-            font-weight: 700;
-            color: #111;
-            font-size: 0.82rem;
-        }
-        .info-header-row {
-            grid-column: span 4;
-            background: #003087;
-            color: #fff;
-            font-size: 0.68rem;
+        .data-value {
+            font-size: 0.92rem;
             font-weight: 800;
-            text-transform: uppercase;
-            padding: 5px 10px;
-            letter-spacing: 0.5px;
-            border-bottom: none;
+            color: #0f172a;
         }
 
-        /* ── TABLA DE ENCOMIENDAS ── */
+        .data-grid-row2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #ffffff;
+        }
+        .data-cell-driver {
+            padding: 9px 12px;
+            border-right: 1px solid #c8d4e8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .data-cell-plate {
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-register-action {
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 5px;
+            padding: 3px 10px;
+            border: 1.5px solid #003087;
+            color: #003087;
+            background: #eef2ff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-register-action:hover {
+            background: #003087;
+            color: #ffffff;
+        }
+
+        /* ── 5. TABLA DE ENCOMIENDAS ── */
+        .table-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #003087;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .enc-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.74rem;
-            margin-bottom: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 16px;
         }
         .enc-table thead tr th {
-            background: #003087;
-            color: #fff;
+            background-color: #003087;
+            color: #ffffff;
             font-weight: 800;
-            font-size: 0.67rem;
+            font-size: 0.68rem;
             text-transform: uppercase;
-            padding: 7px 5px;
+            padding: 7px 6px;
             border: 1px solid #003087;
             text-align: left;
         }
         .enc-table tbody td {
-            padding: 6px 5px;
-            border: 1px solid #c8d4e8;
+            padding: 6px 6px;
+            border: 1px solid #cbd5e1;
             vertical-align: middle;
         }
         .enc-table tbody tr:nth-child(even) td {
-            background: #f0f4fb;
-        }
-        .enc-table .no-data td {
-            text-align: center;
-            padding: 28px;
-            color: #888;
-            font-style: italic;
+            background-color: #f8fafc;
         }
 
-        /* ── RESUMEN TOTALES ── */
-        .totals-row {
+        /* ── 6. TOTALES Y FIRMAS ── */
+        .totals-summary {
             display: flex;
             justify-content: flex-end;
-            gap: 24px;
-            font-size: 0.8rem;
-            font-weight: 700;
+            gap: 20px;
+            font-size: 0.82rem;
+            font-weight: 800;
             color: #003087;
             border-top: 2px solid #003087;
             padding-top: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 26px;
         }
 
-        /* ── FIRMAS ── */
-        .signatures {
+        .signatures-grid {
             display: flex;
             justify-content: space-around;
-            margin-top: 24px;
-            padding-top: 10px;
+            padding-top: 14px;
         }
-        .sig-block {
+        .sig-column {
             text-align: center;
-            width: 210px;
+            width: 230px;
         }
         .sig-line {
-            border-top: 1.5px solid #111;
+            border-top: 1.5px solid #0f172a;
             margin-bottom: 5px;
         }
-        .sig-title {
-            font-size: 0.72rem;
+        .sig-role {
+            font-size: 0.74rem;
             font-weight: 800;
             text-transform: uppercase;
             color: #003087;
         }
-        .sig-sub {
-            font-size: 0.65rem;
-            color: #555;
+        .sig-detail {
+            font-size: 0.67rem;
+            color: #475569;
         }
 
-        /* ══ IMPRESIÓN ══ */
+        /* ══ REGLAS DE IMPRESIÓN (A4) ══ */
         @@media print {
-            body { background: #fff !important; padding: 0 !important; }
-            .controls-bar, .filter-panel { display: none !important; }
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .controls-bar, .filter-panel, .btn-register-action, .alert {
+                display: none !important;
+            }
             .a4-sheet {
                 max-width: 100% !important;
                 box-shadow: none !important;
+                border: none !important;
                 border-radius: 0 !important;
             }
-            .enc-table thead tr th {
-                background: #003087 !important;
-                color: #fff !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+            .official-header, .manifest-number-band, .data-card-header, .enc-table thead tr th {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
-            .official-header, .manifest-number-band, .info-header-row {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+            @@page {
+                size: A4 portrait;
+                margin: 8mm 10mm;
             }
-            @@page { size: A4; margin: 10mm; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ══ BARRA DE ACCIONES (solo pantalla) ══ -->
+    <!-- MENSAJES DE ÉXITO O ERROR -->
+    @if (TempData["Exito"] != null)
+    {
+        <div class="controls-bar">
+            <div class="alert alert-success alert-dismissible fade show w-100 shadow-sm" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i>@TempData["Exito"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="controls-bar">
+            <div class="alert alert-danger alert-dismissible fade show w-100 shadow-sm" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        </div>
+    }
+
+    <!-- ══ BARRA DE CONTROL (PANTALLA) ══ -->
     <div class="controls-bar">
-        <a href="@Url.Action("Index", "Encomienda")" class="btn btn-outline-light btn-sm">
-            <i class="fa-solid fa-arrow-left me-1"></i> Volver
+        <a href="@Url.Action("Index", "Encomienda")" class="btn btn-outline-light btn-sm fw-bold">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver a Encomiendas
         </a>
-        <button onclick="window.print();" class="btn btn-warning btn-sm">
-            <i class="fa-solid fa-print me-1"></i> Imprimir
+        <button onclick="window.print();" class="btn btn-warning btn-sm fw-bold text-dark px-3">
+            <i class="fa-solid fa-print me-1"></i> Imprimir Manifiesto
         </button>
-        <button onclick="enviarWhatsAppEncomiendas();" class="btn btn-success btn-sm">
+        <button onclick="enviarWhatsAppEncomiendas();" class="btn btn-success btn-sm fw-bold px-3">
             <i class="fa-brands fa-whatsapp me-1"></i> Compartir por WhatsApp
         </button>
         <span class="text-white-50 small ms-auto">
-            <i class="fa-solid fa-circle-info me-1 text-warning"></i> Formato oficial A4 — Encomiendas por turno
+            <i class="fa-solid fa-file-circle-check me-1 text-warning"></i> Formato Oficial A4 - Tours Chota Express S.A.C.
         </span>
     </div>
 
-    <!-- ══ PANEL FILTRO DE TURNO (solo pantalla) ══ -->
+    <!-- ══ PANEL DE FILTROS POR TURNO (PANTALLA) ══ -->
     <div class="filter-panel">
         <form method="get" asp-action="ManifiestoTurno" class="row g-2 align-items-end mb-3">
             <div class="col-md-3">
@@ -396,13 +491,13 @@
             </div>
         </form>
 
-        <!-- Franjas horarias -->
+        <!-- Franjas horarias de salida -->
         <div class="pt-2 border-top border-secondary">
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="text-warning fw-bold small text-uppercase">
-                    <i class="fa-regular fa-clock me-1"></i> TURNO / HORA DE SALIDA (@origenFiltro → @destinoFiltro):
+                    <i class="fa-regular fa-clock me-1"></i> TURNO DE SALIDA (@origenFiltro → @destinoFiltro):
                 </span>
-                <small class="text-muted" style="font-size:0.68rem;">24 FRANJAS</small>
+                <small class="text-white-50" style="font-size:0.68rem;">24 FRANJAS HORARIAS</small>
             </div>
             <div class="d-flex flex-wrap gap-1">
                 @{
@@ -438,115 +533,121 @@
     ══════════════════════════════════════════ -->
     <div class="a4-sheet">
 
-        <!-- ENCABEZADO OFICIAL (igual a la imagen) -->
+        <!-- ── 1. ENCABEZADO OFICIAL EXACTO A LA IMAGEN ── -->
         <div class="official-header">
-            <!-- Logo empresa (izquierda) -->
-            <div class="header-logo">
-                <img src="~/img/logo_chota.jpg" alt="Logo Chota Express" />
+            <!-- Logo Empresa (Izquierda) -->
+            <div class="header-logo-box">
+                <img src="~/img/logo_manifiesto.png" alt="Logo Tours Chota Express" />
             </div>
 
-            <!-- Centro: nombre empresa + combi -->
-            <div class="header-center">
-                <div class="empresa-line">Empresa de Multiservicios y Transportes</div>
+            <!-- Centro: Nombre de la Empresa + Foto Combi -->
+            <div class="header-center-box">
+                <div class="empresa-sub">EMPRESA DE MULTISERVICIOS Y TRANSPORTES</div>
                 <div>
-                    <span class="empresa-nombre">TURS CHOTA EXPRESS</span>
+                    <span class="empresa-main">TURS CHOTA EXPRESS</span>
                     <span class="empresa-sac"> S.A.C.</span>
                 </div>
-                <img src="~/img/combi_manifiesto.png" class="combi-img" alt="Vehículo Chota Express" />
+                <img src="~/img/combi_manifiesto.png" class="header-combi-img" alt="Combi Oficial Chota Express" />
             </div>
 
-            <!-- Derecha: RUC + Título -->
-            <div class="header-right">
-                <div class="ruc-label">R.U.C.</div>
-                <div class="ruc-num">20600308883</div>
-                <div class="doc-title">MANIFIESTO DE<br>ENCOMIENDAS</div>
+            <!-- Derecha: RUC + Título Manifiesto -->
+            <div class="header-right-box">
+                <div class="ruc-text">R.U.C. 20600308883</div>
+                <div class="doc-title">MANIFIESTO DE<br />ENCOMIENDAS</div>
             </div>
         </div>
 
-        <!-- BANDA NÚMERO DE MANIFIESTO -->
+        <!-- ── 2. BANDA N° DE MANIFIESTO (SIN FECHA NI TURNO REPETIDOS) ── -->
         <div class="manifest-number-band">
-            <span>N° DE MANIFIESTO:</span>
-            <span class="num-code">@numeroManifiesto</span>
-            <span>Fecha: @fechaFiltro.ToString("dd/MM/yyyy") &nbsp;|&nbsp; Turno: @horaFormato12</span>
+            <span class="band-label">N° DE MANIFIESTO:</span>
+            <span class="band-code">@numeroManifiesto</span>
         </div>
 
-        <!-- CUERPO DEL DOCUMENTO -->
+        <!-- ── 3. CUERPO DEL MANIFIESTO ── -->
         <div class="doc-body">
 
-            <!-- DATOS DEL TURNO -->
-            <div class="info-grid">
-                <div class="info-header-row">Datos del Turno y Vehículo</div>
-
-                <!-- Fila 1 -->
-                <div class="info-cell">
-                    <div class="info-label">📍 Origen</div>
-                    <div class="info-value">@origenFiltro.ToUpper()</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">🏁 Destino</div>
-                    <div class="info-value">@destinoFiltro.ToUpper()</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">📅 Fecha</div>
-                    <div class="info-value">@fechaFiltro.ToString("dd/MM/yyyy")</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">⏰ Hora Salida</div>
-                    <div class="info-value" style="color:#003087;">@horaFormato12</div>
+            <!-- ── CUADRO DE DATOS (CONDUCTOR, ORIGEN, DESTINO, FECHA, HORA, PLACA) ── -->
+            <div class="data-card">
+                <div class="data-card-header">
+                    <i class="fa-solid fa-circle-info me-1"></i> DATOS DEL SERVICIO Y VEHÍCULO
                 </div>
 
-                <!-- Fila 2 -->
-                <div class="info-cell">
-                    <div class="info-label">🚐 Modelo</div>
-                    <div class="info-value">@modeloVehiculo</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">🏷️ Marca</div>
-                    <div class="info-value">@marcaVehiculo</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">🛡️ Placa</div>
-                    <div class="info-value">@placaVehiculo.ToUpper()</div>
-                </div>
-                <div class="info-cell">
-                    <div class="info-label">💺 Capacidad</div>
-                    <div class="info-value">@capacidadVehiculo asientos</div>
+                <!-- Fila 1: ORIGEN, DESTINO, FECHA, HORA -->
+                <div class="data-grid-row1">
+                    <div class="data-cell">
+                        <div class="data-label"><i class="fa-solid fa-location-dot"></i> ORIGEN:</div>
+                        <div class="data-value text-primary">@origenFiltro.ToUpper()</div>
+                    </div>
+                    <div class="data-cell">
+                        <div class="data-label"><i class="fa-solid fa-flag-checkered"></i> DESTINO:</div>
+                        <div class="data-value text-primary">@destinoFiltro.ToUpper()</div>
+                    </div>
+                    <div class="data-cell">
+                        <div class="data-label"><i class="fa-regular fa-calendar-days"></i> FECHA:</div>
+                        <div class="data-value">@fechaFiltro.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <div class="data-cell">
+                        <div class="data-label"><i class="fa-regular fa-clock"></i> HORA:</div>
+                        <div class="data-value" style="color: #003087;">@horaFormato12</div>
+                    </div>
                 </div>
 
-                <!-- Fila 3 -->
-                <div class="info-cell span2">
-                    <div class="info-label">🧑‍✈️ Conductor / Piloto</div>
-                    <div class="info-value">@piloto.ToUpper()</div>
-                </div>
-                <div class="info-cell span2">
-                    <div class="info-label">🪪 N° Licencia</div>
-                    <div class="info-value">@licencia.ToUpper()</div>
+                <!-- Fila 2: CONDUCTOR Y PLACA CON SUS VENTANAS MODALES -->
+                <div class="data-grid-row2">
+                    <!-- Conductor -->
+                    <div class="data-cell-driver">
+                        <div>
+                            <div class="data-label"><i class="fa-solid fa-id-card"></i> CONDUCTOR:</div>
+                            <div class="data-value @(tieneConductor ? "text-dark" : "text-muted")">
+                                @displayConductor
+                            </div>
+                        </div>
+                        <button type="button" class="btn-register-action" data-bs-toggle="modal" data-bs-target="#modalEditarConductor" title="Registrar o editar conductor">
+                            <i class="fa-solid fa-pen-to-square"></i> @(tieneConductor ? "Editar" : "Ingresar")
+                        </button>
+                    </div>
+
+                    <!-- Placa -->
+                    <div class="data-cell-plate">
+                        <div>
+                            <div class="data-label"><i class="fa-solid fa-shield"></i> PLACA DEL VEHÍCULO:</div>
+                            <div class="data-value font-monospace @(tienePlaca ? "text-dark" : "text-muted")">
+                                @displayPlaca
+                            </div>
+                        </div>
+                        <button type="button" class="btn-register-action" data-bs-toggle="modal" data-bs-target="#modalEditarPlaca" title="Registrar o editar placa del vehículo">
+                            <i class="fa-solid fa-pen-to-square"></i> @(tienePlaca ? "Editar" : "Ingresar")
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- TABLA DE ENCOMIENDAS -->
+            <!-- ── RELACIÓN DE ENCOMIENDAS ── -->
+            <div class="table-title">
+                <i class="fa-solid fa-boxes-stacked"></i> Relación Oficial de Encomiendas para Despacho y Embarque
+            </div>
+
             <table class="enc-table">
                 <thead>
                     <tr>
-                        <th style="width:32px; text-align:center;">#</th>
-                        <th style="width:90px;">Código</th>
+                        <th style="width: 34px; text-align: center;">#</th>
+                        <th style="width: 95px;">Código</th>
                         <th>Remitente (Envía)</th>
                         <th>Destinatario (Recibe)</th>
                         <th>Descripción / Contenido</th>
-                        <th style="width:55px; text-align:center;">Peso</th>
-                        <th style="width:68px; text-align:right;">Total S/</th>
-                        <th style="width:70px; text-align:center;">Estado</th>
-                        <th style="width:60px; text-align:center;">✔</th>
+                        <th style="width: 60px; text-align: center;">Peso</th>
+                        <th style="width: 75px; text-align: right;">Total S/</th>
+                        <th style="width: 75px; text-align: center;">Estado</th>
+                        <th style="width: 55px; text-align: center;">✔</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model == null || !Model.Any())
                     {
-                        <tr class="no-data">
-                            <td colspan="9">
-                                <i class="fa-solid fa-box-open fa-2x d-block mb-2 opacity-40"></i>
-                                No hay encomiendas registradas para el turno de las <strong>@horaFormato12</strong>
-                                en la ruta <strong>@origenFiltro → @destinoFiltro</strong>.
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-box-open fa-2x d-block mb-2 opacity-50"></i>
+                                <em>No hay encomiendas registradas para el turno de las <strong>@horaFormato12</strong> en la ruta <strong>@origenFiltro → @destinoFiltro</strong>.</em>
                             </td>
                         </tr>
                     }
@@ -556,49 +657,49 @@
                         foreach (var enc in Model)
                         {
                             <tr>
-                                <td style="text-align:center; font-weight:700;">@idx</td>
-                                <td style="font-family:'Courier New',monospace; font-weight:700; font-size:0.7rem;">@enc.CodigoSeguimiento</td>
+                                <td style="text-align: center; font-weight: 700;">@idx</td>
+                                <td style="font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.72rem;">@enc.CodigoSeguimiento</td>
                                 <td>
-                                    <strong style="text-transform:uppercase;">@enc.NombreRemitente</strong>
+                                    <strong style="text-transform: uppercase;">@enc.NombreRemitente</strong>
                                     @if (!string.IsNullOrEmpty(enc.DniRemitente))
                                     {
-                                        <div style="font-size:0.64rem; color:#666;">Doc: @enc.DniRemitente</div>
+                                        <div style="font-size: 0.65rem; color: #64748b;">Doc: @enc.DniRemitente</div>
                                     }
                                 </td>
                                 <td>
-                                    <strong style="text-transform:uppercase;">@enc.NombreDestinatario</strong>
+                                    <strong style="text-transform: uppercase;">@enc.NombreDestinatario</strong>
                                     @if (!string.IsNullOrEmpty(enc.TelefonoDestinatario))
                                     {
-                                        <div style="font-size:0.64rem; color:#666;"><i class="fa-solid fa-phone" style="font-size:0.6rem;"></i> @enc.TelefonoDestinatario</div>
+                                        <div style="font-size: 0.65rem; color: #64748b;"><i class="fa-solid fa-phone me-1"></i>@enc.TelefonoDestinatario</div>
                                     }
                                 </td>
-                                <td style="font-size:0.72rem;">@enc.Descripcion</td>
-                                <td style="text-align:center; font-size:0.72rem;">
+                                <td style="font-size: 0.72rem;">@enc.Descripcion</td>
+                                <td style="text-align: center; font-size: 0.72rem;">
                                     @(enc.PesoKg.HasValue ? enc.PesoKg.Value.ToString("0.0") + " kg" : "—")
                                 </td>
-                                <td style="text-align:right; font-weight:700; font-family:'Courier New',monospace;">
+                                <td style="text-align: right; font-weight: 800; font-family: 'Courier New', monospace;">
                                     S/ @enc.PrecioEnvio.ToString("N2")
                                 </td>
-                                <td style="text-align:center;">
+                                <td style="text-align: center;">
                                     @if (enc.Estado == "Registrado")
                                     {
-                                        <span style="background:#64748b;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">BODEGA</span>
+                                        <span class="badge bg-secondary" style="font-size: 0.62rem;">BODEGA</span>
                                     }
                                     else if (enc.Estado == "En transito")
                                     {
-                                        <span style="background:#0ea5e9;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">EN RUTA</span>
+                                        <span class="badge bg-info text-dark" style="font-size: 0.62rem;">EN RUTA</span>
                                     }
                                     else if (enc.Estado == "Entregado")
                                     {
-                                        <span style="background:#16a34a;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">ENTREGADO</span>
+                                        <span class="badge bg-success" style="font-size: 0.62rem;">ENTREGADO</span>
                                     }
                                     else
                                     {
-                                        <span style="background:#e2e8f0;color:#333;padding:2px 6px;border-radius:4px;font-size:0.62rem;font-weight:700;">@enc.Estado</span>
+                                        <span class="badge bg-light text-dark" style="font-size: 0.62rem;">@enc.Estado</span>
                                     }
                                 </td>
-                                <td style="text-align:center;">
-                                    <input type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform:scale(1.2);" checked />
+                                <td style="text-align: center;">
+                                    <input type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform: scale(1.15);" checked />
                                 </td>
                             </tr>
                             idx++;
@@ -607,33 +708,125 @@
                 </tbody>
             </table>
 
-            <!-- TOTALES -->
-            <div class="totals-row">
-                <span>Total Bultos: <strong>@count</strong></span>
+            <!-- ── TOTALES ── -->
+            <div class="totals-summary">
+                <span>Total Encomiendas: <strong>@count bultos</strong></span>
                 @if (totalKilos > 0)
                 {
                     <span>Peso Total: <strong>@totalKilos.ToString("0.0") kg</strong></span>
                 }
-                <span>Recaudación: <strong>S/ @totalRecaudado.ToString("N2")</strong></span>
+                <span>Recaudación Total: <strong>S/ @totalRecaudado.ToString("N2")</strong></span>
             </div>
 
-            <!-- FIRMAS -->
-            <div class="signatures">
-                <div class="sig-block">
+            <!-- ── FIRMAS ── -->
+            <div class="signatures-grid">
+                <div class="sig-column">
                     <div class="sig-line"></div>
-                    <div class="sig-title">Despachador de Encomiendas</div>
-                    <div class="sig-sub">Tours Chota Express S.A.C.</div>
+                    <div class="sig-role">DESPACHADOR DE ENCOMIENDAS</div>
+                    <div class="sig-detail">Tours Chota Express S.A.C.</div>
                 </div>
-                <div class="sig-block">
+                <div class="sig-column">
                     <div class="sig-line"></div>
-                    <div class="sig-title">Conductor / Piloto</div>
-                    <div class="sig-sub">@piloto</div>
+                    <div class="sig-role">CONDUCTOR / PILOTO</div>
+                    <div class="sig-detail">@displayConductor</div>
                 </div>
             </div>
+
         </div>
-        <!-- fin doc-body -->
+        <!-- Fin doc-body -->
     </div>
-    <!-- fin a4-sheet -->
+    <!-- Fin a4-sheet -->
+
+    <!-- ══════════════════════════════════════════════
+         VENTANA MODAL 1: REGISTRAR / EDITAR CONDUCTOR
+    ══════════════════════════════════════════════ -->
+    <div class="modal fade" id="modalEditarConductor" tabindex="-1" aria-labelledby="modalConductorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content bg-dark text-white shadow-lg border border-secondary">
+                <div class="modal-header border-secondary py-2">
+                    <h6 class="modal-title fw-bold text-warning" id="modalConductorLabel">
+                        <i class="fa-solid fa-id-card me-2"></i> Asignar Conductor
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form asp-action="ActualizarConductorManifiesto" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)" />
+                    <input type="hidden" name="origen" value="@origenFiltro" />
+                    <input type="hidden" name="destino" value="@destinoFiltro" />
+                    <input type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="hora" value="@horaFiltro" />
+
+                    <div class="modal-body py-3">
+                        <label for="txtModalConductorNombre" class="form-label text-white-50 small fw-bold">
+                            Nombre del Conductor (Chofer)
+                        </label>
+                        <input type="text" id="txtModalConductorNombre" name="nombreConductor"
+                               aria-label="Nombre del conductor"
+                               class="form-control bg-secondary text-white border-secondary"
+                               value="@(viaje?.NombreConductor ?? "")"
+                               placeholder="Ej: Carlos Gómez" required />
+                        <small class="text-white-50 mt-1 d-block" style="font-size: 0.7rem;">
+                            Se actualizará el conductor oficial para este turno.
+                        </small>
+                    </div>
+                    <div class="modal-footer border-secondary py-2">
+                        <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-3">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Conductor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         VENTANA MODAL 2: REGISTRAR / EDITAR PLACA
+    ══════════════════════════════════════════════ -->
+    <div class="modal fade" id="modalEditarPlaca" tabindex="-1" aria-labelledby="modalPlacaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content bg-dark text-white shadow-lg border border-secondary">
+                <div class="modal-header border-secondary py-2">
+                    <h6 class="modal-title fw-bold text-warning" id="modalPlacaLabel">
+                        <i class="fa-solid fa-shield me-2"></i> Registrar Placa
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form asp-action="ActualizarPlacaManifiesto" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)" />
+                    <input type="hidden" name="origen" value="@origenFiltro" />
+                    <input type="hidden" name="destino" value="@destinoFiltro" />
+                    <input type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="hora" value="@horaFiltro" />
+
+                    <div class="modal-body py-3">
+                        <label for="txtModalPlacaVehiculo" class="form-label text-white-50 small fw-bold">
+                            Placa del Vehículo
+                        </label>
+                        <input type="text" id="txtModalPlacaVehiculo" name="placaVehiculo"
+                               aria-label="Placa del vehículo"
+                               class="form-control bg-secondary text-white border-secondary font-monospace"
+                               value="@(viaje?.PlacaVehiculo ?? "")"
+                               placeholder="Ej: M4X-956" />
+                        <small class="text-white-50 mt-1 d-block" style="font-size: 0.7rem;">
+                            Ingrese la placa asignada a este turno (o deje en blanco para quitar).
+                        </small>
+                    </div>
+                    <div class="modal-footer border-secondary py-2">
+                        <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-3">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Placa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS local para habilitar las ventanas modales -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         async function enviarWhatsAppEncomiendas() {
@@ -650,36 +843,63 @@
                 var canvas = await html2canvas(sheet, { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' });
 
                 canvas.toBlob(async function(blob) {
-                    if (!blob) { alert("No se pudo generar la imagen."); if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; }
+                    if (!blob) {
+                        alert("No se pudo generar la imagen del manifiesto.");
+                        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                        return;
+                    }
 
                     var fileName = `Manifiesto_Enc_@(fechaFiltro.ToString("yyyyMMdd"))_@(horaFiltro.Replace(":", "")).png`;
                     var file = new File([blob], fileName, { type: 'image/png' });
 
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try { await navigator.share({ files: [file], title: 'Manifiesto de Encomiendas - Chota Express' }); if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; }
-                        catch(e) { if (e.name === 'AbortError') { if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; } return; } }
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Manifiesto de Encomiendas - Tours Chota Express'
+                            });
+                            if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                            return;
+                        } catch(e) {
+                            if (e.name === 'AbortError') {
+                                if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+                                return;
+                            }
+                        }
                     }
 
                     var copiado = false;
                     if (navigator.clipboard && window.ClipboardItem) {
-                        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); copiado = true; } catch(e) {}
+                        try {
+                            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                            copiado = true;
+                        } catch(cErr) {
+                            console.warn("Clipboard err:", cErr);
+                        }
                     }
 
                     var urlBlob = URL.createObjectURL(blob);
                     var link = document.createElement('a');
-                    link.href = urlBlob; link.download = fileName;
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    link.href = urlBlob;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
                     window.open("https://web.whatsapp.com/", "_blank");
+
+                    var modalWA = document.getElementById('modalWA');
+                    if (modalWA) modalWA.remove();
 
                     document.body.insertAdjacentHTML('beforeend', `
                         <div id="modalWA" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:999999;display:flex;align-items:center;justify-content:center;padding:15px;">
                             <div style="background:#1e293b;color:#fff;padding:24px;border-radius:14px;max-width:460px;text-align:center;border:1px solid rgba(255,255,255,0.15);">
-                                <div style="font-size:40px;color:#10b981;margin-bottom:10px;"><i class="fa-solid fa-camera"></i></div>
+                                <div style="font-size:42px;color:#10b981;margin-bottom:10px;"><i class="fa-solid fa-camera"></i></div>
                                 <h4 style="font-weight:800;margin-bottom:8px;">¡Foto del Manifiesto Lista!</h4>
                                 <p style="font-size:13px;color:#e2e8f0;margin-bottom:16px;">
-                                    ${copiado ? '✅ <strong>Copiada al portapapeles.</strong><br>' : ''}
-                                    📂 Archivo <strong>${fileName}</strong> descargado.<br><br>
-                                    👉 En WhatsApp Web, ve al chat del chofer y presiona <strong>Ctrl + V</strong>.
+                                    ${copiado ? '✅ <strong>La foto fue copiada a tu portapapeles.</strong><br>' : ''}
+                                    📂 Se descargó el archivo <strong>${fileName}</strong>.<br><br>
+                                    👉 En WhatsApp Web, entra al chat del chofer y presiona <strong>Ctrl + V</strong> para pegar y enviar.
                                 </p>
                                 <div style="display:flex;justify-content:center;gap:10px;">
                                     <a href="https://web.whatsapp.com/" target="_blank" style="background:#10b981;color:#fff;padding:9px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;">
@@ -696,7 +916,7 @@
                 }, 'image/png');
             } catch(e) {
                 console.error(e);
-                alert("Error al capturar: " + e.message);
+                alert("Error al capturar la imagen: " + e.message);
                 if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
             }
         }

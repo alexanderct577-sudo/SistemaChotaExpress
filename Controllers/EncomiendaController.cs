@@ -613,5 +613,133 @@ namespace SistemaChotaExpress.Controllers
                 return RedirectToAction("Index");
             }
         }
+    
+        // =============================================
+        // 9. ACTUALIZAR CONDUCTOR EN MANIFIESTO TURNO
+        // =============================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActualizarConductorManifiesto(int? viajeId, string origen, string destino, string fecha, string hora, string nombreConductor)
+        {
+            try
+            {
+                DateTime dtFecha = DateTime.TryParse(fecha, out var f) ? f.Date : DateTime.Today;
+                Viaje? viaje = null;
+
+                if (viajeId.HasValue && viajeId.Value > 0)
+                {
+                    viaje = await _context.Viajes.FindAsync(viajeId.Value);
+                }
+
+                if (viaje == null)
+                {
+                    var ruta = await _context.Rutas.FirstOrDefaultAsync(r => r.Origen.ToLower() == origen.ToLower() && r.Destino.ToLower() == destino.ToLower());
+                    if (ruta != null)
+                    {
+                        var viajesExistentes = await _context.Viajes
+                            .Where(v => v.Id_Ruta == ruta.Id_Ruta && v.FechaHoraSalida.Date == dtFecha)
+                            .ToListAsync();
+                        viaje = viajesExistentes.FirstOrDefault(v => v.FechaHoraSalida.ToString("HH:mm") == hora);
+
+                        if (viaje == null)
+                        {
+                            DateTime horaDt;
+                            DateTime fechaHora = DateTime.TryParse(hora, out horaDt)
+                                ? dtFecha.Add(horaDt.TimeOfDay)
+                                : dtFecha.AddHours(8);
+
+                            viaje = new Viaje
+                            {
+                                Id_Ruta = ruta.Id_Ruta,
+                                FechaHoraSalida = fechaHora,
+                                Precio = 30.00m,
+                                Estado = "Programado"
+                            };
+                            _context.Viajes.Add(viaje);
+                        }
+                    }
+                }
+
+                if (viaje != null)
+                {
+                    viaje.NombreConductor = string.IsNullOrWhiteSpace(nombreConductor) ? null : nombreConductor.Trim().ToUpper();
+                    await _context.SaveChangesAsync();
+                    viajeId = viaje.Id_Viaje;
+                    TempData["Exito"] = $"¡Conductor actualizado: {viaje.NombreConductor ?? "Sin asignar"}!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar conductor: " + ex.Message;
+            }
+
+            return RedirectToAction("ManifiestoTurno", new { viajeId, origen, destino, fecha, hora });
+        }
+
+        // =============================================
+        // 10. ACTUALIZAR PLACA EN MANIFIESTO TURNO
+        // =============================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActualizarPlacaManifiesto(int? viajeId, string origen, string destino, string fecha, string hora, string? placaVehiculo)
+        {
+            try
+            {
+                DateTime dtFecha = DateTime.TryParse(fecha, out var f) ? f.Date : DateTime.Today;
+                Viaje? viaje = null;
+
+                if (viajeId.HasValue && viajeId.Value > 0)
+                {
+                    viaje = await _context.Viajes.FindAsync(viajeId.Value);
+                }
+
+                if (viaje == null)
+                {
+                    var ruta = await _context.Rutas.FirstOrDefaultAsync(r => r.Origen.ToLower() == origen.ToLower() && r.Destino.ToLower() == destino.ToLower());
+                    if (ruta != null)
+                    {
+                        var viajesExistentes = await _context.Viajes
+                            .Where(v => v.Id_Ruta == ruta.Id_Ruta && v.FechaHoraSalida.Date == dtFecha)
+                            .ToListAsync();
+                        viaje = viajesExistentes.FirstOrDefault(v => v.FechaHoraSalida.ToString("HH:mm") == hora);
+
+                        if (viaje == null)
+                        {
+                            DateTime horaDt;
+                            DateTime fechaHora = DateTime.TryParse(hora, out horaDt)
+                                ? dtFecha.Add(horaDt.TimeOfDay)
+                                : dtFecha.AddHours(8);
+
+                            viaje = new Viaje
+                            {
+                                Id_Ruta = ruta.Id_Ruta,
+                                FechaHoraSalida = fechaHora,
+                                Precio = 30.00m,
+                                Estado = "Programado"
+                            };
+                            _context.Viajes.Add(viaje);
+                        }
+                    }
+                }
+
+                if (viaje != null)
+                {
+                    var placa = placaVehiculo?.Trim().ToUpper();
+                    viaje.PlacaVehiculo = string.IsNullOrWhiteSpace(placa) ? null : placa;
+                    await _context.SaveChangesAsync();
+                    viajeId = viaje.Id_Viaje;
+                    TempData["Exito"] = string.IsNullOrWhiteSpace(viaje.PlacaVehiculo)
+                        ? "Placa del vehículo eliminada."
+                        : $"¡Placa registrada: {viaje.PlacaVehiculo}!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar placa: " + ex.Message;
+            }
+
+            return RedirectToAction("ManifiestoTurno", new { viajeId, origen, destino, fecha, hora });
+        }
+
     }
 }
