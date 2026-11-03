@@ -577,7 +577,7 @@
                                         <div class="d-flex align-items-center gap-2 bg-dark-card border-glass p-2 rounded">
                                             <i class="fa-solid fa-id-card text-warning fs-8 flex-shrink-0"></i>
                                             <span class="fs-9 text-muted text-nowrap">CONDUCTOR:</span>
-                                            <span class="fs-8 text-white fw-bold flex-grow-1">@(string.IsNullOrWhiteSpace(selectedViaje.NombreConductor) ? "SIN ASIGNAR" : selectedViaje.NombreConductor.ToUpper())</span>
+                                            <span class="fs-9 text-white fw-bold flex-grow-1 text-nowrap" style="font-size: 0.72rem !important; letter-spacing: 0.3px;">@(string.IsNullOrWhiteSpace(selectedViaje.NombreConductor) ? "SIN ASIGNAR" : selectedViaje.NombreConductor.ToUpper())</span>
                                             <button type="button" class="btn btn-xs btn-outline-warning border-glass-btn px-2 py-0 text-warning fs-9 flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalCambiarConductor">
                                                 <i class="fa-solid fa-pen-to-square me-1"></i>@(string.IsNullOrWhiteSpace(selectedViaje.NombreConductor) ? "Ingresar" : "Editar")
                                             </button>
