@@ -931,11 +931,3 @@ body.light-mode .hour-pill-btn.btn-teal-active {
     border-color: #10b981 !important;
     color: #ffffff !important;
 }
-
-/* ====================================================
-   UTILIDADES TIPOGRÁFICAS COMPACTAS
-   ==================================================== */
-.fs-7 { font-size: 0.82rem !important; }
-.fs-8 { font-size: 0.74rem !important; }
-.fs-9 { font-size: 0.68rem !important; }
-.fs-10 { font-size: 0.60rem !important; }
