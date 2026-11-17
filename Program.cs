@@ -139,7 +139,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
 });
 
-// builder.Services.AddHttpClient();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDocumentLookupService, DocumentLookupService>();
 builder.Services.AddScoped<SunatService>();
 
