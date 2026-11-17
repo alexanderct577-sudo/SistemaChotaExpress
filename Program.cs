@@ -42,6 +42,7 @@ builder.Services.AddControllersWithViews(options =>
 string? discoveredPostgres = null;
 try
 {
+    // 1. Buscar cualquier variable que tenga URI de postgres
     foreach (System.Collections.DictionaryEntry env in Environment.GetEnvironmentVariables())
     {
         string val = env.Value?.ToString()?.Trim() ?? "";
@@ -50,6 +51,21 @@ try
         {
             discoveredPostgres = val;
             break;
+        }
+    }
+
+    // 2. Si Railway proveyo variables individuales (PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD)
+    if (string.IsNullOrWhiteSpace(discoveredPostgres))
+    {
+        var pgHost = Environment.GetEnvironmentVariable("PGHOST") ?? Environment.GetEnvironmentVariable("POSTGRES_HOST");
+        var pgUser = Environment.GetEnvironmentVariable("PGUSER") ?? Environment.GetEnvironmentVariable("POSTGRES_USER");
+        var pgPass = Environment.GetEnvironmentVariable("PGPASSWORD") ?? Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+        var pgDb = Environment.GetEnvironmentVariable("PGDATABASE") ?? Environment.GetEnvironmentVariable("POSTGRES_DB");
+        var pgPort = Environment.GetEnvironmentVariable("PGPORT") ?? Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+
+        if (!string.IsNullOrWhiteSpace(pgHost) && !string.IsNullOrWhiteSpace(pgUser))
+        {
+            discoveredPostgres = $"Host={pgHost};Port={pgPort};Username={pgUser};Password={pgPass};Database={pgDb};SslMode=Prefer;TrustServerCertificate=true;";
         }
     }
 }
@@ -80,10 +96,11 @@ string rawConn =
 
 bool isPostgres = !string.IsNullOrWhiteSpace(rawConn) &&
                   (rawConn.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
-                   rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase));
+                   rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+                   rawConn.Contains("Host=", StringComparison.OrdinalIgnoreCase));
 
 string finalConn = rawConn;
-if (isPostgres)
+if (isPostgres && (rawConn.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || rawConn.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase)))
 {
     try
     {
@@ -122,8 +139,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
 });
 
-// Registrar Servicios de la Aplicacion
-builder.Services.AddHttpClient();
+// builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDocumentLookupService, DocumentLookupService>();
 builder.Services.AddScoped<SunatService>();
 
