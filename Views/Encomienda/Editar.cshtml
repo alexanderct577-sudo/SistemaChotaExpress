@@ -1,4 +1,4 @@
-@model SistemaChotaExpress.Models.Encomienda
+﻿@model SistemaChotaExpress.Models.Encomienda
 @{
     ViewData["Title"] = "Editar Encomienda";
 }
@@ -51,7 +51,7 @@
 
 <form asp-action="Editar" asp-route-id="@Model.Id_Encomienda" method="post">
     @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id_Encomienda" />
+    <input  type="hidden" asp-for="Id_Encomienda">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <div class="row g-4">
@@ -67,8 +67,8 @@
                     <div class="mb-3">
                         <label for="txtDniRemitente" asp-for="DniRemitente" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
                         <div class="input-group">
-                            <input asp-for="DniRemitente" id="txtDniRemitente" aria-label="DNI o RUC del Remitente" class="form-control bg-secondary border-0 text-white"
-                                   placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off" />
+                            <input  asp-for="DniRemitente" id="txtDniRemitente" aria-label="DNI o RUC del Remitente" class="form-control bg-secondary border-0 text-white"
+                                   placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off">
                             <button type="button" id="btnBuscarRemitente" class="btn btn-warning fw-bold px-3">
                                 <span id="txtBtnRemitente"><i class="fa-solid fa-magnifying-glass me-1"></i> Buscar</span>
                                 <span id="spinnerRemitente" class="spinner-border spinner-border-sm d-none" role="status"></span>
@@ -78,13 +78,13 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="NombreRemitente" class="form-label text-muted small">Nombre Completo / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreRemitente" id="txtNombreRemitente" aria-label="Nombres y Apellidos del Remitente" class="form-control bg-secondary border-0 text-white"
-                               placeholder="Se completa automáticamente al ingresar DNI o RUC" />
+                        <input  asp-for="NombreRemitente" id="txtNombreRemitente" aria-label="Nombres y Apellidos del Remitente" class="form-control bg-secondary border-0 text-white"
+                               placeholder="Se completa automáticamente al ingresar DNI o RUC">
                         <span asp-validation-for="NombreRemitente" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="TelefonoRemitente" class="form-label text-muted small">Teléfono / Celular</label>
-                        <input asp-for="TelefonoRemitente" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 987654321 (opcional)" />
+                        <input  asp-for="TelefonoRemitente" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 987654321 (opcional)">
                     </div>
                 </div>
             </div>
@@ -101,8 +101,8 @@
                     <div class="mb-3">
                         <label for="txtDniDestinatario" asp-for="DniDestinatario" class="form-label text-muted small">DNI (8 dígitos) o RUC (11 dígitos)</label>
                         <div class="input-group">
-                            <input asp-for="DniDestinatario" id="txtDniDestinatario" aria-label="DNI o RUC del Destinatario" class="form-control bg-secondary border-0 text-white"
-                                   placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off" />
+                            <input  asp-for="DniDestinatario" id="txtDniDestinatario" aria-label="DNI o RUC del Destinatario" class="form-control bg-secondary border-0 text-white"
+                                   placeholder="Ej: 72345678 o 20601234567" maxlength="11" autocomplete="off">
                             <button type="button" id="btnBuscarDestinatario" class="btn btn-info fw-bold text-white px-3">
                                 <span id="txtBtnDestinatario"><i class="fa-solid fa-magnifying-glass me-1"></i> Buscar</span>
                                 <span id="spinnerDestinatario" class="spinner-border spinner-border-sm d-none" role="status"></span>
@@ -112,13 +112,13 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="NombreDestinatario" class="form-label text-muted small">Nombre Completo / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreDestinatario" id="txtNombreDestinatario" aria-label="Nombres y Apellidos del Destinatario" class="form-control bg-secondary border-0 text-white"
-                               placeholder="Se completa automáticamente al ingresar DNI o RUC" />
+                        <input  asp-for="NombreDestinatario" id="txtNombreDestinatario" aria-label="Nombres y Apellidos del Destinatario" class="form-control bg-secondary border-0 text-white"
+                               placeholder="Se completa automáticamente al ingresar DNI o RUC">
                         <span asp-validation-for="NombreDestinatario" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="TelefonoDestinatario" class="form-label text-muted small">Teléfono / Celular</label>
-                        <input asp-for="TelefonoDestinatario" class="form-control bg-secondary border-0 text-white" placeholder="Recomendado para contactar" />
+                        <input  asp-for="TelefonoDestinatario" class="form-control bg-secondary border-0 text-white" placeholder="Recomendado para contactar">
                     </div>
                 </div>
             </div>
@@ -134,15 +134,15 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label asp-for="Descripcion" class="form-label text-muted small"></label>
-                            <input asp-for="Descripcion" class="form-control bg-secondary border-0 text-white"
-                                   placeholder="Ej: Ropa, documentos, electrodoméstico..." />
+                            <input  asp-for="Descripcion" class="form-control bg-secondary border-0 text-white"
+                                   placeholder="Ej: Ropa, documentos, electrodoméstico...">
                             <span asp-validation-for="Descripcion" class="text-danger small"></span>
                         </div>
                         <div class="col-md-3">
                             <label asp-for="PesoKg" class="form-label text-muted small"></label>
                             <div class="input-group">
-                                <input asp-for="PesoKg" type="number" step="0.1" min="0.1"
-                                       class="form-control bg-secondary border-0 text-white" placeholder="0.0" />
+                                <input  asp-for="PesoKg" type="number" step="0.1" min="0.1"
+                                       class="form-control bg-secondary border-0 text-white" placeholder="0.0">
                                 <span class="input-group-text bg-secondary border-0 text-muted">kg</span>
                             </div>
                         </div>
@@ -150,8 +150,8 @@
                             <label asp-for="PrecioEnvio" class="form-label text-muted small"></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-secondary border-0 text-muted">S/</span>
-                                <input asp-for="PrecioEnvio" type="number" step="0.50" min="0.01"
-                                       class="form-control bg-secondary border-0 text-white" placeholder="0.00" />
+                                <input  asp-for="PrecioEnvio" type="number" step="0.50" min="0.01"
+                                       class="form-control bg-secondary border-0 text-white" placeholder="0.00">
                             </div>
                             <span asp-validation-for="PrecioEnvio" class="text-danger small"></span>
                         </div>
@@ -189,8 +189,8 @@
                         <!-- Cuadrito opcional: Conductor que lleva la encomienda -->
                         <div class="col-md-3">
                             <label asp-for="NombreConductor" class="form-label text-muted small"><i class="fa-solid fa-user-tie me-1 text-warning"></i> Conductor / Chofer <span class="text-muted">(Opcional)</span></label>
-                            <input asp-for="NombreConductor" class="form-control bg-secondary border-0 text-white" 
-                                   placeholder="Nombre del chofer (opcional)" list="conductoresSugeridos" autocomplete="off" />
+                            <input  asp-for="NombreConductor" class="form-control bg-secondary border-0 text-white" 
+                                   placeholder="Nombre del chofer (opcional)" list="conductoresSugeridos" autocomplete="off">
                             <datalist id="conductoresSugeridos">
                                 @if (ViewBag.Conductores != null)
                                 {

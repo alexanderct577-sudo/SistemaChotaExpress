@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.Bus>
+﻿@model IEnumerable<SistemaChotaExpress.Models.Bus>
 @{
     ViewData["Title"] = "Gestión de Buses";
 }
@@ -50,7 +50,7 @@
                                     <td class="text-end">
                                         <form asp-action="EliminarBus" method="post" class="m-0" onsubmit="return confirm('¿Está seguro de que desea eliminar este vehículo?');">
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@b.Id_Bus" />
+                                            <input  type="hidden" name="id" value="@b.Id_Bus">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
                                                 <i class="fa-solid fa-trash-can me-1"></i> Eliminar
                                             </button>
@@ -80,18 +80,18 @@
                 
                 <div class="mb-3">
                     <label for="txtNombreVehiculo" class="form-label text-muted fs-8 font-weight-600">Nombre del Vehículo</label>
-                    <input type="text" id="txtNombreVehiculo" name="NombreVehiculo" aria-label="Nombre del Vehículo" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Combi 01 - Chotano" required />
+                    <input  type="text" id="txtNombreVehiculo" name="NombreVehiculo" aria-label="Nombre del Vehículo" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Combi 01 - Chotano" required>
                     <small class="text-muted fs-9">Identificador visible (Ej. Combi 01, Toyota 2)</small>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtNombreConductor" class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer / Piloto)</label>
-                    <input type="text" id="txtNombreConductor" name="NombreConductor" aria-label="Nombre del Conductor" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Juan Pérez" />
+                    <input  type="text" id="txtNombreConductor" name="NombreConductor" aria-label="Nombre del Conductor" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Juan Pérez">
                 </div>
 
                 <div class="mb-3">
                     <label for="txtNumeroLicencia" class="form-label text-muted fs-8 font-weight-600">N° Licencia de Conducir</label>
-                    <input type="text" id="txtNumeroLicencia" name="NumeroLicencia" aria-label="Número de Licencia de Conducir" class="form-control bg-dark-input text-white border-glass-field font-monospace text-uppercase" placeholder="Ej. Q50348826" maxlength="20" />
+                    <input  type="text" id="txtNumeroLicencia" name="NumeroLicencia" aria-label="Número de Licencia de Conducir" class="form-control bg-dark-input text-white border-glass-field font-monospace text-uppercase" placeholder="Ej. Q50348826" maxlength="20">
                     <small class="text-muted fs-9">Número de licencia del piloto (aparece en el manifiesto)</small>
                 </div>
 
@@ -114,12 +114,12 @@
 
                 <div class="mb-3">
                     <label for="txtModeloVehiculo" class="form-label text-muted fs-8 font-weight-600">Modelo</label>
-                    <input type="text" id="txtModeloVehiculo" name="Modelo" aria-label="Modelo del Vehículo" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Toyota HiAce" required />
+                    <input  type="text" id="txtModeloVehiculo" name="Modelo" aria-label="Modelo del Vehículo" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Toyota HiAce" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtPlacaVehiculo" class="form-label text-muted fs-8 font-weight-600">Placa (Opcional)</label>
-                    <input type="text" id="txtPlacaVehiculo" name="Placa" aria-label="Placa del Vehículo" class="form-control bg-dark-input text-white border-glass-field font-monospace text-uppercase" placeholder="Ej. MSH-206" maxlength="10" />
+                    <input  type="text" id="txtPlacaVehiculo" name="Placa" aria-label="Placa del Vehículo" class="form-control bg-dark-input text-white border-glass-field font-monospace text-uppercase" placeholder="Ej. MSH-206" maxlength="10">
                 </div>
 
                 <div class="mb-3">

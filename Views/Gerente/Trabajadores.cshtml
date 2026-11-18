@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.Usuario>
+﻿@model IEnumerable<SistemaChotaExpress.Models.Usuario>
 @{
     ViewData["Title"] = "Gestión de Trabajadores";
 }
@@ -80,7 +80,7 @@
 
                                             <form asp-action="EliminarTrabajador" method="post" class="m-0" onsubmit="return confirm('¿Está seguro de que desea eliminar la cuenta de @u.Name?');">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@u.Id_Usuario" />
+                                                <input  type="hidden" name="id" value="@u.Id_Usuario">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger"
                                                         style="border-radius: 8px;" title="Eliminar Cuenta">
                                                     <i class="fa-solid fa-trash-can"></i>
@@ -119,32 +119,32 @@
 
                 <div class="mb-3">
                     <label for="txtNombreTrabajador" class="form-label text-muted fs-8 font-weight-600">Nombre Completo</label>
-                    <input type="text" id="txtNombreTrabajador" name="Name" aria-label="Nombre Completo del Trabajador" class="form-control bg-dark-input text-white border-glass-field"
-                           placeholder="Ej. Juan Manuel Pérez" required />
+                    <input  type="text" id="txtNombreTrabajador" name="Name" aria-label="Nombre Completo del Trabajador" class="form-control bg-dark-input text-white border-glass-field"
+                           placeholder="Ej. Juan Manuel Pérez" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtEmailTrabajador" class="form-label text-muted fs-8 font-weight-600">Correo Electrónico (Login)</label>
-                    <input type="email" id="txtEmailTrabajador" name="Email" aria-label="Correo Electrónico de Login" class="form-control bg-dark-input text-white border-glass-field"
-                           placeholder="Ej. juan@chotaexpress.com" required />
+                    <input  type="email" id="txtEmailTrabajador" name="Email" aria-label="Correo Electrónico de Login" class="form-control bg-dark-input text-white border-glass-field"
+                           placeholder="Ej. juan@chotaexpress.com" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Contraseña Inicial</label>
-                    <input type="password" id="txtPasswordTrabajador" name="Password" aria-label="Contraseña Inicial" class="form-control bg-dark-input text-white border-glass-field"
-                           placeholder="Mínimo 6 caracteres" required />
+                    <input  type="password" id="txtPasswordTrabajador" name="Password" aria-label="Contraseña Inicial" class="form-control bg-dark-input text-white border-glass-field"
+                           placeholder="Mínimo 6 caracteres" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtRepetPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Confirmar Contraseña</label>
-                    <input type="password" id="txtRepetPasswordTrabajador" name="RepetPassword" aria-label="Confirmar Contraseña" class="form-control bg-dark-input text-white border-glass-field"
-                           placeholder="Repita la contraseña" required />
+                    <input  type="password" id="txtRepetPasswordTrabajador" name="RepetPassword" aria-label="Confirmar Contraseña" class="form-control bg-dark-input text-white border-glass-field"
+                           placeholder="Repita la contraseña" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="txtTelefonoTrabajador" class="form-label text-muted fs-8 font-weight-600">Teléfono Celular (9 dígitos)</label>
-                    <input type="tel" id="txtTelefonoTrabajador" name="Telefono" aria-label="Teléfono Celular de 9 dígitos" class="form-control bg-dark-input text-white border-glass-field"
-                           placeholder="Ej. 987654321" pattern="[0-9]{9}" required />
+                    <input  type="tel" id="txtTelefonoTrabajador" name="Telefono" aria-label="Teléfono Celular de 9 dígitos" class="form-control bg-dark-input text-white border-glass-field"
+                           placeholder="Ej. 987654321" pattern="[0-9]{9}" required>
                 </div>
 
                 <div class="mb-3">
@@ -184,7 +184,7 @@
             <form asp-action="AsignarAgencia" method="post">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="agenciaUserId" />
+                    <input  type="hidden" name="id" id="agenciaUserId">
                     <p>Asignando agencia para: <strong id="agenciaUserName" class="text-warning"></strong></p>
                     <div class="mb-3">
                         <label for="agenciaSelect" class="form-label text-muted fs-8 font-weight-600">Ciudad / Agencia de Salida</label>
@@ -222,13 +222,13 @@
             <form asp-action="ResetPassword" method="post">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="resetUserId" />
+                    <input  type="hidden" name="id" id="resetUserId">
                     <p>Vas a cambiar la contraseña para: <strong id="resetUserName" class="text-warning"></strong>.</p>
                     <div class="mb-3">
                         <label for="txtNewPasswordTrabajador" class="form-label text-muted fs-8 font-weight-600">Nueva Contraseña</label>
-                        <input type="password" id="txtNewPasswordTrabajador" name="newPassword" aria-label="Nueva Contraseña"
+                        <input  type="password" id="txtNewPasswordTrabajador" name="newPassword" aria-label="Nueva Contraseña"
                                class="form-control bg-dark-input text-white border-glass-field"
-                               placeholder="Nueva clave" required />
+                               placeholder="Nueva clave" required>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary">

@@ -1,4 +1,4 @@
-@model List<SistemaChotaExpress.Models.Encomienda>
+﻿@model List<SistemaChotaExpress.Models.Encomienda>
 @{
     Layout = null;
     var viaje = ViewBag.Viaje as SistemaChotaExpress.Models.Viaje;
@@ -31,11 +31,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta  charset="utf-8">
+    <meta  name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manifiesto de Encomiendas - @numeroManifiesto - Tours Chota Express</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -454,10 +454,10 @@
                 <label for="txtFechaManifiesto" class="form-label text-warning small fw-bold mb-1">
                     <i class="fa-regular fa-calendar me-1"></i> Fecha:
                 </label>
-                <input type="date" id="txtFechaManifiesto" name="fecha"
+                <input  type="date" id="txtFechaManifiesto" name="fecha"
                        aria-label="Fecha de manifiesto"
                        class="form-control form-control-sm bg-dark text-white border-secondary"
-                       value="@fechaFiltro.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+                       value="@fechaFiltro.ToString("yyyy-MM-dd")" onchange="this.form.submit()">
             </div>
             <div class="col-md-3">
                 <label for="selOrigenManifiesto" class="form-label text-warning small fw-bold mb-1">
@@ -484,7 +484,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <input type="hidden" name="hora" id="hiddenHoraFiltro" value="@horaFiltro" />
+                <input  type="hidden" name="hora" id="hiddenHoraFiltro" value="@horaFiltro">
                 <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold">
                     <i class="fa-solid fa-filter me-1"></i> Filtrar Turno
                 </button>
@@ -537,7 +537,7 @@
         <div class="official-header">
             <!-- Logo Empresa (Izquierda) -->
             <div class="header-logo-box">
-                <img src="~/img/logo_manifiesto.png" alt="Logo Tours Chota Express" />
+                <img  src="~/img/logo_manifiesto.png" alt="Logo Tours Chota Express">
             </div>
 
             <!-- Centro: Nombre de la Empresa + Foto Combi -->
@@ -547,13 +547,13 @@
                     <span class="empresa-main">TURS CHOTA EXPRESS</span>
                     <span class="empresa-sac"> S.A.C.</span>
                 </div>
-                <img src="~/img/combi_manifiesto.png" class="header-combi-img" alt="Combi Oficial Chota Express" />
+                <img  src="~/img/combi_manifiesto.png" class="header-combi-img" alt="Combi Oficial Chota Express">
             </div>
 
             <!-- Derecha: RUC + Título Manifiesto -->
             <div class="header-right-box">
                 <div class="ruc-text">R.U.C. 20600308883</div>
-                <div class="doc-title">MANIFIESTO DE<br />ENCOMIENDAS</div>
+                <div class="doc-title">MANIFIESTO DE<br>ENCOMIENDAS</div>
             </div>
         </div>
 
@@ -699,7 +699,7 @@
                                     }
                                 </td>
                                 <td style="text-align: center;">
-                                    <input type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform: scale(1.15);" checked />
+                                    <input  type="checkbox" aria-label="Marcar encomienda conforme" class="form-check-input" style="transform: scale(1.15);" checked>
                                 </td>
                             </tr>
                             idx++;
@@ -751,21 +751,21 @@
                 </div>
                 <form asp-action="ActualizarConductorManifiesto" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)" />
-                    <input type="hidden" name="origen" value="@origenFiltro" />
-                    <input type="hidden" name="destino" value="@destinoFiltro" />
-                    <input type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")" />
-                    <input type="hidden" name="hora" value="@horaFiltro" />
+                    <input  type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)">
+                    <input  type="hidden" name="origen" value="@origenFiltro">
+                    <input  type="hidden" name="destino" value="@destinoFiltro">
+                    <input  type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")">
+                    <input  type="hidden" name="hora" value="@horaFiltro">
 
                     <div class="modal-body py-3">
                         <label for="txtModalConductorNombre" class="form-label text-white-50 small fw-bold">
                             Nombre del Conductor (Chofer)
                         </label>
-                        <input type="text" id="txtModalConductorNombre" name="nombreConductor"
+                        <input  type="text" id="txtModalConductorNombre" name="nombreConductor"
                                aria-label="Nombre del conductor"
                                class="form-control bg-secondary text-white border-secondary"
                                value="@(viaje?.NombreConductor ?? "")"
-                               placeholder="Ej: Carlos Gómez" required />
+                               placeholder="Ej: Carlos Gómez" required>
                         <small class="text-white-50 mt-1 d-block" style="font-size: 0.7rem;">
                             Se actualizará el conductor oficial para este turno.
                         </small>
@@ -795,21 +795,21 @@
                 </div>
                 <form asp-action="ActualizarPlacaManifiesto" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)" />
-                    <input type="hidden" name="origen" value="@origenFiltro" />
-                    <input type="hidden" name="destino" value="@destinoFiltro" />
-                    <input type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")" />
-                    <input type="hidden" name="hora" value="@horaFiltro" />
+                    <input  type="hidden" name="viajeId" value="@(viaje?.Id_Viaje ?? 0)">
+                    <input  type="hidden" name="origen" value="@origenFiltro">
+                    <input  type="hidden" name="destino" value="@destinoFiltro">
+                    <input  type="hidden" name="fecha" value="@fechaFiltro.ToString("yyyy-MM-dd")">
+                    <input  type="hidden" name="hora" value="@horaFiltro">
 
                     <div class="modal-body py-3">
                         <label for="txtModalPlacaVehiculo" class="form-label text-white-50 small fw-bold">
                             Placa del Vehículo
                         </label>
-                        <input type="text" id="txtModalPlacaVehiculo" name="placaVehiculo"
+                        <input  type="text" id="txtModalPlacaVehiculo" name="placaVehiculo"
                                aria-label="Placa del vehículo"
                                class="form-control bg-secondary text-white border-secondary font-monospace"
                                value="@(viaje?.PlacaVehiculo ?? "")"
-                               placeholder="Ej: M4X-956" />
+                               placeholder="Ej: M4X-956">
                         <small class="text-white-50 mt-1 d-block" style="font-size: 0.7rem;">
                             Ingrese la placa asignada a este turno (o deje en blanco para quitar).
                         </small>

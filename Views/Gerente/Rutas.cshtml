@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.Ruta>
+﻿@model IEnumerable<SistemaChotaExpress.Models.Ruta>
 @{
     ViewData["Title"] = "Gestión de Rutas";
 }
@@ -41,7 +41,7 @@
                                     <td class="text-end">
                                         <form asp-action="EliminarRuta" method="post" class="m-0" onsubmit="return confirm('¿Está seguro de que desea eliminar esta ruta?');">
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@r.Id_Ruta" />
+                                            <input  type="hidden" name="id" value="@r.Id_Ruta">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
                                                 <i class="fa-solid fa-trash-can me-1"></i> Eliminar
                                             </button>
@@ -69,17 +69,17 @@
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
                     <label for="txtOrigenRuta" class="form-label text-muted fs-8 font-weight-600">Ciudad de Origen</label>
-                    <input type="text" id="txtOrigenRuta" name="Origen" aria-label="Ciudad de Origen" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chiclayo" required />
+                    <input  type="text" id="txtOrigenRuta" name="Origen" aria-label="Ciudad de Origen" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chiclayo" required>
                 </div>
                 
                 <div class="mb-3">
                     <label for="txtDestinoRuta" class="form-label text-muted fs-8 font-weight-600">Ciudad de Destino</label>
-                    <input type="text" id="txtDestinoRuta" name="Destino" aria-label="Ciudad de Destino" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chota" required />
+                    <input  type="text" id="txtDestinoRuta" name="Destino" aria-label="Ciudad de Destino" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. Chota" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="numDuracionHoras" class="form-label text-muted fs-8 font-weight-600">Duración Estimada (Horas)</label>
-                    <input type="number" step="0.1" id="numDuracionHoras" name="DuracionHoras" aria-label="Duración Estimada en Horas" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. 6.0" min="0.5" max="48" required />
+                    <input  type="number" step="0.1" id="numDuracionHoras" name="DuracionHoras" aria-label="Duración Estimada en Horas" class="form-control bg-dark-input text-white border-glass-field" placeholder="Ej. 6.0" min="0.5" max="48" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2.5 mt-2 btn-orange-solid">

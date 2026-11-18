@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.ProformaViaje>
+﻿@model IEnumerable<SistemaChotaExpress.Models.ProformaViaje>
 @{
     ViewData["Title"] = "Proformas de Viajes";
 }
@@ -37,8 +37,8 @@
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-secondary border-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="txtBuscarProforma" name="buscar" value="@ViewBag.Buscar" aria-label="Buscar por código, cliente, DNI o teléfono" class="form-control bg-secondary border-0 text-white"
-                           placeholder="Buscar por código, cliente, DNI o teléfono..." />
+                    <input  type="text" id="txtBuscarProforma" name="buscar" value="@ViewBag.Buscar" aria-label="Buscar por código, cliente, DNI o teléfono" class="form-control bg-secondary border-0 text-white"
+                           placeholder="Buscar por código, cliente, DNI o teléfono...">
                 </div>
             </div>
             <div class="col-md-3">
@@ -146,8 +146,8 @@
                                         {
                                             <form asp-action="CambiarEstado" method="post" class="d-inline m-0">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@item.Id_Proforma" />
-                                                <input type="hidden" name="nuevoEstado" value="Aprobada" />
+                                                <input  type="hidden" name="id" value="@item.Id_Proforma">
+                                                <input  type="hidden" name="nuevoEstado" value="Aprobada">
                                                 <button type="submit" class="btn btn-outline-success btn-sm" title="Marcar como Aprobada">
                                                     <i class="fa-solid fa-check"></i>
                                                 </button>

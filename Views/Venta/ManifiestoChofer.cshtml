@@ -1,4 +1,4 @@
-@model SistemaChotaExpress.Models.Viaje
+﻿@model SistemaChotaExpress.Models.Viaje
 @{
     Layout = null;
     var ventas = ViewBag.VentasActivas as List<SistemaChotaExpress.Models.Venta> ?? new List<SistemaChotaExpress.Models.Venta>();
@@ -15,11 +15,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta  charset="utf-8">
+    <meta  name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manifiesto de Pasajeros - Salida #@Model.Id_Viaje - Chota Express</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
     <style>
         @@page {
@@ -495,10 +495,10 @@
             <div class="header-company-block">
                 <div class="header-top-sub">EMPRESA DE MULTISERVICIOS Y TRANSPORTES</div>
                 <div class="header-brand-row">
-                    <img src="~/img/logo_manifiesto.png" alt="Logo Chota Express" class="logo-img" />
+                    <img  src="~/img/logo_manifiesto.png" alt="Logo Chota Express" class="logo-img">
                     <span class="brand-text">TURS CHOTA EXPRESS</span>
                     <span class="sac-tag">S.A.C.</span>
-                    <img src="~/img/combi_manifiesto.png" alt="Combi Oficial Chota Express" class="combi-img" />
+                    <img  src="~/img/combi_manifiesto.png" alt="Combi Oficial Chota Express" class="combi-img">
                 </div>
                 <div class="header-address-block">
                     <div><strong>DOMICILIO FISCAL:</strong> Cal. Sara Macdougall N° 218 - Bar. San José - Cajamarca - Cajamarca - Cajamarca</div>

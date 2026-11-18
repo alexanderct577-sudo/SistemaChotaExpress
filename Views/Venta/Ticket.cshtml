@@ -1,4 +1,4 @@
-@model List<SistemaChotaExpress.Models.Venta>
+﻿@model List<SistemaChotaExpress.Models.Venta>
 @using SistemaChotaExpress.Services
 @{
     Layout = null;
@@ -23,17 +23,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta  charset="utf-8">
+    <meta  name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@tituloGeneral - Tours Chota Express</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js" integrity="sha384-Kk5SjBOKprEnGfyBWfD2zROFd1Cu8kwOXxG2GIhYPcoDL2rBJS9P8Ud1ZMy4412a" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha384-Yv5O+t3uE3hunW8uyrbpPW3iw6/5/Y7HitWJBLgqfMoA36NogMmy+8wWZMpn3HWc" crossorigin="anonymous"></script>
     <style id="dynamicPageStyle">
         @@page { size: 80mm auto; margin: 0; }
     </style>
 
-    <link rel="stylesheet" href="~/css/ticket-viewer.css" />
+    <link  rel="stylesheet" href="~/css/ticket-viewer.css">
     <style>
 
         .btn-action {
@@ -414,7 +414,7 @@
                     }
                 </div>
 
-                <hr class="t-dotted" />
+                <hr  class="t-dotted">
 
                 <div class="t-title @(esReserva ? "t-reserva" : "")">@tipoTituloTicket</div>
                 <div class="t-serie">@serieCorrelativoTicket</div>
@@ -436,7 +436,7 @@
                 <div class="t-row"><span class="t-key">Forma de Pago:</span><span class="t-val">@(esReserva ? "Pendiente" : (v.MetodoPago ?? "Efectivo"))</span></div>
                 <div class="t-row"><span class="t-key">Atendido por:</span><span class="t-val">@(v.ObjetoUsuario?.Name ?? "Agencia Chota")</span></div>
 
-                <hr class="t-dotted" />
+                <hr  class="t-dotted">
 
                 <div class="t-section-header">DATOS DEL PASAJERO</div>
                 <div class="t-row"><span class="t-key">Documento:</span><span class="t-val">@(v.ObjetoPasajero?.TipoDocumento ?? "DNI"): @(v.ObjetoPasajero?.NumeroDocumento ?? "-")</span></div>
@@ -449,7 +449,7 @@
                     <div class="t-row"><span class="t-key">Razón Social:</span><span class="t-val">@v.RazonSocialEmpresa</span></div>
                 }
 
-                <hr class="t-dotted" />
+                <hr  class="t-dotted">
 
                 <div class="t-section-header">DETALLES DEL VIAJE</div>
                 <div class="t-row">
@@ -483,7 +483,7 @@
                     <div class="t-asiento-val">#@v.NumeroAsiento</div>
                 </div>
 
-                <hr class="t-dotted" />
+                <hr  class="t-dotted">
 
                 <!-- Totales -->
                 <div class="t-totales-box">
@@ -493,7 +493,7 @@
                             <span>Estado Reserva:</span>
                             <strong style="color: #d97706;">PENDIENTE DE PAGO</strong>
                         </div>
-                        <hr />
+                        <hr>
                         <div class="t-total-final">
                             <span class="t-total-final-lbl">MONTO A PAGAR</span>
                             <span class="t-total-final-val reserva-val">S/ @v.PrecioPagado.ToString("N2")</span>
@@ -509,7 +509,7 @@
                             <span>I.G.V. (18%):</span>
                             <strong>S/ @igvV.ToString("N2")</strong>
                         </div>
-                        <hr />
+                        <hr>
                         <div class="t-total-final">
                             <span class="t-total-final-lbl">TOTAL PAGADO</span>
                             <span class="t-total-final-val">S/ @v.PrecioPagado.ToString("N2")</span>
@@ -660,7 +660,7 @@
                     <div class="left-notes">
                         <div class="monto-letras">@NumeroALetrasHelper.Convertir(v.PrecioPagado)</div>
                         <div class="adicional-title">INFORMACIÓN ADICIONAL</div>
-                        <hr class="adicional-divider" />
+                        <hr  class="adicional-divider">
                         <div class="adicional-details">
                             <div class="adicional-obs-grid">
                                 <div class="adicional-label">OBSERVACIONES:</div>
@@ -682,7 +682,7 @@
                     </div>
                 </div>
 
-                <hr class="page-divider" />
+                <hr  class="page-divider">
 
                 <div class="footer-section">
                     <div class="box-hash">
@@ -694,7 +694,7 @@
                         </div>
                     </div>
                     <div class="box-qr">
-                        <img src="@qrUrl" alt="QR SUNAT" />
+                        <img  src="@qrUrl" alt="QR SUNAT">
                     </div>
                 </div>
             </div>

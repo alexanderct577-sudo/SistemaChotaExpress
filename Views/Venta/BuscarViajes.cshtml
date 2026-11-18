@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Controllers.VentaController.ViajeConDisponibilidad>
+﻿@model IEnumerable<SistemaChotaExpress.Controllers.VentaController.ViajeConDisponibilidad>
 @{
     ViewData["Title"] = "Venta de Pasajes y Salidas";
     var selectedViaje = ViewBag.SelectedViaje as SistemaChotaExpress.Models.Viaje;
@@ -289,7 +289,7 @@
     <div class="col-xl-3 col-lg-4 col-md-5 col-12">
         <form method="get" id="searchFilterForm" class="m-0" action="@Url.Action("BuscarViajes")">
 
-            <input type="hidden" name="fecha" id="fechaInput" value="@ViewBag.SelectedFecha" />
+            <input  type="hidden" name="fecha" id="fechaInput" value="@ViewBag.SelectedFecha">
 
             <div class="sidebar-card border-warning">
                 <div class="sidebar-section-title text-warning fw-bold fs-7 mb-2">
@@ -344,7 +344,7 @@
                     <div class="text-warning fw-bold fs-8 mb-1.5 d-flex align-items-center">
                         <i class="fa-solid fa-van-shuttle me-1 text-warning"></i> TIPO DE UNIDAD (FLOTA):
                     </div>
-                    <input type="hidden" name="tipoUnidad" id="tipoUnidadInput" value="@selTipoFlota" />
+                    <input  type="hidden" name="tipoUnidad" id="tipoUnidadInput" value="@selTipoFlota">
                     
                     <div class="row g-1.5 text-center" id="fleetTypeSelector">
                         <div class="col-4">
@@ -506,10 +506,10 @@
                                         {
                                             <form asp-action="EliminarSalida" method="post" class="d-inline m-0" onsubmit="return confirm('¿Está seguro de que desea eliminar la salida de @nombreVeh?');">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                                                <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                                                <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
-                                                <input type="hidden" name="viajeId" value="@itemV.Viaje.Id_Viaje" />
+                                                <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                                                <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                                                <input  type="hidden" name="fecha" value="@ViewBag.SelectedFecha">
+                                                <input  type="hidden" name="viajeId" value="@itemV.Viaje.Id_Viaje">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger border-glass-btn h-100 px-2" title="Eliminar este vehículo de la hora @selectedViaje.FechaHoraSalida.ToString("hh:mm tt")">
                                                     <i class="fa-solid fa-trash-can fs-9"></i>
                                                 </button>
@@ -519,11 +519,11 @@
                                 }
                                 <form asp-action="AgregarSalidaAdicional" method="post" class="d-inline m-0">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
-                                    <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                                    <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                                    <input type="hidden" name="fecha" value="@selectedViaje.FechaHoraSalida.ToString("yyyy-MM-dd")" />
-                                    <input type="hidden" name="hora" value="@selectedViaje.FechaHoraSalida.Hour" />
+                                    <input  type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje">
+                                    <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                                    <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                                    <input  type="hidden" name="fecha" value="@selectedViaje.FechaHoraSalida.ToString("yyyy-MM-dd")">
+                                    <input  type="hidden" name="hora" value="@selectedViaje.FechaHoraSalida.Hour">
                                     <button type="submit" class="btn btn-sm btn-outline-warning border-glass-btn py-1.5 px-3 fs-9" title="Agregar otra combi a las @selectedViaje.FechaHoraSalida.ToString("hh:mm tt")">
                                         <i class="fa-solid fa-plus me-1"></i> Agregar Combi @(viajesEnMismaHora.Count + 1)
                                     </button>
@@ -813,11 +813,11 @@
 
                                  <form asp-action="RegistrarVentaMultiple" method="post" id="ventaForm">
                                      @Html.AntiForgeryToken()
-                                     <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
-                                     <input type="hidden" name="tipoTransaccion" id="tipoTransaccionInput" value="Venta" />
-                                     <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                                     <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                                     <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
+                                     <input  type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje">
+                                     <input  type="hidden" name="tipoTransaccion" id="tipoTransaccionInput" value="Venta">
+                                     <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                                     <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                                     <input  type="hidden" name="fecha" value="@ViewBag.SelectedFecha">
 
                                      <div id="seatSelectedIndicator" class="alert alert-success p-2 mb-3 fs-8 text-center d-none fw-bold" role="alert">
                                          <i class="fa-solid fa-circle-check me-1"></i> Asiento(s): <span id="selectedSeatLabel" class="badge bg-dark px-2 py-1 fs-8 text-success border border-success">Ninguno</span>
@@ -863,7 +863,7 @@
                                                  <div class="col-6">
                                                      <label for="rucEmpresa" class="form-label text-success fs-9 mb-1 fw-bold">N° RUC Empresa (Aplica a todos)</label>
                                                      <div class="input-group input-group-sm">
-                                                         <input type="text" name="rucEmpresa" id="rucEmpresa" aria-label="RUC de la Empresa" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" placeholder="20600308883" maxlength="11" />
+                                                         <input  type="text" name="rucEmpresa" id="rucEmpresa" aria-label="RUC de la Empresa" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" placeholder="20600308883" maxlength="11">
                                                          <button class="btn btn-success" type="button" id="btnConsultarRuc" title="Consultar RUC en SUNAT">
                                                              <span id="btnRucText"><i class="fa-solid fa-magnifying-glass me-1"></i> Sunat</span>
                                                              <span id="btnRucSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
@@ -872,12 +872,12 @@
                                                  </div>
                                                  <div class="col-6">
                                                      <label for="razonSocialEmpresa" class="form-label text-muted fs-9 mb-1">Razón Social</label>
-                                                     <input type="text" name="razonSocialEmpresa" id="razonSocialEmpresa" aria-label="Razón Social de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Nombre de la empresa" />
+                                                     <input  type="text" name="razonSocialEmpresa" id="razonSocialEmpresa" aria-label="Razón Social de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Nombre de la empresa">
                                                  </div>
                                              </div>
                                              <div>
                                                  <label for="direccionEmpresa" class="form-label text-muted fs-9 mb-1">Domicilio / Dirección Fiscal</label>
-                                                 <input type="text" name="direccionEmpresa" id="direccionEmpresa" aria-label="Dirección Fiscal de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Dirección fiscal para la factura" />
+                                                 <input  type="text" name="direccionEmpresa" id="direccionEmpresa" aria-label="Dirección Fiscal de la Empresa" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Dirección fiscal para la factura">
                                              </div>
                                          </div>
 
@@ -885,13 +885,13 @@
                                              <div class="col-6">
                                                  <label for="descuentoInput" class="form-label text-muted fs-9 mb-1">Descuento Especial (S/)</label>
                                                  <div class="input-group input-group-sm">
-                                                     <input type="number" step="0.50" min="0" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" id="descuentoInput" aria-label="Descuento Especial en Soles" placeholder="Monto desc." />
+                                                     <input  type="number" step="0.50" min="0" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-8" id="descuentoInput" aria-label="Descuento Especial en Soles" placeholder="Monto desc.">
                                                      <button class="btn btn-outline-success" type="button" id="btnAplicarDescuento">Aplicar</button>
                                                  </div>
                                              </div>
                                              <div class="col-6">
                                                  <label for="observaciones" class="form-label text-muted fs-9 mb-1">Observaciones</label>
-                                                 <input type="text" name="observaciones" id="observaciones" aria-label="Observaciones de venta" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Ej. Viaje corporativo, equipaje extra..." />
+                                                 <input  type="text" name="observaciones" id="observaciones" aria-label="Observaciones de venta" class="form-control bg-dark-input text-white border-glass-field fs-8 py-1.5" placeholder="Ej. Viaje corporativo, equipaje extra...">
                                              </div>
                                          </div>
                                      </div>
@@ -959,17 +959,17 @@
             </div>
             <form asp-action="AgregarSalidaAdicional" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
-                <input type="hidden" name="hora" id="inputModalHora" value="0" />
-                <input type="hidden" name="idRuta" id="inputModalIdRuta" value="0" />
+                <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                <input  type="hidden" name="fecha" value="@ViewBag.SelectedFecha">
+                <input  type="hidden" name="hora" id="inputModalHora" value="0">
+                <input  type="hidden" name="idRuta" id="inputModalIdRuta" value="0">
                 
                 <div class="modal-body py-3">
                     <div class="mb-3">
                         <label for="inputModalConductor" class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
-                        <input type="text" name="conductorNombre" id="inputModalConductor" aria-label="Nombre del conductor" class="form-control bg-dark-input text-white border-glass-field" 
-                               placeholder="Nombre del conductor" required />
+                        <input  type="text" name="conductorNombre" id="inputModalConductor" aria-label="Nombre del conductor" class="form-control bg-dark-input text-white border-glass-field" 
+                               placeholder="Nombre del conductor" required>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary py-2">
@@ -996,15 +996,15 @@
                 </div>
                 <form asp-action="ActualizarConductorViaje" method="post">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje" />
-                    <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                    <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                    <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
+                    <input  type="hidden" name="viajeId" value="@selectedViaje.Id_Viaje">
+                    <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                    <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                    <input  type="hidden" name="fecha" value="@ViewBag.SelectedFecha">
                     <div class="modal-body py-3">
                         <label for="txtCambiarConductor" class="form-label text-muted fs-8 font-weight-600">Nombre del Conductor (Chofer)</label>
-                        <input type="text" id="txtCambiarConductor" name="nombreConductor" aria-label="Nombre del Conductor" class="form-control bg-dark-input text-white border-glass-field" 
+                        <input  type="text" id="txtCambiarConductor" name="nombreConductor" aria-label="Nombre del Conductor" class="form-control bg-dark-input text-white border-glass-field" 
                                value="@(selectedViaje.NombreConductor ?? selectedViaje.ObjetoBus?.NombreConductor ?? "")" 
-                               placeholder="Ej. Carlos Gómez" required />
+                               placeholder="Ej. Carlos Gómez" required>
                     </div>
                     <div class="modal-footer border-secondary py-2">
                         <button type="submit" class="btn btn-sm btn-warning text-white w-100 fw-bold" style="background-color: #f7941d; border: none; border-radius: 8px;">
@@ -1041,11 +1041,11 @@
                 <div class="modal-footer border-secondary p-2 d-flex flex-column gap-1">
                     <form asp-action="AnularVenta" method="post" id="formAnularAsientoModal" class="w-100 m-0" onsubmit="return confirm('¿Está seguro de ANULAR la venta de este asiento? El asiento se liberará inmediatamente.');">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="idVenta" id="modalIdVentaInput" value="0" />
-                        <input type="hidden" name="origen" value="@ViewBag.SelectedOrigen" />
-                        <input type="hidden" name="destino" value="@ViewBag.SelectedDestino" />
-                        <input type="hidden" name="fecha" value="@ViewBag.SelectedFecha" />
-                        <input type="hidden" name="viajeId" value="@(selectedViaje.Id_Viaje)" />
+                        <input  type="hidden" name="idVenta" id="modalIdVentaInput" value="0">
+                        <input  type="hidden" name="origen" value="@ViewBag.SelectedOrigen">
+                        <input  type="hidden" name="destino" value="@ViewBag.SelectedDestino">
+                        <input  type="hidden" name="fecha" value="@ViewBag.SelectedFecha">
+                        <input  type="hidden" name="viajeId" value="@(selectedViaje.Id_Viaje)">
                         <button type="submit" class="btn btn-danger btn-sm w-100 fw-bold py-2 fs-8" style="background-color: #dc3545; border: none; border-radius: 8px;">
                             <i class="fa-solid fa-ban me-1"></i> ANULAR VENTA / LIBERAR ASIENTO
                         </button>
@@ -1381,12 +1381,12 @@ else if (hasActiveRoute)
                     selectedSeatsList.forEach((numSeat, idx) => {
                         const cardHtml = `
                             <div class="p-2.5 bg-dark border-glass rounded mb-2 border-start border-3 border-warning">
-                                <input type="hidden" name="asientos" value="${numSeat}" />
+                                <input  type="hidden" name="asientos" value="${numSeat}">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                     <span class="fs-8 fw-bold text-warning"><i class="fa-solid fa-chair me-1"></i> Asiento #${numSeat}</span>
                                     <div class="d-flex align-items-center gap-1">
                                         <span class="fs-9 text-muted">Precio S/</span>
-                                        <input type="number" step="0.50" min="0.01" name="preciosPagados" class="form-control form-control-sm bg-dark-input text-success font-monospace fs-9 border-glass-field text-end seat-price-input" style="width: 85px;" placeholder="0.00" required />
+                                        <input  type="number" step="0.50" min="0.01" name="preciosPagados" class="form-control form-control-sm bg-dark-input text-success font-monospace fs-9 border-glass-field text-end seat-price-input" style="width: 85px;" placeholder="0.00" required>
                                     </div>
                                 </div>
                                 <div class="row g-2 mb-1">
@@ -1399,7 +1399,7 @@ else if (hasActiveRoute)
                                     </div>
                                     <div class="col-8">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" name="numerosDocumento" id="numDoc_${numSeat}" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-9" placeholder="N° Documento" maxlength="15" autocomplete="off" />
+                                            <input  type="text" name="numerosDocumento" id="numDoc_${numSeat}" class="form-control bg-dark-input text-white border-glass-field font-monospace fs-9" placeholder="N° Documento" maxlength="15" autocomplete="off">
                                             <button class="btn btn-warning py-0 px-2 fs-9" type="button" id="btnDoc_${numSeat}" onclick="consultarDocAsiento(${numSeat})" title="Buscar Documento">
                                                 <i class="fa-solid fa-magnifying-glass"></i> <span id="lblBtnDoc_${numSeat}">Buscar</span>
                                             </button>
@@ -1407,7 +1407,7 @@ else if (hasActiveRoute)
                                     </div>
                                 </div>
                                 <div class="mb-1.5">
-                                    <input type="text" name="nombresCompletos" id="nombre_${numSeat}" class="form-control bg-dark-input text-white border-glass-field fs-9 py-1" placeholder="Nombres y Apellidos del Pasajero #${numSeat}" required />
+                                    <input  type="text" name="nombresCompletos" id="nombre_${numSeat}" class="form-control bg-dark-input text-white border-glass-field fs-9 py-1" placeholder="Nombres y Apellidos del Pasajero #${numSeat}" required>
                                 </div>
                             </div>
                         `;

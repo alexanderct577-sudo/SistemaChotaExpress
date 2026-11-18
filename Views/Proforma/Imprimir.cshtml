@@ -1,12 +1,12 @@
-@model SistemaChotaExpress.Models.ProformaViaje
+﻿@model SistemaChotaExpress.Models.ProformaViaje
 @{
     Layout = null;
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta  charset="utf-8">
+    <meta  name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proforma @Model.CodigoProforma — Tours Chota Express</title>
     <style>
         * {
@@ -269,10 +269,10 @@
             <!-- ENCABEZADO -->
             <div class="header-grid">
                 <div class="logo-box">
-                    <img src="~/img/logo_chota.jpg" alt="Tours Chota Express" />
+                    <img  src="~/img/logo_chota.jpg" alt="Tours Chota Express">
                     <div class="company-subtitle">
-                        TOURS CHOTA EXPRESS S.A.C. • RUC: 20601234567<br />
-                        Transporte Interprovincial Regular y Especial de Pasajeros<br />
+                        TOURS CHOTA EXPRESS S.A.C. • RUC: 20601234567<br>
+                        Transporte Interprovincial Regular y Especial de Pasajeros<br>
                         Chota — Cajamarca — Cutervo • Central: 987 654 321
                     </div>
                 </div>
@@ -343,7 +343,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <strong>@Model.TipoServicio</strong><br />
+                            <strong>@Model.TipoServicio</strong><br>
                             <small style="color: #64748b;">
                                 Servicio de transporte en Combi moderna Toyota HiAce equipada, incluye combustible y conductor calificado.
                             </small>
@@ -395,14 +395,14 @@
                 <div>
                     <div style="height: 45px;"></div>
                     <div class="signature-line">
-                        <strong>Tours Chota Express S.A.C.</strong><br />
+                        <strong>Tours Chota Express S.A.C.</strong><br>
                         Agencia de Ventas & Operaciones
                     </div>
                 </div>
                 <div>
                     <div style="height: 45px;"></div>
                     <div class="signature-line">
-                        <strong>Firma del Cliente Aceptante</strong><br />
+                        <strong>Firma del Cliente Aceptante</strong><br>
                         DNI / RUC: @(Model.NumeroDocumento ?? "____________________")
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.Encomienda>
+﻿@model IEnumerable<SistemaChotaExpress.Models.Encomienda>
 @{
     ViewData["Title"] = "Registro de Encomiendas";
 }
@@ -44,8 +44,8 @@
                 <label for="txtBuscarEncomienda" class="form-label text-muted small">Buscar por código, remitente, destinatario o DNI</label>
                 <div class="input-group">
                     <span class="input-group-text bg-secondary border-0"><i class="fa-solid fa-magnifying-glass text-white"></i></span>
-                    <input type="text" id="txtBuscarEncomienda" name="buscar" aria-label="Buscar encomienda por código, remitente o DNI" class="form-control bg-secondary border-0 text-white"
-                           placeholder="Ej: ECE-2026-0001 o Juan Perez" value="@ViewBag.Buscar" />
+                    <input  type="text" id="txtBuscarEncomienda" name="buscar" aria-label="Buscar encomienda por código, remitente o DNI" class="form-control bg-secondary border-0 text-white"
+                           placeholder="Ej: ECE-2026-0001 o Juan Perez" value="@ViewBag.Buscar">
                 </div>
             </div>
             <div class="col-md-4">
@@ -203,8 +203,8 @@
                                             </a>
                                             <form asp-action="CambiarEstado" method="post" class="m-0">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@enc.Id_Encomienda" />
-                                                <input type="hidden" name="nuevoEstado" value="En transito" />
+                                                <input  type="hidden" name="id" value="@enc.Id_Encomienda">
+                                                <input  type="hidden" name="nuevoEstado" value="En transito">
                                                 <button type="submit" class="btn btn-outline-info btn-sm px-2" title="Marcar En tránsito"
                                                         onclick="return confirm('¿Marcar como En tránsito?')">
                                                     <i class="fa-solid fa-truck-fast"></i>
@@ -215,8 +215,8 @@
                                         {
                                             <form asp-action="CambiarEstado" method="post" class="m-0">
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@enc.Id_Encomienda" />
-                                                <input type="hidden" name="nuevoEstado" value="Entregado" />
+                                                <input  type="hidden" name="id" value="@enc.Id_Encomienda">
+                                                <input  type="hidden" name="nuevoEstado" value="Entregado">
                                                 <button type="submit" class="btn btn-outline-success btn-sm px-2" title="Marcar Entregada"
                                                         onclick="return confirm('¿Confirmar entrega?')">
                                                     <i class="fa-solid fa-circle-check"></i>

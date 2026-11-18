@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaChotaExpress.Models.Venta>
+﻿@model IEnumerable<SistemaChotaExpress.Models.Venta>
 @{
     ViewData["Title"] = "Registro de pasajes vendidos";
 }
@@ -29,7 +29,7 @@
             <span class="fs-8 text-muted"><i class="fa-solid fa-info-circle me-1"></i> Busca por pasajero, DNI, RUC, número de comprobante o destino.</span>
         </div>
         <div class="col-md-6 text-end">
-            <input type="text" id="tableFilter" class="form-control bg-dark-input text-white border-glass-field d-inline-block" aria-label="Filtrar ventas, RUC o pasajeros" placeholder="Filtrar ventas, RUC o pasajeros..." style="max-width: 350px;" />
+            <input  type="text" id="tableFilter" class="form-control bg-dark-input text-white border-glass-field d-inline-block" aria-label="Filtrar ventas, RUC o pasajeros" placeholder="Filtrar ventas, RUC o pasajeros..." style="max-width: 350px;">
         </div>
     </div>
 </div>
@@ -125,7 +125,7 @@
                                         <!-- Confirm Reservation Form -->
                                         <form asp-action="ConfirmarReserva" method="post" class="m-0">
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@v.Id_Venta" />
+                                            <input  type="hidden" name="id" value="@v.Id_Venta">
                                             <button type="submit" class="btn btn-xs btn-success py-1 px-2" style="border-radius: 6px;" title="Confirmar y Cobrar Venta">
                                                 <i class="fa-solid fa-check me-1"></i> Cobrar
                                             </button>
@@ -134,7 +134,7 @@
                                         <!-- Cancel Reservation Form -->
                                         <form asp-action="CancelarTransaccion" method="post" class="m-0" onsubmit="return confirm('¿Está seguro de que desea cancelar esta reserva? El asiento quedará libre.');">
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@v.Id_Venta" />
+                                            <input  type="hidden" name="id" value="@v.Id_Venta">
                                             <button type="submit" class="btn btn-xs btn-outline-danger py-1 px-2" style="border-radius: 6px;" title="Cancelar Reserva">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
@@ -160,7 +160,7 @@
                                         <!-- Cancel Sale Form -->
                                         <form asp-action="CancelarTransaccion" method="post" class="m-0" onsubmit="return confirm('¿Está seguro de que desea CANCELAR este pasaje vendido? Se liberará el asiento.');">
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@v.Id_Venta" />
+                                            <input  type="hidden" name="id" value="@v.Id_Venta">
                                             <button type="submit" class="btn btn-xs btn-outline-danger py-1 px-2" style="border-radius: 6px;" title="Cancelar Venta">
                                                 <i class="fa-solid fa-ban"></i>
                                             </button>

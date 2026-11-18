@@ -1,4 +1,4 @@
-@model SistemaChotaExpress.Models.ProformaViaje
+﻿@model SistemaChotaExpress.Models.ProformaViaje
 @{
     ViewData["Title"] = "Nueva Proforma de Viaje";
 }
@@ -51,8 +51,8 @@
                         <div class="col-sm-8">
                             <label asp-for="NumeroDocumento" class="form-label text-muted small fw-bold">N° de Documento</label>
                             <div class="input-group">
-                                <input asp-for="NumeroDocumento" id="txtNumeroDoc" aria-label="Número de Documento" class="form-control bg-secondary border-0 text-white"
-                                       placeholder="Ingrese DNI, RUC o CE" maxlength="12" autocomplete="off" />
+                                <input  asp-for="NumeroDocumento" id="txtNumeroDoc" aria-label="Número de Documento" class="form-control bg-secondary border-0 text-white"
+                                       placeholder="Ingrese DNI, RUC o CE" maxlength="12" autocomplete="off">
                                 <button type="button" id="btnBuscarDoc" class="btn btn-warning fw-bold px-3">
                                     <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
                                 </button>
@@ -63,14 +63,14 @@
 
                     <div class="mb-3">
                         <label asp-for="NombreCliente" class="form-label text-muted small fw-bold">Cliente / Razón Social <span class="text-danger">*</span></label>
-                        <input asp-for="NombreCliente" id="txtNombreCliente" aria-label="Nombre del Cliente" class="form-control bg-secondary border-0 text-white"
-                               placeholder="Nombre del solicitante o empresa" required />
+                        <input  asp-for="NombreCliente" id="txtNombreCliente" aria-label="Nombre del Cliente" class="form-control bg-secondary border-0 text-white"
+                               placeholder="Nombre del solicitante o empresa" required>
                         <span asp-validation-for="NombreCliente" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-2">
                         <label asp-for="TelefonoCliente" class="form-label text-muted small fw-bold">Teléfono / Celular / WhatsApp</label>
-                        <input asp-for="TelefonoCliente" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 987654321" />
+                        <input  asp-for="TelefonoCliente" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 987654321">
                     </div>
 
                 </div>
@@ -97,16 +97,16 @@
                         <div class="col-sm-6">
                             <label asp-for="CantidadPasajeros" class="form-label text-muted small fw-bold">Cantidad de Pasajeros</label>
                             <div class="input-group">
-                                <input asp-for="CantidadPasajeros" id="txtCantidadPasajeros" aria-label="Cantidad de Pasajeros" type="number" min="1" max="50"
-                                       class="form-control bg-secondary border-0 text-white" value="15" />
+                                <input  asp-for="CantidadPasajeros" id="txtCantidadPasajeros" aria-label="Cantidad de Pasajeros" type="number" min="1" max="50"
+                                       class="form-control bg-secondary border-0 text-white" value="15">
                                 <span class="input-group-text bg-secondary border-0 text-muted">asientos</span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <label asp-for="ValidezDias" class="form-label text-muted small fw-bold">Validez de la Proforma</label>
                             <div class="input-group">
-                                <input asp-for="ValidezDias" type="number" min="1" max="90"
-                                       class="form-control bg-secondary border-0 text-white" value="5" />
+                                <input  asp-for="ValidezDias" type="number" min="1" max="90"
+                                       class="form-control bg-secondary border-0 text-white" value="5">
                                 <span class="input-group-text bg-secondary border-0 text-muted">días</span>
                             </div>
                         </div>
@@ -116,8 +116,8 @@
                         <label asp-for="PrecioTotal" class="form-label text-warning small fw-bold">Precio Total Cotizado (S/) <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-secondary border-0 text-warning fs-5 fw-bold">S/</span>
-                            <input asp-for="PrecioTotal" type="number" step="1.00" min="1.00"
-                                   class="form-control bg-secondary border-0 text-white fw-bold fs-4 text-warning" placeholder="0.00" required />
+                            <input  asp-for="PrecioTotal" type="number" step="1.00" min="1.00"
+                                   class="form-control bg-secondary border-0 text-white fw-bold fs-4 text-warning" placeholder="0.00" required>
                         </div>
                         <span asp-validation-for="PrecioTotal" class="text-danger small"></span>
                     </div>
@@ -165,12 +165,12 @@
 
                         <div class="col-md-3">
                             <label asp-for="FechaViaje" class="form-label text-muted small fw-bold"><i class="fa-solid fa-calendar-day me-1 text-info"></i> Fecha Prevista</label>
-                            <input asp-for="FechaViaje" type="date" class="form-control bg-secondary border-0 text-white" required />
+                            <input  asp-for="FechaViaje" type="date" class="form-control bg-secondary border-0 text-white" required>
                         </div>
 
                         <div class="col-md-3">
                             <label asp-for="HoraSalida" class="form-label text-muted small fw-bold"><i class="fa-solid fa-clock me-1 text-info"></i> Horario Acordado</label>
-                            <input asp-for="HoraSalida" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 06:00 am o a coordinar" />
+                            <input  asp-for="HoraSalida" class="form-control bg-secondary border-0 text-white" placeholder="Ej: 06:00 am o a coordinar">
                         </div>
 
                         <div class="col-12">

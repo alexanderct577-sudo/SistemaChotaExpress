@@ -1,4 +1,4 @@
-@model SistemaChotaExpress.Models.Encomienda
+﻿@model SistemaChotaExpress.Models.Encomienda
 @{
     ViewData["Title"] = "Detalle Encomienda";
     var badgeColor = Model.Estado switch {
@@ -40,8 +40,8 @@
                 {
                     <form asp-action="CambiarEstado" method="post" class="m-0 d-inline">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id_Encomienda" />
-                        <input type="hidden" name="nuevoEstado" value="En transito" />
+                        <input  type="hidden" name="id" value="@Model.Id_Encomienda">
+                        <input  type="hidden" name="nuevoEstado" value="En transito">
                         <button type="submit" class="btn btn-info btn-sm fw-bold text-dark"
                                 onclick="return confirm('¿Marcar esta encomienda como En tránsito?')">
                             <i class="fa-solid fa-truck-fast me-1"></i> Marcar En tránsito
@@ -53,8 +53,8 @@
                 {
                     <form asp-action="CambiarEstado" method="post" class="m-0 d-inline">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id_Encomienda" />
-                        <input type="hidden" name="nuevoEstado" value="Entregado" />
+                        <input  type="hidden" name="id" value="@Model.Id_Encomienda">
+                        <input  type="hidden" name="nuevoEstado" value="Entregado">
                         <button type="submit" class="btn btn-success btn-sm fw-bold"
                                 onclick="return confirm('¿Confirmar entrega de la encomienda?')">
                             <i class="fa-solid fa-circle-check me-1"></i> Marcar Entregada
@@ -63,8 +63,8 @@
 
                     <form asp-action="CambiarEstado" method="post" class="m-0 d-inline">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id_Encomienda" />
-                        <input type="hidden" name="nuevoEstado" value="No reclamado" />
+                        <input  type="hidden" name="id" value="@Model.Id_Encomienda">
+                        <input  type="hidden" name="nuevoEstado" value="No reclamado">
                         <button type="submit" class="btn btn-danger btn-sm fw-bold"
                                 onclick="return confirm('¿Marcar como No Reclamado?')">
                             <i class="fa-solid fa-circle-xmark me-1"></i> No Reclamado
@@ -76,8 +76,8 @@
                 {
                     <form asp-action="CambiarEstado" method="post" class="m-0 d-inline">
                         @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id_Encomienda" />
-                        <input type="hidden" name="nuevoEstado" value="Anulado" />
+                        <input  type="hidden" name="id" value="@Model.Id_Encomienda">
+                        <input  type="hidden" name="nuevoEstado" value="Anulado">
                         <button type="submit" class="btn btn-outline-secondary btn-sm"
                                 onclick="return confirm('¿Anular esta encomienda? Esta acción no se puede deshacer.')">
                             <i class="fa-solid fa-ban me-1"></i> Anular
@@ -151,7 +151,7 @@
     <div class="card-body pb-0">
         <div class="row align-items-center mb-3">
             <div class="col-auto">
-                <img src="~/img/logo_oficial.png" alt="Logo" style="height:60px;" />
+                <img  src="~/img/logo_oficial.png" alt="Logo" style="height:60px;">
             </div>
             <div class="col">
                 <h5 class="text-white fw-bold mb-0">Tours Chota Express S.A.C.</h5>
@@ -164,7 +164,7 @@
                 </div>
             </div>
         </div>
-        <hr class="border-secondary" />
+        <hr  class="border-secondary">
     </div>
 
     <div class="card-body pt-2">
@@ -248,7 +248,7 @@
                         </div>
                         @if (!string.IsNullOrEmpty(Model.Observaciones))
                         {
-                            <hr class="border-dark" />
+                            <hr  class="border-dark">
                             <small class="text-muted">Observaciones: </small>
                             <span class="text-white small">@Model.Observaciones</span>
                         }

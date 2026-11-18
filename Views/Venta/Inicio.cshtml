@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Bienvenido";
     var nombre = TempData["BienvenidaLogin"]?.ToString() ?? User.Identity?.Name ?? "Trabajador";
 
@@ -213,7 +213,7 @@
 
     <div class="hero-header-clean fade-up-item d-1">
         <div>
-            <img src="~/img/logo_chota.jpg?v=@DateTime.Now.Ticks" asp-append-version="true" alt="Tours Chota Express S.A.C." class="hero-logo-badge" />
+            <img  src="~/img/logo_chota.jpg?v=@DateTime.Now.Ticks" asp-append-version="true" alt="Tours Chota Express S.A.C." class="hero-logo-badge">
         </div>
         <h1 class="text-white fw-bold mb-2" style="font-size: clamp(1.7rem, 4vw, 2.7rem);">
             <span>@emoji</span> @saludo, <span class="nombre-glow">@nombre</span>

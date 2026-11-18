@@ -1,4 +1,4 @@
-@model SistemaChotaExpress.Models.Encomienda
+﻿@model SistemaChotaExpress.Models.Encomienda
 @{
     Layout = null;
     string rucEmisor = "20600308883";
@@ -25,10 +25,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta  charset="utf-8">
+    <meta  name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@tituloDoc @numeroDoc - Tours Chota Express</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js" integrity="sha384-Kk5SjBOKprEnGfyBWfD2zROFd1Cu8kwOXxG2GIhYPcoDL2rBJS9P8Ud1ZMy4412a" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha384-Yv5O+t3uE3hunW8uyrbpPW3iw6/5/Y7HitWJBLgqfMoA36NogMmy+8wWZMpn3HWc" crossorigin="anonymous"></script>
@@ -41,7 +41,7 @@
         }
     </style>
 
-    <link rel="stylesheet" href="~/css/ticket-viewer.css" />
+    <link  rel="stylesheet" href="~/css/ticket-viewer.css">
     <style>
         .btn-tab:hover { color: #fff; }
         .btn-tab.active {
@@ -678,11 +678,11 @@
                         <td style="text-align: center; font-weight: 700;">1</td>
                         <td style="text-align: center; font-family: monospace; font-weight: 700;">@Model.CodigoSeguimiento</td>
                         <td>
-                            <strong>SERVICIO DE TRANSPORTE DE ENCOMIENDAS</strong><br />
+                            <strong>SERVICIO DE TRANSPORTE DE ENCOMIENDAS</strong><br>
                             <span style="color: #475569;">Contenido: @Model.Descripcion</span>
                             @if (!string.IsNullOrWhiteSpace(Model.ObservacionesLimpias))
                             {
-                                <br /><small style="color: #64748b;"><em>Obs: @Model.ObservacionesLimpias</em></small>
+                                <br><small style="color: #64748b;"><em>Obs: @Model.ObservacionesLimpias</em></small>
                             }
                         </td>
                         <td style="text-align: center;">@(Model.PesoKg.HasValue ? $"{Model.PesoKg:N1} kg" : "1.0 kg")</td>
@@ -751,8 +751,8 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div id="qrcodeA4"></div>
                     <div style="font-size: 10px; color: #64748b; line-height: 1.3;">
-                        <strong>Tours Chota Express</strong><br />
-                        Comprobante Electrónico Autorizado.<br />
+                        <strong>Tours Chota Express</strong><br>
+                        Comprobante Electrónico Autorizado.<br>
                         Consulte en www.chotaexpress.com
                     </div>
                 </div>
